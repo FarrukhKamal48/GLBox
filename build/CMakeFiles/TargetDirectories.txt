@@ -1,0 +1,3 @@
+/home/farrukh/Dev/OpenGL/build/CMakeFiles/main.dir
+/home/farrukh/Dev/OpenGL/build/CMakeFiles/edit_cache.dir
+/home/farrukh/Dev/OpenGL/build/CMakeFiles/rebuild_cache.dir
