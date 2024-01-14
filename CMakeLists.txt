@@ -4,15 +4,9 @@ project (OpenGL)
 set (out main)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 set (src_dir "${PROJECT_SOURCE_DIR}/src/")
-set (dep_dir "${PROJECT_SOURCE_DIR}/deps/")
-set (GLFW ${dep_dir}/GLFW)
 
-file (GLOB src_files "${src_dir}/*.cpp" "${GLFW}/*.h")
+file (GLOB src_files "${src_dir}/*.cpp" "${src_dir}/*.h" "${src_dir}/*.hpp")
 
 add_executable(${out} ${src_files})
 
-target_include_directories(${out} PRIVATE ${dep_dir})
-target_link_libraries(${out} ${GLFW}/libglfw.so ${GLFW}/libGL.so)
-
-# target_link_libraries(${out} GL glfw)
-
+target_link_libraries(${out} GL glfw)
