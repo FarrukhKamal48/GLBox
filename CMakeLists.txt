@@ -7,6 +7,6 @@ set (src_dir "${PROJECT_SOURCE_DIR}/src/")
 
 file (GLOB src_files "${src_dir}/*.cpp" "${src_dir}/*.h" "${src_dir}/*.hpp")
 
+add_compile_definitions(GLEW_STATIC)
 add_executable(${out} ${src_files})
-
-target_link_libraries(${out} GL glfw)
+target_link_libraries(${out} GL GLEW glfw)
