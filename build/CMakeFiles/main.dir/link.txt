@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Werror -g CMakeFiles/main.dir/src/main.cpp.o -o main  -Wl,-rpath,/home/farrukh/Dev/OpenGL/deps/GLFW /home/farrukh/Dev/OpenGL/deps//GLFW/libglfw.so /home/farrukh/Dev/OpenGL/deps//GLFW/libGL.so 

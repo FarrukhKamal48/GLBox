@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Werror -g CMakeFiles/OpenGl.dir/main.cpp.o -o OpenGl 
