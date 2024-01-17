@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 
@@ -23,6 +24,25 @@ uint CompileShader(uint shaderType, const std::string& shaderSrc) {
     const char* src = shaderSrc.c_str();
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
+    
+    /* Error Handling */
+    int result;
+    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+    if (result == GL_FALSE) {
+        int length;
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        
+        char message[length];
+        glGetShaderInfoLog(id, length, &length, message);
+        
+        std::cout << "Failed to compile " 
+            << (shaderType==GL_VERTEX_SHADER ? "vertex" : "fragment") 
+            << "shader!" << std::endl;
+        std::cout << message << std::endl;
+
+        glDeleteShader(id);
+        return 0;
+    }
 
     return id;
 }
