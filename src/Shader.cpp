@@ -1,10 +1,10 @@
-#include "Shader.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
+#include "Shader.h"
 
 std::string GetShaderSource(const std::string& shaderPath) {
     std::ifstream stream(shaderPath);
