@@ -4,8 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
 #include "Shader.h"
-#include "GLlog.cpp"
+#include "GLlog.h"
 
 std::string GetShaderSource(const std::string& shaderPath) {
     std::ifstream stream(shaderPath);

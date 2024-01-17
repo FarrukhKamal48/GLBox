@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#define GLCall(X) GLClearError(); X; GLLogCall(#X, __FILE__, __LINE__)
+#include "GLlog.h"
 
 void GLClearError() {
     while (glGetError() != GL_NO_ERROR);

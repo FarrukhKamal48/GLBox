@@ -3,7 +3,7 @@
 #include <sys/types.h>
 
 #include "Shader.h"
-#include "GLlog.cpp"
+#include "GLlog.h"
 
 int main (int argc, char *argv[])
 {
@@ -59,7 +59,7 @@ int main (int argc, char *argv[])
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
