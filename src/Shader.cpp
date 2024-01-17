@@ -5,13 +5,17 @@
 #include <sstream>
 
 
-std::string ParseShader(const std::string& shaderPath) {
+std::string GetShaderSource(const std::string& shaderPath) {
     std::ifstream stream(shaderPath);
     std::stringstream ss;
 
     ss << stream.rdbuf();
     
     return ss.str();
+}
+
+ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragPath) {
+    return { GetShaderSource(vertPath), GetShaderSource(fragPath), };
 }
 
 uint CompileShader(uint shaderType, const std::string& shaderSrc) {

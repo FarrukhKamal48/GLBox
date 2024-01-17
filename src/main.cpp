@@ -38,9 +38,9 @@ int main (int argc, char *argv[])
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*)0);
     glEnableVertexAttribArray(0);
 
-    uint shader = CreateShader2(ParseShader("assets/shaders/Basic.vert.shader"), 
-                                ParseShader("assets/shaders/Basic.frag.shader"));
-    glUseProgram(shader);
+    auto shaderPair = GetShaderSource2("assets/shaders/Basic.vert.shader", "assets/shaders/Basic.frag.shader");
+    uint program = CreateShader2(shaderPair.vertSrc, shaderPair.fragSrc);
+    glUseProgram(program);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -57,7 +57,8 @@ int main (int argc, char *argv[])
         glfwPollEvents();
     }
 
-    glDeleteProgram(shader);
+    // glDeleteProgram(shader);
+    glDeleteProgram(program);
 
     glfwTerminate();
     return 0;
