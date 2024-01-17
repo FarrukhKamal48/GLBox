@@ -38,16 +38,16 @@ int main (int argc, char *argv[])
     };
 
     uint buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*)0);
-    glEnableVertexAttribArray(0);
+    GLCall(glGenBuffers(1, &buffer));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
+    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*)0));
+    GLCall(glEnableVertexAttribArray(0));
 
     uint ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(uint), indices, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &ibo));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(uint), indices, GL_STATIC_DRAW));
 
     auto shaderPair = GetShaderSource2("assets/shaders/Basic.vert.shader", "assets/shaders/Basic.frag.shader");
     uint program = CreateShader2(shaderPair.vertSrc, shaderPair.fragSrc);
@@ -69,7 +69,7 @@ int main (int argc, char *argv[])
     }
 
     // glDeleteProgram(shader);
-    glDeleteProgram(program);
+    GLCall(glDeleteProgram(program));
 
     glfwTerminate();
     return 0;
