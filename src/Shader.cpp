@@ -3,21 +3,28 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "Shader.h"
 #include "GLlog.h"
 
-std::string GetShaderSource(const std::string& shaderPath) {
-    std::ifstream stream(shaderPath);
-    std::stringstream ss;
-
-    ss << stream.rdbuf();
-    
-    return ss.str();
+Shader::Shader() {
+}
+Shader::~Shader() {
+    GLCall(glDeleteProgram(m_RendererID));
 }
 
-ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragPath) {
-    return { GetShaderSource(vertPath), GetShaderSource(fragPath), };
+void Shader::Bind() {
+}
+void Shader::UnBind() {
+    GLCall(glUseProgram(0));
+}
+
+void Shader::AddSource(unsigned int type, std::string& srcPath) {
+    std::ifstream stream(srcPath);
+    std::stringstream srcStream;
+    srcStream << stream.rdbuf();
+    m_Sources.push_back({ type, srcStream.str() });
 }
 
 unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc) {
@@ -44,9 +51,42 @@ unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc
         GLCall(glDeleteShader(id));
         return 0;
     }
-
     return id;
 }
+void Shader::Compile() {
+    GLCall(m_RendererID = glCreateProgram());
+    unsigned int shaderID;
+
+    for (ShaderElement element : m_Sources) {
+        shaderID = CompileShader(element.type, element.src);
+        GLCall(glAttachShader(m_RendererID, shaderID));
+        GLCall(glDeleteShader(shaderID));
+    }
+    
+    GLCall(glLinkProgram(m_RendererID));
+    GLCall(glValidateProgram(m_RendererID));
+}
+
+void Shader::Use() {
+    GLCall(glUseProgram(m_RendererID));
+}
+
+
+
+
+std::string GetShaderSource(const std::string& shaderPath) {
+    std::ifstream stream(shaderPath);
+    std::stringstream ss;
+
+    ss << stream.rdbuf();
+    
+    return ss.str();
+}
+
+ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragPath) {
+    return { GetShaderSource(vertPath), GetShaderSource(fragPath), };
+}
+
 
 unsigned int CreateShader(unsigned int shaderType, const std::string &shaderSrc) {
     GLCall(unsigned int program = glCreateProgram());

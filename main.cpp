@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
 
     IndexBuffer ib(indices, 6);
 
-    auto shaderPair = GetShaderSource2("assets/shaders/Basic.vert.shader", "assets/shaders/Basic.frag.shader");
+    ShaderSrc shaderPair = GetShaderSource2("assets/shaders/Basic.vert.shader", "assets/shaders/Basic.frag.shader");
     unsigned int program = CreateShader2(shaderPair.vertSrc, shaderPair.fragSrc);
     GLCall(glUseProgram(program));
 
