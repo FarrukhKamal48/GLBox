@@ -1,8 +1,6 @@
 #pragma once
-#include <iostream>
-#include <ostream>
 #include <string>
-#include <vector>
+#include <unordered_map>
 
 struct ShaderSourceElement {
     unsigned int type;
@@ -13,6 +11,7 @@ class ShaderProgram {
 private:
     unsigned int m_RendererID;
     ShaderSourceElement m_Sources[2];
+    std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
     ShaderProgram();
     ~ShaderProgram();
@@ -29,4 +28,6 @@ public:
     template<typename T> void SetUniformVec4(const std::string& name, T val1, T val2, T val3, T val4);
 
     inline const unsigned int GetID() const { return m_RendererID; }
+private:
+    int GetUniformLocation(const std::string& name);
 };

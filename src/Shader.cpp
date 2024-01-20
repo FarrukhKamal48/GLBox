@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 #include "Shader.h"
@@ -73,27 +74,35 @@ void ShaderProgram::Compile() {
     GLCall(glValidateProgram(m_RendererID));
 }
 
+int ShaderProgram::GetUniformLocation(const std::string& name) {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+        return m_UniformLocationCache[name];
+    
+    GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+    if (location == -1)
+        std::cout << "Warning, uniform '" << name << "' does not exist" << std::endl;
+    
+    m_UniformLocationCache[name] = location;
+    return location;
+}
+
 template<> 
 void ShaderProgram::SetUniform<float>(const std::string& name, float val) {
-    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
-    GLCall(glUniform1f(u_color, val));
+    GLCall(glUniform1f(GetUniformLocation(name), val));
 }
 
 template<> 
 void ShaderProgram::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
-    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
-    GLCall(glUniform2f(u_color, val1, val2));
+    GLCall(glUniform2f(GetUniformLocation(name), val1, val2));
 } 
 
 template<> 
 void ShaderProgram::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
-    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
-    GLCall(glUniform3f(u_color, val1, val2, val3));
+    GLCall(glUniform3f(GetUniformLocation(name), val1, val2, val3));
 } 
 
 template<> 
 void ShaderProgram::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
-    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
-    GLCall(glUniform4f(u_color, val1, val2, val3, val4));
+    GLCall(glUniform4f(GetUniformLocation(name), val1, val2, val3, val4));
 } 
 
