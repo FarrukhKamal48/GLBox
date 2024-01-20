@@ -2,36 +2,30 @@
 #include <string>
 #include <vector>
 
-struct ShaderSrc {
-    std::string vertSrc;    
-    std::string fragSrc;    
-};
-
-std::string GetShaderSource(const std::string& shaderPath);
-ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragPath);
-
-unsigned int CreateShader(unsigned int shaderType, const std::string &shaderSrc);
-unsigned int CreateShader2(const std::string &VertSrc, const std::string &fragSrc);
-
-unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc);
-
-struct ShaderElement {
+struct ShaderSourceElement {
     unsigned int type;
-    const std::string& src;
+    std::string src;
 };
 
-class Shader {
+class ShaderProgram {
 private:
     unsigned int m_RendererID;
-    std::vector<ShaderElement> m_Sources;
+    std::vector<ShaderSourceElement> m_Sources;
 public:
-    Shader();
-    ~Shader();
+    ShaderProgram();
+    ~ShaderProgram();
 
     void Bind();
     void UnBind();
 
-    void AddSource(unsigned int type, std::string& srcPath);
+    void Push(unsigned int type, const std::string& srcPath);
     void Compile();
     void Use();
+
+    template<typename T> void SetUniform(const std::string& name, T val);
+    template<typename T> void SetUniformVec2(const std::string& name, T val1, T val2);
+    template<typename T> void SetUniformVec3(const std::string& name, T val1, T val2, T val3);
+    template<typename T> void SetUniformVec4(const std::string& name, T val1, T val2, T val3, T val4);
+
+    inline const unsigned int GetID() const { return m_RendererID; }
 };

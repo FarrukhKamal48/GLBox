@@ -1,26 +1,23 @@
 #include <GL/glew.h>
-
 #include <fstream>
-#include <iostream>
 #include <sstream>
-#include <string>
 
 #include "Shader.h"
 #include "GLlog.h"
 
-Shader::Shader() {
+ShaderProgram::ShaderProgram() {
 }
-Shader::~Shader() {
+ShaderProgram::~ShaderProgram() {
     GLCall(glDeleteProgram(m_RendererID));
 }
 
-void Shader::Bind() {
+void ShaderProgram::Bind() {
 }
-void Shader::UnBind() {
+void ShaderProgram::UnBind() {
     GLCall(glUseProgram(0));
 }
 
-void Shader::AddSource(unsigned int type, std::string& srcPath) {
+void ShaderProgram::Push(unsigned int type, const std::string& srcPath) {
     std::ifstream stream(srcPath);
     std::stringstream srcStream;
     srcStream << stream.rdbuf();
@@ -53,12 +50,11 @@ unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc
     }
     return id;
 }
-void Shader::Compile() {
+void ShaderProgram::Compile() {
     GLCall(m_RendererID = glCreateProgram());
-    unsigned int shaderID;
 
-    for (ShaderElement element : m_Sources) {
-        shaderID = CompileShader(element.type, element.src);
+    for (ShaderSourceElement element : m_Sources) {
+        unsigned int shaderID = CompileShader(element.type, element.src);
         GLCall(glAttachShader(m_RendererID, shaderID));
         GLCall(glDeleteShader(shaderID));
     }
@@ -67,52 +63,31 @@ void Shader::Compile() {
     GLCall(glValidateProgram(m_RendererID));
 }
 
-void Shader::Use() {
+void ShaderProgram::Use() {
     GLCall(glUseProgram(m_RendererID));
 }
 
-
-
-
-std::string GetShaderSource(const std::string& shaderPath) {
-    std::ifstream stream(shaderPath);
-    std::stringstream ss;
-
-    ss << stream.rdbuf();
-    
-    return ss.str();
+template<> 
+void ShaderProgram::SetUniform<float>(const std::string& name, float val) {
+    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCall(glUniform1f(u_color, val));
 }
 
-ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragPath) {
-    return { GetShaderSource(vertPath), GetShaderSource(fragPath), };
-}
+template<> 
+void ShaderProgram::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
+    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCall(glUniform2f(u_color, val1, val2));
+} 
 
+template<> 
+void ShaderProgram::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
+    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCall(glUniform3f(u_color, val1, val2, val3));
+} 
 
-unsigned int CreateShader(unsigned int shaderType, const std::string &shaderSrc) {
-    GLCall(unsigned int program = glCreateProgram());
-    unsigned int shader = CompileShader(shaderType, shaderSrc);
+template<> 
+void ShaderProgram::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
+    GLCall(int u_color = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCall(glUniform4f(u_color, val1, val2, val3, val4));
+} 
 
-    GLCall(glAttachShader(program, shader));
-    GLCall(glLinkProgram(program));
-    GLCall(glValidateProgram(program));
-
-    GLCall(glDeleteShader(shader));
-    
-    return program;
-}
-
-unsigned int CreateShader2(const std::string &vertSrc, const std::string &fragSrc) {
-    GLCall(unsigned int program = glCreateProgram());
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertSrc);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragSrc);
-
-    GLCall(glAttachShader(program, vs));
-    GLCall(glAttachShader(program, fs));
-    GLCall(glLinkProgram(program));
-    GLCall(glValidateProgram(program));
-
-    GLCall(glDeleteShader(vs));
-    GLCall(glDeleteShader(fs));
-    
-    return program;
-}

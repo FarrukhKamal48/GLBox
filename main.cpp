@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <string>
 #include "src/GLlog.h"
 
 #include "src/Shader.h"
@@ -56,14 +57,15 @@ int main (int argc, char *argv[])
 
     IndexBuffer ib(indices, 6);
 
-    ShaderSrc shaderPair = GetShaderSource2("assets/shaders/Basic.vert.shader", "assets/shaders/Basic.frag.shader");
-    unsigned int program = CreateShader2(shaderPair.vertSrc, shaderPair.fragSrc);
-    GLCall(glUseProgram(program));
+    ShaderProgram shader;
+    shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert.shader");
+    shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag.shader");
+    shader.Compile();
+    shader.Use();
 
-    GLCall(int u_color = glGetUniformLocation(program, "u_color"));
-    GLCall(glUniform4f(u_color, 0.0, 0.5, 1.0, 1.0));
+    shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
     
-    GLCall(glUseProgram(0));
+    shader.UnBind();
     va.UnBind();
     vb.UnBind();
     ib.UnBind();
@@ -80,8 +82,8 @@ int main (int argc, char *argv[])
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        GLCall(glUseProgram(program));
-        GLCall(glUniform4f(u_color, r, g, b, 1.0));
+        shader.Use();
+        shader.SetUniformVec4("u_color", r, g, b, 1.0f);
 
         va.Bind();
         ib.Bind();
@@ -99,7 +101,6 @@ int main (int argc, char *argv[])
         glfwPollEvents();
     }
 
-    GLCall(glDeleteProgram(program));
 
     glfwTerminate();
     return 0;
