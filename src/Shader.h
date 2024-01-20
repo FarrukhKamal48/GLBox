@@ -7,14 +7,14 @@ struct ShaderSourceElement {
     std::string src;
 };
 
-class ShaderProgram {
+class Shader {
 private:
     unsigned int m_RendererID;
     ShaderSourceElement m_Sources[2];
     std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
-    ShaderProgram();
-    ~ShaderProgram();
+    Shader();
+    ~Shader();
 
     void Bind() const;
     void UnBind() const;

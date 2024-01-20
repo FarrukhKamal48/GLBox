@@ -6,16 +6,16 @@
 #include "Shader.h"
 #include "GLlog.h"
 
-ShaderProgram::ShaderProgram() {
+Shader::Shader() {
 }
-ShaderProgram::~ShaderProgram() {
+Shader::~Shader() {
     GLCall(glDeleteProgram(m_RendererID));
 }
 
-void ShaderProgram::Bind() const {
+void Shader::Bind() const {
     GLCall(glUseProgram(m_RendererID));
 }
-void ShaderProgram::UnBind() const {
+void Shader::UnBind() const {
     GLCall(glUseProgram(0));
 }
 
@@ -25,7 +25,7 @@ void ShaderProgram::UnBind() const {
 //     srcStream << stream.rdbuf();
 //     m_Sources.push_back({ type, srcStream.str() });
 // }
-void ShaderProgram::Push(unsigned int type, const std::string& srcPath) {
+void Shader::Push(unsigned int type, const std::string& srcPath) {
     std::ifstream stream(srcPath);
     std::stringstream srcStream;
     srcStream << stream.rdbuf();
@@ -61,7 +61,7 @@ unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc
     }
     return id;
 }
-void ShaderProgram::Compile() {
+void Shader::Compile() {
     GLCall(m_RendererID = glCreateProgram());
 
     for (ShaderSourceElement element : m_Sources) {
@@ -74,7 +74,7 @@ void ShaderProgram::Compile() {
     GLCall(glValidateProgram(m_RendererID));
 }
 
-int ShaderProgram::GetUniformLocation(const std::string& name) {
+int Shader::GetUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
         return m_UniformLocationCache[name];
     
@@ -87,22 +87,22 @@ int ShaderProgram::GetUniformLocation(const std::string& name) {
 }
 
 template<> 
-void ShaderProgram::SetUniform<float>(const std::string& name, float val) {
+void Shader::SetUniform<float>(const std::string& name, float val) {
     GLCall(glUniform1f(GetUniformLocation(name), val));
 }
 
 template<> 
-void ShaderProgram::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
+void Shader::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
     GLCall(glUniform2f(GetUniformLocation(name), val1, val2));
 } 
 
 template<> 
-void ShaderProgram::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
+void Shader::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
     GLCall(glUniform3f(GetUniformLocation(name), val1, val2, val3));
 } 
 
 template<> 
-void ShaderProgram::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
+void Shader::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
     GLCall(glUniform4f(GetUniformLocation(name), val1, val2, val3, val4));
 } 
 

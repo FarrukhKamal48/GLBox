@@ -1,8 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "src/GLlog.h"
 
+#include "src/Renderer.h"
 #include "src/Shader.h"
 #include "src/IndexBuffer.h"
 #include "src/VertexBuffer.h"
@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
 
     IndexBuffer ib(indices, 6);
 
-    ShaderProgram shader;
+    Shader shader;
     shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert.shader");
     shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag.shader");
     shader.Compile();
@@ -76,19 +76,18 @@ int main (int argc, char *argv[])
     float b = 0.7f;
     bool pong = false;
 
+    Renderer renderer;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        renderer.Clear();
+        
         shader.Bind();
         shader.SetUniformVec4("u_color", r, g, b, 1.0f);
-
-        va.Bind();
-        ib.Bind();
         
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        renderer.Draw(va, ib, shader);
         
         if (r > 0.95f || r < 0.05f) pong = !pong;
         if (pong) r = Lerp(r, 1.0f, i);
