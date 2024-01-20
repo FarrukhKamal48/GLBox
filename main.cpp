@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
     shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert.shader");
     shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag.shader");
     shader.Compile();
-    shader.Use();
+    shader.Bind();
 
     shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
     
@@ -82,7 +82,7 @@ int main (int argc, char *argv[])
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.Use();
+        shader.Bind();
         shader.SetUniformVec4("u_color", r, g, b, 1.0f);
 
         va.Bind();

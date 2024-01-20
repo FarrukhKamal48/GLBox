@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -10,17 +12,16 @@ struct ShaderSourceElement {
 class ShaderProgram {
 private:
     unsigned int m_RendererID;
-    std::vector<ShaderSourceElement> m_Sources;
+    ShaderSourceElement m_Sources[2];
 public:
     ShaderProgram();
     ~ShaderProgram();
 
-    void Bind();
-    void UnBind();
+    void Bind() const;
+    void UnBind() const;
 
     void Push(unsigned int type, const std::string& srcPath);
     void Compile();
-    void Use();
 
     template<typename T> void SetUniform(const std::string& name, T val);
     template<typename T> void SetUniformVec2(const std::string& name, T val1, T val2);

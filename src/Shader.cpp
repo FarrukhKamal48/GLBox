@@ -11,17 +11,27 @@ ShaderProgram::~ShaderProgram() {
     GLCall(glDeleteProgram(m_RendererID));
 }
 
-void ShaderProgram::Bind() {
+void ShaderProgram::Bind() const {
+    GLCall(glUseProgram(m_RendererID));
 }
-void ShaderProgram::UnBind() {
+void ShaderProgram::UnBind() const {
     GLCall(glUseProgram(0));
 }
 
+// void ShaderProgram::Push(unsigned int type, const std::string& srcPath) {
+//     std::ifstream stream(srcPath);
+//     std::stringstream srcStream;
+//     srcStream << stream.rdbuf();
+//     m_Sources.push_back({ type, srcStream.str() });
+// }
 void ShaderProgram::Push(unsigned int type, const std::string& srcPath) {
     std::ifstream stream(srcPath);
     std::stringstream srcStream;
     srcStream << stream.rdbuf();
-    m_Sources.push_back({ type, srcStream.str() });
+    switch (type) {
+        case GL_VERTEX_SHADER:      m_Sources[0] = { type, srcStream.str() };
+        case GL_FRAGMENT_SHADER:    m_Sources[1] = { type, srcStream.str() };
+    }
 }
 
 unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc) {
@@ -61,10 +71,6 @@ void ShaderProgram::Compile() {
     
     GLCall(glLinkProgram(m_RendererID));
     GLCall(glValidateProgram(m_RendererID));
-}
-
-void ShaderProgram::Use() {
-    GLCall(glUseProgram(m_RendererID));
 }
 
 template<> 
