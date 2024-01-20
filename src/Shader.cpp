@@ -20,8 +20,8 @@ ShaderSrc GetShaderSource2(const std::string& vertPath, const std::string& fragP
     return { GetShaderSource(vertPath), GetShaderSource(fragPath), };
 }
 
-uint CompileShader(uint shaderType, const std::string& shaderSrc) {
-    GLCall(uint id = glCreateShader(shaderType));
+unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc) {
+    GLCall(unsigned int id = glCreateShader(shaderType));
     const char* src = shaderSrc.c_str();
     GLCall(glShaderSource(id, 1, &src, nullptr));
     GLCall(glCompileShader(id));
@@ -48,9 +48,9 @@ uint CompileShader(uint shaderType, const std::string& shaderSrc) {
     return id;
 }
 
-uint CreateShader(uint shaderType, const std::string &shaderSrc) {
-    GLCall(uint program = glCreateProgram());
-    uint shader = CompileShader(shaderType, shaderSrc);
+unsigned int CreateShader(unsigned int shaderType, const std::string &shaderSrc) {
+    GLCall(unsigned int program = glCreateProgram());
+    unsigned int shader = CompileShader(shaderType, shaderSrc);
 
     GLCall(glAttachShader(program, shader));
     GLCall(glLinkProgram(program));
@@ -61,10 +61,10 @@ uint CreateShader(uint shaderType, const std::string &shaderSrc) {
     return program;
 }
 
-uint CreateShader2(const std::string &vertSrc, const std::string &fragSrc) {
-    GLCall(uint program = glCreateProgram());
-    uint vs = CompileShader(GL_VERTEX_SHADER, vertSrc);
-    uint fs = CompileShader(GL_FRAGMENT_SHADER, fragSrc);
+unsigned int CreateShader2(const std::string &vertSrc, const std::string &fragSrc) {
+    GLCall(unsigned int program = glCreateProgram());
+    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertSrc);
+    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragSrc);
 
     GLCall(glAttachShader(program, vs));
     GLCall(glAttachShader(program, fs));

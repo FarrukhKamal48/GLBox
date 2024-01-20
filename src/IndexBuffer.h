@@ -1,17 +1,16 @@
 #pragma once
 #include <GL/glew.h>
-#include <sys/types.h>
 
 class IndexBuffer {
 private:
-    uint m_RendereID;
-    uint m_Count;
+    unsigned int m_RendereID;
+    unsigned int m_Count;
 public:
-    IndexBuffer(const uint* data, uint count);
+    IndexBuffer(const unsigned int* data, unsigned int count);
     ~IndexBuffer();
 
     void Bind() const;
     void UnBind() const;
 
-    inline uint GetCount() const { return m_Count; }
+    inline unsigned int GetCount() const { return m_Count; }
 };

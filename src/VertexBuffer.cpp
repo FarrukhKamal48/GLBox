@@ -1,7 +1,7 @@
 #include "GLlog.h"
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(const void* data, uint size) 
+VertexBuffer::VertexBuffer(const void* data, unsigned int size) 
 {
     GLCall(glGenBuffers(1, &m_RendereID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendereID));

@@ -1,12 +1,11 @@
 #pragma once
 #include <GL/glew.h>
-#include <sys/types.h>
 
 class VertexBuffer {
 private:
-    uint m_RendereID;
+    unsigned int m_RendereID;
 public:
-    VertexBuffer(const void* data, uint size);
+    VertexBuffer(const void* data, unsigned int size);
     ~VertexBuffer();
 
     void Bind() const;
