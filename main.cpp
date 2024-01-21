@@ -58,8 +58,8 @@ int main (int argc, char *argv[])
     IndexBuffer ib(indices, 6);
 
     Shader shader;
-    shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert.shader");
-    shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag.shader");
+    shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
+    shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
     shader.Compile();
     shader.Bind();
 
