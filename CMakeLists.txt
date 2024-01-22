@@ -6,7 +6,7 @@ set (out main)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set (src_dir "${PROJECT_SOURCE_DIR}/src/")
 
-file (GLOB src_files "${src_dir}/*.cpp" "${src_dir}/*.h" "${src_dir}/*.hpp")
+file (GLOB src_files "${src_dir}/*.cpp" "${src_dir}/vendor/*.cpp")
 
 add_compile_definitions(GLEW_STATIC)
 add_executable(${out} main.cpp ${src_files})
