@@ -2,11 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-#include "src/Renderer.h"
-#include "src/Shader.h"
 #include "src/IndexBuffer.h"
 #include "src/VertexBuffer.h"
 #include "src/VertexArray.h"
+#include "src/Renderer.h"
+#include "src/Shader.h"
+#include "src/Texture.h"
 
 template <typename T>
 T Lerp(T a, T b, T t) {
@@ -38,20 +39,25 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    float positions[4*2] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-        -0.5f,  0.5f
+    float positions[4*4] = {
+        -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f, 1.0f,
     };
     unsigned int indices[4*2] = {
         0, 1, 2, 
         0, 2, 3
     };
+    
+    Renderer renderer;
+    renderer.BasicBlend();
 
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+    
     VertexBufferLayout layout;
+    layout.Push<float>(2);
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
@@ -62,8 +68,11 @@ int main (int argc, char *argv[])
     shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
     shader.Compile();
     shader.Bind();
-
     shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
+
+    Texture texture("assets/textures/tes_1000x1000px.png");
+    texture.Bind();
+    shader.SetUniform("u_Texture", texture.GetSlot());
     
     shader.UnBind();
     va.UnBind();
@@ -76,9 +85,7 @@ int main (int argc, char *argv[])
     float b = 0.7f;
     bool pong = false;
 
-    Renderer renderer;
-
-    /* Loop until the user closes the window */
+       /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
