@@ -1,13 +1,16 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <string>
 
 #include "src/IndexBuffer.h"
 #include "src/VertexBuffer.h"
 #include "src/VertexArray.h"
+
 #include "src/Renderer.h"
 #include "src/Shader.h"
 #include "src/Texture.h"
+
+#include "src/vendor/glm/glm.hpp"
+#include "src/vendor/glm/gtc/matrix_transform.hpp"
 
 template <typename T>
 T Lerp(T a, T b, T t) {
@@ -63,12 +66,15 @@ int main (int argc, char *argv[])
 
     IndexBuffer ib(indices, 6);
 
+    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+    
     Shader shader;
     shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
     shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
     shader.Compile();
     shader.Bind();
     shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
+    shader.SetUniformMat4("u_MVP", proj);
 
     Texture texture("assets/textures/tes_1000x1000px.png");
     texture.Bind();
