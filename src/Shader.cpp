@@ -87,36 +87,32 @@ int Shader::GetUniformLocation(const std::string& name) {
 }
 
 
-template<> 
-void Shader::SetUniform<int>(const std::string& name, int val) {
+template<> void Shader::SetUniform<int>(const std::string& name, int val) {
     GLCall(glUniform1i(GetUniformLocation(name), val));
 }
-template<> 
-void Shader::SetUniformVec2<int>(const std::string& name, int val1, int val2) {
+template<> void Shader::SetUniformVec2<int>(const std::string& name, int val1, int val2) {
     GLCall(glUniform2i(GetUniformLocation(name), val1, val2));
 }
-template<> 
-void Shader::SetUniformVec3<int>(const std::string& name, int val1, int val2, int val3) {
+template<> void Shader::SetUniformVec3<int>(const std::string& name, int val1, int val2, int val3) {
     GLCall(glUniform3i(GetUniformLocation(name), val1, val2, val3));
 }
-template<> 
-void Shader::SetUniformVec4<int>(const std::string& name, int val1, int val2, int val3, int val4) {
+template<> void Shader::SetUniformVec4<int>(const std::string& name, int val1, int val2, int val3, int val4) {
     GLCall(glUniform4i(GetUniformLocation(name), val1, val2, val3, val4));
 }
 
-template<> 
-void Shader::SetUniform<float>(const std::string& name, float val) {
+template<> void Shader::SetUniform<float>(const std::string& name, float val) {
     GLCall(glUniform1f(GetUniformLocation(name), val));
 }
-template<> 
-void Shader::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
+template<> void Shader::SetUniformVec2<float>(const std::string& name, float val1, float val2) {
     GLCall(glUniform2f(GetUniformLocation(name), val1, val2));
 } 
-template<> 
-void Shader::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
+template<> void Shader::SetUniformVec3<float>(const std::string& name, float val1, float val2, float val3) {
     GLCall(glUniform3f(GetUniformLocation(name), val1, val2, val3));
 } 
-template<> 
-void Shader::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
+template<> void Shader::SetUniformVec4<float>(const std::string& name, float val1, float val2, float val3, float val4) {
     GLCall(glUniform4f(GetUniformLocation(name), val1, val2, val3, val4));
 } 
+
+void Shader::SetUniformMat4(const std::string& name, const glm::mat4& mat) {
+    GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+}

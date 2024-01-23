@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include "vendor/glm/glm.hpp"
 
 struct ShaderSourceElement {
     unsigned int type;
@@ -26,6 +27,7 @@ public:
     template<typename T> void SetUniformVec2(const std::string& name, T val1, T val2);
     template<typename T> void SetUniformVec3(const std::string& name, T val1, T val2, T val3);
     template<typename T> void SetUniformVec4(const std::string& name, T val1, T val2, T val3, T val4);
+    void SetUniformMat4(const std::string& name, const glm::mat4& mat);
 
     inline const unsigned int GetID() const { return m_RendererID; }
 private:
