@@ -30,7 +30,7 @@ int main (int argc, char *argv[])
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
 
     IndexBuffer ib(indices, 6);
 
-    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+    glm::mat4 proj = glm::ortho(-8.0f, 8.0f, -4.5f, 4.5f, -1.0f, 1.0f);
     
     Shader shader;
     shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
@@ -75,6 +75,7 @@ int main (int argc, char *argv[])
     shader.Bind();
     shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
     shader.SetUniformMat4("u_MVP", proj);
+    shader.SetUniformVec2("u_Offset", 0.0f, 0.0f);
 
     Texture texture("assets/textures/tes_1000x1000px.png");
     texture.Bind();
@@ -89,6 +90,12 @@ int main (int argc, char *argv[])
     float r = 1.0f;
     float g = 0.5f;
     float b = 0.7f;
+    float offsetx = 0.01f;
+    float offsety = 0.01f;
+    float x = 0.0f;
+    float y = 0.0f;
+    float boundx = 0.94f;
+    float boundy = 0.85f;
     bool pong = false;
 
        /* Loop until the user closes the window */
@@ -99,12 +106,17 @@ int main (int argc, char *argv[])
         
         shader.Bind();
         shader.SetUniformVec4("u_color", r, g, b, 1.0f);
+        shader.SetUniformVec2("u_Offset", x, y);
         
         renderer.Draw(va, ib, shader);
         
         if (r > 0.95f || r < 0.05f) pong = !pong;
         if (pong) r = Lerp(r, 1.0f, i);
         else      r = Lerp(r, 0.0f, i);
+        if (x >= boundx || x <= -boundx) offsetx *= -1;
+        if (y >= boundy || y <= -boundy-0.05f) offsety *= -1;
+        x += offsetx;
+        y += offsety;
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
