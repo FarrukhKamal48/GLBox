@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "src/GLlog.h"
 
 #include "src/IndexBuffer.h"
 #include "src/VertexBuffer.h"
@@ -9,13 +10,10 @@
 #include "src/Shader.h"
 #include "src/Texture.h"
 
-#include "src/scenes/SceneTriangle.h"
 #include "src/vendor/glm/ext/matrix_transform.hpp"
 #include "src/vendor/glm/fwd.hpp"
 #include "src/vendor/glm/glm.hpp"
 #include "src/vendor/glm/gtc/matrix_transform.hpp"
-
-#include "src/scenes/SceneClearColor.h"
 
 #define WIDTH (float)1920
 #define HEIGHT (float)1080
@@ -76,7 +74,7 @@ int main (int argc, char *argv[])
 
     glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT-100, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
     glm::mat4 mvp = proj * view * model;
     
     Shader shader;
@@ -97,13 +95,11 @@ int main (int argc, char *argv[])
     vb.UnBind();
     ib.UnBind();
 
-    Scene::Triangle firstScene;
-    
        /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        renderer.Clear();
+        renderer.Clear(1, 1, 1, 1);
 
         renderer.Draw(va, ib, shader);
         
