@@ -9,10 +9,13 @@
 #include "src/Shader.h"
 #include "src/Texture.h"
 
+#include "src/scenes/SceneTriangle.h"
 #include "src/vendor/glm/ext/matrix_transform.hpp"
 #include "src/vendor/glm/fwd.hpp"
 #include "src/vendor/glm/glm.hpp"
 #include "src/vendor/glm/gtc/matrix_transform.hpp"
+
+#include "src/scenes/SceneClearColor.h"
 
 #define WIDTH (float)1920
 #define HEIGHT (float)1080
@@ -73,7 +76,7 @@ int main (int argc, char *argv[])
 
     glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT-100, 0.0f));
     glm::mat4 mvp = proj * view * model;
     
     Shader shader;
@@ -94,40 +97,18 @@ int main (int argc, char *argv[])
     vb.UnBind();
     ib.UnBind();
 
-    float i = 0.1f;
-    float r = 1.0f;
-    float g = 0.5f;
-    float b = 0.7f;
-    bool pong = false;
-
-    glm::vec3 offset(WIDTH/2, HEIGHT/2, 0.0f);
-    float x = 10.0f;
-    float y = 10.0f;
-//
+    Scene::Triangle firstScene;
+    
        /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         renderer.Clear();
-        
-        shader.Bind();
-        shader.SetUniformVec4("u_color", r, g, b, 1.0f);
-        shader.SetUniformMat4("u_MVP", mvp);
-        
-        model = glm::translate(glm::mat4(1.0f), offset);
-        mvp = proj * view * model;
-        
+
         renderer.Draw(va, ib, shader);
         
-        if (r > 0.95f || r < 0.05f) pong = !pong;
-        if (pong) r = Lerp(r, 1.0f, i);
-        else      r = Lerp(r, 0.0f, i);
-
-        if (offset.x > (WIDTH-100.0f) || offset.x < 0+100.0f) x *= -1;
-        if (offset.y > (HEIGHT-100.0f) || offset.y < 0+100.0f) y *= -1;
-
-        offset.x += x;
-        offset.y += y;
+        // firstScene.Update(0);
+        // firstScene.Render();
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
