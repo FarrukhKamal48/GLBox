@@ -10,6 +10,7 @@
 #include "src/Shader.h"
 #include "src/Texture.h"
 
+#include "src/vendor/glm/common.hpp"
 #include "src/vendor/glm/ext/matrix_transform.hpp"
 #include "src/vendor/glm/fwd.hpp"
 #include "src/vendor/glm/glm.hpp"
@@ -74,7 +75,7 @@ int main (int argc, char *argv[])
 
     glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2+300, HEIGHT-100, 0.0f));
     glm::mat4 mvp = proj * view * model;
     
     Shader shader;
@@ -95,6 +96,14 @@ int main (int argc, char *argv[])
     vb.UnBind();
     ib.UnBind();
 
+    
+    glm::vec2 centre(WIDTH/2, HEIGHT/2);
+    float Radius = HEIGHT/2;
+    glm::vec2 displacment;
+    glm::vec2 pos(WIDTH/2 + Radius-100, HEIGHT/2);
+    glm::vec2 vel(0, 0);
+    glm::vec2 acc(0, -5);
+
        /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -105,6 +114,20 @@ int main (int argc, char *argv[])
         
         // firstScene.Update(0);
         // firstScene.Render();
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0));
+        glm::mat4 mvp = proj * view * model;
+        shader.Bind();
+        shader.SetUniformMat4("u_MVP", mvp);
+
+        pos += vel;
+        vel += acc;
+
+        displacment = pos - centre;
+        float dist = glm::length(displacment);
+
+        if (dist > Radius - 100) {
+            pos = centre + (displacment/dist * (Radius - 100));
+        }
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

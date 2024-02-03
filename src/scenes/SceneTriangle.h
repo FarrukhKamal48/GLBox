@@ -8,26 +8,16 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
+#define WIDTH (float)1920
+#define HEIGHT (float)1080
+
 namespace Scene {
 
 class Triangle : public Scene {
 private:
-    std::unique_ptr<VertexArray> m_VAO;
-    std::unique_ptr<VertexBuffer> m_VertexBuffer;
-    std::unique_ptr<IndexBuffer> m_IBO;
-    std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<Texture> m_Texture;
-    
-    glm::vec3 m_Offset;
-    glm::mat4 m_Proj, m_View;
     
 public:
-    Triangle() 
-        : m_Offset(960, 540, 0),
-        m_Proj(glm::ortho(0, 1920, 0, 1080, -1, 1)),
-        m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)))
-    {
-        
+    Triangle() {
         float positions[4*4] = {
             -100.0f, -100.0f, 0.0f, 0.0f,
              100.0f, -100.0f, 1.0f, 0.0f,
@@ -42,31 +32,35 @@ public:
         Renderer renderer;
         renderer.BasicBlend();
 
-        m_VAO = std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+        VertexArray va;
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+        
         VertexBufferLayout layout;
         layout.Push<float>(2);
         layout.Push<float>(2);
-        
-        m_VAO->AddBuffer(*m_VertexBuffer, layout);
-        m_IBO = std::make_unique<IndexBuffer>(indices, 6);
+        va.AddBuffer(vb, layout);
 
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_Offset);
-        glm::mat4 mvp = m_Proj * m_View * model;
-        
-        m_Shader = std::make_unique<Shader>();
-        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
-        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
-        m_Shader->Compile();
-        m_Shader->Bind();
-        m_Shader->SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
-        m_Shader->SetUniformMat4("u_MVP", mvp);
-        m_Shader->SetUniformVec2("u_Offset", 0.0f, 0.0f);
+        IndexBuffer ib(indices, 6);
 
-        m_Texture = std::make_unique<Texture>("assets/textures/tes_1000x1000px.png");
-        m_Shader->SetUniform("u_Texture", m_Texture->GetSlot());
+        glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2+300, HEIGHT-100, 0.0f));
+        glm::mat4 mvp = proj * view * model;
         
+        Shader shader;
+        shader.Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
+        shader.Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
+        shader.Compile();
+        shader.Bind();
+        shader.SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
+        shader.SetUniformMat4("u_MVP", mvp);
+        shader.SetUniformVec2("u_Offset", 0.0f, 0.0f);
+
+        Texture texture("assets/textures/tes_1000x1000px.png");
+        texture.Bind();
+        shader.SetUniform("u_Texture", texture.GetSlot());
     }
+    
     ~Triangle() {
         
     }
@@ -75,22 +69,7 @@ public:
         
     }
     
-    template <typename T>
-    T Lerp(T a, T b, T t) {
-        return a + (b-a)*t;
-    }
-    
     void Render() override {
-        Renderer renderer;
-        renderer.Clear();
-
-        m_Texture->Bind();
-
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_Offset);
-        glm::mat4 mvp = m_Proj * m_View * model;
-        m_Shader->Bind();
-        m_Shader->SetUniformMat4("u_MVP", mvp);
-        renderer.Draw(*m_VAO, *m_IBO, *m_Shader);
     }
     
     void ImGuiRender() override {
