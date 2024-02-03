@@ -22,7 +22,7 @@ private:
     std::unique_ptr<Shader> m_Shader;
     std::unique_ptr<Texture> m_Texutre;
 
-    float m_CircleRadius = 20;
+    float m_CircleRadius = 100;
     
 public:
     Circle() {
@@ -56,12 +56,11 @@ public:
         
         m_Shader = std::make_unique<Shader>();
         m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
-        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/Circle.frag");
+        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/CircleWithTexture.frag");
         m_Shader->Compile();
         m_Shader->Bind();
-        m_Shader->SetUniformVec4("u_color", 0.0f, 0.5f, 1.0f, 1.0f);
+        m_Shader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
         m_Shader->SetUniformMat4("u_MVP", mvp);
-        m_Shader->SetUniformVec2("u_Offset", 0.0f, 0.0f);
 
         m_Texutre = std::make_unique<Texture>("assets/textures/tes_1000x1000px.png");
         m_Texutre->Bind();

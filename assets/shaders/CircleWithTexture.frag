@@ -3,17 +3,17 @@
 layout(location = 0) out vec4 color;
 in vec2 v_TexCoord;
 
-uniform vec4 u_color;
+uniform vec4 u_Color;
 uniform sampler2D u_Texture;
 
-float CircleBound() {
+float CircleBound(float radialMask) {
     float dist = distance(v_TexCoord, vec2(0.5, 0.5));
-    float val = 1-step(0.5, dist);
-    return val;
+    float edgeSmooth = 0.01;
+    return 1-smoothstep(radialMask-edgeSmooth, radialMask, dist);
 }
 
 void main() {
     vec4 texColor = texture(u_Texture, v_TexCoord);
-    color = texColor * u_color;
-    color.a = CircleBound();
+    color = texColor * u_Color;
+    color.a = CircleBound(0.5);
 };

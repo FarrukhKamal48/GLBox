@@ -28,15 +28,15 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::Verlet VerletScene;
+    Scene::Verlet verletScene;
 
        /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         
-        VerletScene.Update(0);
-        VerletScene.Render();
+        verletScene.Update(0);
+        verletScene.Render();
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
