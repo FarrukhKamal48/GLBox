@@ -36,19 +36,24 @@ private:
     std::unique_ptr<Shader> m_Shader;
     std::unique_ptr<Texture> m_Texutre;
 
+    float m_CircleRadius = 30;
+    float m_Bounciness = 0.3f;
+    VerletObject m_CircleObject;
+    Constraint m_Constraint;
+
     glm::mat4 m_Proj;
     glm::mat4 m_View;
     glm::mat4 m_Model;
     glm::mat4 m_MVP;
-
-    float m_CircleRadius = 50;
-    Constraint m_Constraint;
-    VerletObject m_CircleObject;
     
 public:
-    Verlet() 
-    : m_CircleObject(glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, -2.0f)), 
-        m_Constraint(glm::vec2(WIDTH/2,HEIGHT/2), HEIGHT) 
+    Verlet() :
+        m_CircleObject(glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(0.0f), glm::vec2(0.0f, -1.0f)),
+        m_Constraint(glm::vec2(WIDTH/2, HEIGHT/2), HEIGHT/2),
+        m_Proj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)),
+        m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
+        m_Model(glm::translate(glm::mat4(1.0f), glm::vec3(m_CircleObject.pos, 0.0f))),
+        m_MVP(m_Proj * m_View * m_Model)
     {
         float positions[] = {
             -m_CircleRadius, -m_CircleRadius, 0.0f, 0.0f,
@@ -72,11 +77,6 @@ public:
         layout.Push<float>(2);
         layout.Push<float>(2);
         m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
-
-        m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
-        m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        m_Model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
-        m_MVP = m_Proj * m_View * m_Model;
         
         m_Shader = std::make_unique<Shader>();
         m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
@@ -86,21 +86,28 @@ public:
         m_Shader->SetUniformVec4("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
         m_Shader->SetUniformMat4("u_MVP", m_MVP);
     }
-    
-    ~Verlet() {
-        
+    ~Verlet() { }
+
+    void Start() override { 
+        m_CircleObject.pos = m_Constraint.centre + glm::vec2(-m_Constraint.radius + m_CircleRadius, 0);
+        m_CircleObject.vel = glm::vec2(20, 20);
+        m_CircleObject.acc *= 2;
+        m_Bounciness = 0.5f;
     }
     
     void Update (float deltaTime) override {
         
+        m_CircleObject.vel += 0.6f * m_CircleObject.acc;
         m_CircleObject.pos += m_CircleObject.vel;
-        m_CircleObject.vel += m_CircleObject.acc;
+        m_CircleObject.vel += 0.4f * m_CircleObject.acc;
 
         glm::vec2 displacment = m_CircleObject.pos - m_Constraint.centre;
         float dist = glm::length(displacment);
 
-        if (dist > m_Constraint.radius - m_CircleRadius) {
+        if (dist >= m_Constraint.radius - m_CircleRadius) {
+            glm::vec2 normVel = glm::dot(displacment/dist, m_CircleObject.vel) * displacment/dist;
             m_CircleObject.pos = m_Constraint.centre + (displacment/dist * (m_Constraint.radius - m_CircleRadius));
+            m_CircleObject.vel -= (1.0f+m_Bounciness) * normVel;
         }
     }
     
@@ -109,13 +116,10 @@ public:
         renderer.Clear(0, 0, 0, 0);
 
         m_Model = glm::translate(glm::mat4(1.0f), glm::vec3(m_CircleObject.pos, 0.0f));
-        glm::mat4 mvp = m_Proj * m_View * m_Model;
+        m_MVP = m_Proj * m_View * m_Model;
+        m_Shader->SetUniformMat4("u_MVP", m_MVP);
         
         renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-    }
-    
-    void ImGuiRender() override {
-        
     }
     
 };
