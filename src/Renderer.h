@@ -3,6 +3,9 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 
+#define WIDTH (float)1920
+#define HEIGHT (float)1080
+
 class Renderer {
 public:
     void Clear() const;
