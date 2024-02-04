@@ -7,6 +7,7 @@ namespace Scene {
         Scene() {};
         virtual ~Scene() {};
         
+        virtual void Start() {};
         virtual void Update(float deltaTime) {};
         virtual void Render() {};
         virtual void ImGuiRender() {};
