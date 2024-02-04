@@ -66,23 +66,12 @@ public:
         m_Texutre->Bind();
         m_Shader->SetUniform("u_Texture", m_Texutre->GetSlot());
     }
-    
-    ~Circle() {
-        
-    }
-    
-    void Update (float deltaTime) override {
-        
-    }
+    ~Circle() { }
     
     void Render() override {
         Renderer renderer;
         renderer.Clear(1, 1, 1, 1);
         renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-    }
-    
-    void ImGuiRender() override {
-        
     }
     
 };

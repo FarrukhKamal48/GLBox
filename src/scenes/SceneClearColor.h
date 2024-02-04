@@ -11,16 +11,9 @@ private:
     bool pong;
     
 public:
-    ClearColor() 
-        : m_ClearColor { 0, 0, 0, 1.0f }, pong(true)
-    {}
-    ~ClearColor() {
-        
-    }
-    
-    void Update (float deltaTime) override {
-        
-    }
+    ClearColor() : 
+        m_ClearColor { 0, 0, 0, 1.0f }, pong(true) {}
+    ~ClearColor() { }
     
     template <typename T>
     T Lerp(T a, T b, T t) {
@@ -34,10 +27,6 @@ public:
         if (m_ClearColor[0] < 0.05f || m_ClearColor[0] > 0.95f) pong = !pong;
         
         m_ClearColor[0] = Lerp(m_ClearColor[0], 1.0f * pong, 0.1f);
-    }
-    
-    void ImGuiRender() override {
-        
     }
     
 };
