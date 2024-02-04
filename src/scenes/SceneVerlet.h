@@ -47,33 +47,32 @@ private:
     glm::mat4 m_View;
     glm::mat4 m_Model;
     glm::mat4 m_MVP;
+    float m_eulerSplitProportion = 0.5f;
     
 public:
     Verlet() :
-        m_CircleObject(glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(0.0f), glm::vec2(0.0f, -1.0f), 30, 0.3),
+        m_CircleObject(glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(0.0f), glm::vec2(0.0f, -1.0f), 50, 0.3),
         m_Constraint(glm::vec2(WIDTH/2, HEIGHT/2), HEIGHT/2),
         m_Proj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
         m_Model(glm::translate(glm::mat4(1.0f), glm::vec3(m_CircleObject.pos, 0.0f))),
         m_MVP(m_Proj * m_View * m_Model)
     {
-        float positions[] = {
+        float CirclePositions[] = {
             -m_CircleObject.radius, -m_CircleObject.radius, 0.0f, 0.0f,
              m_CircleObject.radius, -m_CircleObject.radius, 1.0f, 0.0f,
-             m_CircleObject.radius,  m_CircleObject.radius, 1.0f, 1.0f,
-            -m_CircleObject.radius,  m_CircleObject.radius, 0.0f, 1.0f,
+             0.0f                 ,  m_CircleObject.radius, 0.5f, 1.0f,
         };
-        unsigned int indices[] = {
+        unsigned int CircleIndices[] = {
             0, 1, 2, 
-            0, 2, 3
         };
         
         Renderer renderer;
         renderer.BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique< VertexBuffer>(positions, 4 * 4 * sizeof(float));
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
+        m_VertexBuffer = std::make_unique<VertexBuffer>(CirclePositions, 3 * 4 * sizeof(float));
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(CircleIndices, 3);
         
         VertexBufferLayout layout;
         layout.Push<float>(2);
@@ -91,17 +90,19 @@ public:
     ~Verlet() { }
 
     void Start() override { 
-        m_CircleObject.pos = m_Constraint.centre - glm::vec2(m_Constraint.radius - m_CircleObject.radius, 0);
-        m_CircleObject.vel = glm::vec2(0, -60);
-        m_CircleObject.acc *= 2;
-        m_CircleObject.bounciness = 0.5f;
+        m_CircleObject.pos = m_Constraint.centre + glm::vec2(m_Constraint.radius - m_CircleObject.radius-200, 0);
+        m_CircleObject.vel = glm::vec2(-20, 50);
+        m_CircleObject.acc *= 2.0;
+        m_CircleObject.bounciness = 0.3;
+        m_eulerSplitProportion = 0.5;
     }
     
     void Update (float deltaTime) override {
+        // return;
         
-        m_CircleObject.vel += 0.6f * m_CircleObject.acc;
+        m_CircleObject.vel += m_CircleObject.acc * m_eulerSplitProportion;
         m_CircleObject.pos += m_CircleObject.vel;
-        m_CircleObject.vel += 0.4f * m_CircleObject.acc;
+        m_CircleObject.vel += m_CircleObject.acc * (1-m_eulerSplitProportion);
 
         glm::vec2 displacment = m_CircleObject.pos - m_Constraint.centre;
         float dist = glm::length(displacment);
