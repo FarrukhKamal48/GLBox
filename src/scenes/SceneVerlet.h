@@ -1,14 +1,11 @@
 #pragma once
-#include <cstring>
 #include <memory>
 #include "GL/glew.h"
-
 #include "Scene.h"
 #include "../Renderer.h"
 #include "../Texture.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
-#include "../primatives/PrimativeCircle.h"
 
 
 struct VerletObject {
@@ -33,23 +30,59 @@ namespace Scene {
 
 class Verlet : public Scene {
 private:
-    glm::mat4 m_Proj;
-    glm::mat4 m_View;
+    std::unique_ptr<VertexArray> m_VertexArray;
+    std::unique_ptr<VertexBuffer> m_VertexBuffer;
+    std::unique_ptr<IndexBuffer> m_IndexBuffer;
+    std::unique_ptr<Shader> m_Shader;
     
     VerletObject m_CircleObject;
     Constraint m_Constraint;
-    Primative::Circle2D m_Circle2D;
-
+    
+    glm::mat4 m_Proj;
+    glm::mat4 m_View;
+    glm::mat4 m_Model;
+    glm::mat4 m_MVP;
+    
     float m_eulerSplitProportion = 0.5f;
     
 public:
     Verlet() :
-        m_Proj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)),
-        m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
         m_CircleObject(glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(0.0f), glm::vec2(0.0f, -1.0f), 50, 0.3),
         m_Constraint(glm::vec2(WIDTH/2, HEIGHT/2), HEIGHT/2),
-        m_Circle2D(m_CircleObject.pos, m_Proj, m_View)
-    { }
+        m_Proj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)),
+        m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
+        m_Model(glm::translate(glm::mat4(1.0f), glm::vec3(m_CircleObject.pos, 0.0f))),
+        m_MVP(m_Proj * m_View * m_Model)
+    { 
+        float positions[] = {
+            -m_CircleObject.radius, -m_CircleObject.radius, 0.0f, 0.0f,
+             m_CircleObject.radius, -m_CircleObject.radius, 1.0f, 0.0f,
+             0.0f                 ,  m_CircleObject.radius, 0.5f, 1.0f,
+        };
+        unsigned int indices[] = {
+            0, 1, 2, 
+        };
+        
+        Renderer renderer;
+        renderer.BasicBlend();
+
+        m_VertexArray = std::make_unique<VertexArray>();
+        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 3 * 4 * sizeof(float));
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 3);
+        
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        layout.Push<float>(2);
+        m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
+        
+        m_Shader = std::make_unique<Shader>();
+        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
+        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/CircleSolid.frag");
+        m_Shader->Compile();
+        m_Shader->Bind();
+        m_Shader->SetUniformVec4("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+        m_Shader->SetUniformMat4("u_MVP", m_MVP);
+    }
     ~Verlet() { }
 
     void Start() override { 
@@ -81,13 +114,15 @@ public:
         Renderer renderer;
         renderer.Clear(0, 0, 0, 0);
 
-        m_Circle2D.SetPosition(m_CircleObject.pos);
+        m_Model = glm::translate(glm::mat4(1.0f), glm::vec3(m_CircleObject.pos, 0.0f));
+        m_MVP = m_Proj * m_View * m_Model;
+        m_Shader->SetUniformMat4("u_MVP", m_MVP);
         
         float heightPercent = m_CircleObject.pos.y/HEIGHT;
         float widthPercent = abs(m_Constraint.centre.x - m_CircleObject.pos.x) / (m_Constraint.radius - m_CircleObject.radius);
-        m_Circle2D.shader->SetUniformVec4("u_Color", heightPercent, widthPercent, 1.0f - heightPercent, 1.0f);
+        m_Shader->SetUniformVec4("u_Color", heightPercent, widthPercent, 1.0f - heightPercent, 1.0f);
         
-        renderer.Draw(*m_Circle2D.vertexArray, *m_Circle2D.indexBuffer, *m_Circle2D.shader);
+        renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
     }
     
 };
