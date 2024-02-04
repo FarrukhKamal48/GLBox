@@ -7,7 +7,7 @@ uniform vec4 u_Color;
 
 float CircleBound(float radialMask) {
     float dist = distance(v_TexCoord, vec2(0.5, 0.5));
-    float edgeSmooth = 0.01;
+    float edgeSmooth = 0.02;
     return 1-smoothstep(radialMask-edgeSmooth, radialMask, dist);
 }
 
