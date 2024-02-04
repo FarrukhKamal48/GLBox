@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "src/scenes/SceneCircle.h"
+#include "src/scenes/SceneClearColor.h"
 #include "src/scenes/SceneVerlet.h"
 
 int main (int argc, char *argv[])
@@ -29,12 +31,11 @@ int main (int argc, char *argv[])
     glewInit();
 
     Scene::Verlet verletScene;
+    verletScene.Start();
 
-       /* Loop until the user closes the window */
+    /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
-        
         verletScene.Update(0);
         verletScene.Render();
         
