@@ -13,5 +13,5 @@ float CircleBound(float radialMask) {
 
 void main() {
     color = u_Color;
-    color.a = CircleBound(0.32);
+    color.a = 1-CircleBound(0.32);
 };
