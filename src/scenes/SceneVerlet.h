@@ -9,7 +9,7 @@
 #include "../primatives/PrimativeRect.h"
 
 long long int GetStartDelay() {
-    return 1;
+    return 0;
 }
 
 namespace Scene {
