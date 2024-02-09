@@ -66,7 +66,7 @@ public:
             m_OBJS[i].vel += glm::vec2((i+1)*10, 5*(i+1));
             m_OBJS[i].acc *= 2;
             m_OBJS[i].bounciness = 0.9f;
-            m_OBJS[i].radius = (i+1.0f)/m_OBJ_COUNT * 5.0f;
+            m_OBJS[i].radius = (i+1.0f)/m_OBJ_COUNT * 100.0f;
             m_OBJS[i].circle.SetRadius(m_OBJS[i].radius);
         }
         m_Constraint.circle.SetColor(0.0f, 0.0f, 0.0f, 1.0f);
