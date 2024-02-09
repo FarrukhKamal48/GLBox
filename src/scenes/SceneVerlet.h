@@ -8,6 +8,9 @@
 #include "../primatives/PrimativeCircle.h"
 #include "../primatives/PrimativeRect.h"
 
+long long int GetStartDelay() {
+    return 1;
+}
 
 namespace Scene {
 

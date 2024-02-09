@@ -5,6 +5,8 @@
 #include "src/scenes/SceneClearColor.h"
 #include "src/scenes/SceneVerlet.h"
 
+extern long long int GetStartDelay();
+
 int main (int argc, char *argv[])
 {
     GLFWwindow* window;
@@ -30,9 +32,11 @@ int main (int argc, char *argv[])
 
     glewInit();
 
+    for (long long int i=0; i < (GetStartDelay()*200000000); i++) {}
+    
     Scene::Verlet verletScene;
     verletScene.Start();
-
+    
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
