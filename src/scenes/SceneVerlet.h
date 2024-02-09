@@ -66,7 +66,7 @@ public:
             m_OBJS[i].vel += glm::vec2((i+1)*10, 5*(i+1));
             m_OBJS[i].acc *= 2;
             m_OBJS[i].bounciness = 0.9f;
-            m_OBJS[i].radius = (i+1.0f)/m_OBJ_COUNT * 100.0f;
+            m_OBJS[i].radius = (i+1.0f)/m_OBJ_COUNT * 100;
             m_OBJS[i].circle.SetRadius(m_OBJS[i].radius);
         }
         m_Constraint.circle.SetColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -113,8 +113,14 @@ public:
         for (int i=0; i<m_OBJ_COUNT; i++) {
             m_OBJS[i].circle.SetCentre(m_OBJS[i].pos);
 
-            float p = (float)i/(m_OBJ_COUNT-1);
-            m_OBJS[i].circle.SetColor(p, m_OBJ_COUNT-i+1, 1-p, 1.0f);
+            float p = (i+1.0f)/(m_OBJ_COUNT);
+            m_OBJS[i].circle.SetColor(p, m_OBJ_COUNT-i+1, 1-p, 1);
+            m_OBJS[i].circle.SetColor(p, p, 1-p, 1); //yellow+blue
+            // m_OBJS[i].circle.SetColor(p, 1-p, 1-p, 1); //spider-man
+            // m_OBJS[i].circle.SetColor(1-p, 1-p, 1-p, 1); //black+white
+            // m_OBJS[i].circle.SetColor(1-p, 1-p, p, 1); //blue+yellow
+            // m_OBJS[i].circle.SetColor(1-p, p, p, 1); //cyan+red
+            // m_OBJS[i].circle.SetColor(p, p, p, 1); //white
 
             m_OBJS[i].circle.Draw(m_Proj, m_View);
         }
