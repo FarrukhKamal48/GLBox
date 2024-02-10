@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "../GLlog.h"
+#include "../layer/GLlog.h"
 #include "GL/glew.h"
 
 namespace Scene {

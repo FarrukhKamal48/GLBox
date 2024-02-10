@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include "vendor/glm/glm.hpp"
+#include "../vendor/glm/glm.hpp"
 
 struct ShaderSourceElement {
     unsigned int type;

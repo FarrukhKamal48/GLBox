@@ -4,8 +4,8 @@
 #include "GL/glew.h"
 
 #include "Scene.h"
-#include "../Renderer.h"
-#include "../Texture.h"
+#include "../layer/Renderer.h"
+#include "../layer/Texture.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 

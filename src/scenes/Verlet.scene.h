@@ -3,12 +3,12 @@
 #include <iostream>
 #include <memory>
 #include "Scene.h"
-#include "../Renderer.h"
-#include "../Texture.h"
-#include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
+#include "../layer/Renderer.h"
+#include "../layer/Texture.h"
 #include "../primatives/PrimativeCircle.h"
 #include "../primatives/PrimativeRect.h"
+#include "../vendor/glm/ext/matrix_transform.hpp"
+#include "../vendor/glm/ext/matrix_clip_space.hpp"
 
 namespace Scene {
 
