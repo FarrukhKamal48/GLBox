@@ -1,10 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 #include "src/scenes/Circle.scene.h"
 #include "src/scenes/ClearColor.scene.h"
 #include "src/scenes/Verlet.scene.h"
+#include "src/scenes/Batching.scene.h"
 
 int main (int argc, char *argv[])
 {
@@ -31,7 +31,7 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::Verlet activeScene;
+    Scene::Batching activeScene;
     activeScene.Start();
 
     double lastTime = glfwGetTime();
