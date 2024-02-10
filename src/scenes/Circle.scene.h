@@ -9,8 +9,6 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
-#define WIDTH (float)1920
-#define HEIGHT (float)1080
 
 namespace Scene {
 
