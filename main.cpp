@@ -1,11 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
-#include "src/scenes/SceneCircle.h"
-#include "src/scenes/SceneClearColor.h"
-#include "src/scenes/SceneVerlet.h"
-
-extern long long int GetStartDelay();
+#include "src/scenes/Circle.scene.h"
+#include "src/scenes/ClearColor.scene.h"
+#include "src/scenes/Verlet.scene.h"
 
 int main (int argc, char *argv[])
 {
@@ -32,16 +31,22 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    for (long long int i=0; i < (GetStartDelay()*200000000); i++) {}
-    
-    Scene::Verlet verletScene;
-    verletScene.Start();
+    Scene::Verlet activeScene;
+    activeScene.Start();
+
+    double lastTime = glfwGetTime();
+    double deltaTime = 0.016;
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        verletScene.Update(0);
-        verletScene.Render();
+        lastTime = glfwGetTime();
+        if (lastTime < 0) continue;
+        
+        activeScene.Update(deltaTime);
+        activeScene.Render();
+
+        deltaTime = glfwGetTime() - lastTime;
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -50,6 +55,7 @@ int main (int argc, char *argv[])
         glfwPollEvents();
     }
 
+    // delete activeScene;
 
     glfwTerminate();
     return 0;
