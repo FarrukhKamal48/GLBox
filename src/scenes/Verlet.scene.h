@@ -5,8 +5,7 @@
 #include "Scene.h"
 #include "../layer/Renderer.h"
 #include "../layer/Texture.h"
-#include "../primatives/PrimativeCircle.h"
-#include "../primatives/PrimativeRect.h"
+#include "../primatives/Circle.primative.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
