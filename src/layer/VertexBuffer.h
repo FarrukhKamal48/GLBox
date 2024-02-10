@@ -9,6 +9,8 @@ public:
     VertexBuffer(const void* data, unsigned int size, unsigned int drawType);
     ~VertexBuffer();
 
+    void SetData(const void* data, unsigned int size);
+
     void Bind() const;
     void UnBind() const;
 };

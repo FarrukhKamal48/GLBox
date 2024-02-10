@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include "../layer/Renderer.h"
@@ -6,13 +8,19 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
+struct Vertex {
+    std::array<float, 2> Position;
+    std::array<float, 2> UV;
+    std::array<float, 4> Color;
+};
+
 namespace Primative {
 
 class Circle {
 public:
-    std::unique_ptr<VertexArray> vertexArray;
-    std::unique_ptr<IndexBuffer> indexBuffer;
     std::unique_ptr<Shader> shader;
+
+    std::array<Vertex, 4> vertexData;
 private:
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
 
@@ -65,48 +73,31 @@ public:
         shader->SetUniformVec4("u_Color", r, g, b, a);
     }
 
-    void Draw(glm::mat4& Proj, glm::mat4 View) {
-        shader->Bind();
-        shader->SetUniformMat4("u_MVP", Proj * View * m_Model);
-        
-        Renderer renderer;
-        renderer.Draw(*vertexArray, *indexBuffer, *shader);
-    }
+    // void Draw(glm::mat4& Proj, glm::mat4 View) {
+    //     shader->Bind();
+    //     shader->SetUniformMat4("u_MVP", Proj * View * m_Model);
+    //     
+    //     Renderer renderer;
+    //     renderer.Draw(*vertexArray, *indexBuffer, *shader);
+    // }
     
 private:
     void Init() {
-        float positions[] = {
-            -m_Radius, -m_Radius, 0.0f, 0.0f,
-             m_Radius, -m_Radius, 1.0f, 0.0f,
-             m_Radius,  m_Radius, 1.0f, 1.0f,
-            -m_Radius,  m_Radius, 0.0f, 1.0f,
-        };
-        unsigned int indices[] = {
-            0, 1, 2, 
-            2, 3, 0
-        };
+        vertexData[0].Position = { -m_Radius, -m_Radius };
+        vertexData[0].UV = { 0.0f, 0.0f };
+        vertexData[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
         
-        Renderer renderer;
-        renderer.BasicBlend();
+        vertexData[1].Position = { m_Radius, -m_Radius };
+        vertexData[1].UV = { 1.0f, 0.0f };
+        vertexData[1].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+        
+        vertexData[2].Position = { m_Radius,  m_Radius };
+        vertexData[2].UV = { 1.0f, 1.0f };
+        vertexData[2].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-        vertexArray = std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
-        indexBuffer =  std::make_unique<IndexBuffer>(indices, 2 * 3);
-        
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        vertexArray->AddBuffer(*m_VertexBuffer, layout);
-        
-        shader = std::make_unique<Shader>();
-        shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
-        shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/CircleInRect.frag");
-        shader->Compile();
-        shader->Bind();
-        shader->SetUniformVec4("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
-        shader->SetUniform("u_CullRadius", 0.5f);
-        shader->SetUniform("u_EdgeSmooth", 1.2f/m_Radius);
-        shader->UnBind();
+        vertexData[3].Position = { -m_Radius,  m_Radius };
+        vertexData[3].UV = { 0.0f, 1.0f };
+        vertexData[3].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
     }
    
 };
