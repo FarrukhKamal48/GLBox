@@ -1,34 +1,81 @@
 #pragma once
-#include "Scene.h"
-#include "../GLlog.h"
+#include <cstring>
+#include <memory>
 #include "GL/glew.h"
+
+#include "Scene.h"
+#include "../Renderer.h"
+#include "../Texture.h"
+#include "../vendor/glm/ext/matrix_transform.hpp"
+#include "../vendor/glm/ext/matrix_clip_space.hpp"
+
 
 namespace Scene {
 
 class Batching : public Scene {
 private:
-    float m_ClearColor[4];
-    bool pong;
+    std::unique_ptr<VertexArray> m_VertexArray;
+    std::unique_ptr<IndexBuffer> m_IndexBuffer;
+    std::unique_ptr<VertexBuffer> m_VertexBuffer;
+    std::unique_ptr<Shader> m_Shader;
+
+    glm::vec2 m_Scale = glm::vec2(100);
     
 public:
-    Batching() : 
-        m_ClearColor { 0, 0, 0, 1.0f }, pong(true) {}
+    Batching() {
+        float positions[] = {
+            -m_Scale.x - 150, -m_Scale.y, 0.0f, 0.0f,
+             m_Scale.x - 150, -m_Scale.y, 1.0f, 0.0f,
+             m_Scale.x - 150,  m_Scale.y, 1.0f, 1.0f,
+            -m_Scale.x - 150,  m_Scale.y, 0.0f, 1.0f,
+            
+            -m_Scale.x + 150, -m_Scale.y, 0.0f, 0.0f,
+             m_Scale.x + 150, -m_Scale.y, 1.0f, 0.0f,
+             m_Scale.x + 150,  m_Scale.y, 1.0f, 1.0f,
+            -m_Scale.x + 150,  m_Scale.y, 0.0f, 1.0f,
+        };
+        unsigned int indices[] = {
+            0, 1, 2, 
+            0, 2, 3,
+            
+            4, 5, 6, 
+            4, 6, 7
+        };
+        
+        Renderer renderer;
+        renderer.BasicBlend();
+
+        m_VertexArray =  std::make_unique<VertexArray>();
+        m_VertexBuffer = std::make_unique< VertexBuffer>(positions, 8 * 4 * sizeof(float));
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 12);
+        
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        layout.Push<float>(2);
+        m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
+
+        glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
+        glm::mat4 mvp = proj * view * model;
+        
+        m_Shader = std::make_unique<Shader>();
+        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
+        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/Basic.frag");
+        m_Shader->Compile();
+        m_Shader->Bind();
+        m_Shader->SetUniformVec4("u_Color", 0.0f, 0.0f, 0.0f, 1.0f);
+        m_Shader->SetUniformMat4("u_MVP", mvp);
+    }
     ~Batching() { }
     
-    template <typename T>
-    T Lerp(T a, T b, T t) {
-        return a + (b-a)*t;
-    }
-    
     void Render() override {
-        GLCall(glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]));
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
-
-        if (m_ClearColor[0] < 0.05f || m_ClearColor[0] > 0.95f) pong = !pong;
-        
-        m_ClearColor[0] = Lerp(m_ClearColor[0], 1.0f * pong, 0.1f);
+        Renderer renderer;
+        renderer.Clear(1, 1, 1, 1);
+        renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
     }
     
 };
 
 };
+
