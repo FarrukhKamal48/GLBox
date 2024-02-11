@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "../layer/Renderer.h"
+#include "../layer/Batcher.h"
 #include "../primatives/Rect.primative.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
@@ -17,24 +18,15 @@ private:
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
     std::unique_ptr<Shader> m_Shader;
 
-    Primative::Rect m_Shape;
+    Primative::Rect m_Shapes[3];
+    Batch<3> m_Batch;
     
 public:
     Batching() {
-        unsigned int indices[] = {
-            0, 1, 2, 
-            0, 2, 3
-        };
-        
+
         Renderer renderer;
         renderer.BasicBlend();
-
-        m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(m_Shape.verticies));
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
         
-        m_VertexArray->AddBuffer(*m_VertexBuffer, m_Shape.layout);
-
         glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         glm::mat4 mvp = proj * view;
@@ -48,17 +40,36 @@ public:
 
     }
     ~Batching() { }
+
+    void Start() override {
+        m_Shapes[0].SetCentre(glm::vec2(WIDTH/2 - 200, HEIGHT/2));
+        m_Shapes[0].SetColor(1, 0, 0, 1);
+        
+        m_Shapes[1].SetCentre(glm::vec2(WIDTH/2 + 200, HEIGHT/2));
+        m_Shapes[1].SetColor(0, 0, 1, 1);
+        
+        m_Shapes[2].SetCentre(glm::vec2(WIDTH/2, HEIGHT/2 - 200));
+        m_Shapes[2].SetColor(0, 1, 0, 1);
+    }
+
+    void Update(float dt) override {
+        
+        m_Batch.SetData(m_Shapes);
+    }
     
     void Render() override {
         Renderer renderer;
+        renderer.BasicBlend();
         renderer.Clear(1, 1, 1, 1);
         
-        m_Shape.SetColor(1, 0, 0, 1);
-        m_Shape.SetCentre(glm::vec2(WIDTH/2, HEIGHT/2));
-        m_Shape.SetScale(glm::vec2(100, 100));
-        m_VertexBuffer->SetData(m_Shape.verticies, sizeof(m_Shape.verticies));
+        // m_Shape.SetColor(1, 0, 0, 1);
+        // m_Shape.SetCentre(glm::vec2(WIDTH/2, HEIGHT/2));
+        // m_Shape.SetScale(glm::vec2(100, 100));
+        // m_VertexBuffer->SetData(m_Shape.verticies, sizeof(m_Shape.verticies));
         
-        renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+        m_Batch.Draw(*m_Shader);
+
+        // renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
     }
     
 };

@@ -1,11 +1,5 @@
 #pragma once
-#include <iostream>
-#include <memory>
 #include "../layer/Renderer.h"
-#include "../layer/Texture.h"
-#include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
-
 
 struct Vertex {
     glm::vec2 Position;
@@ -49,30 +43,35 @@ public:
         layout.Push<float>(4);
     }
 
+    inline const glm::vec2 GetCentre() const { return m_Centre; }
+
     void SetCentre(glm::vec2 centre) {
         for (Vertex& v : verticies) {
-            v.Position -= m_Centre;
-            v.Position += centre;
+            v.Position -= m_Centre; // remove old translation
+            v.Position += centre;   // apply new tranlation
         }
-        m_Centre = centre;
+        m_Centre = centre;          // store translation
     }
+    
+    inline const glm::vec2 GetScale() const { return m_Scale; }
     
     void SetScale(glm::vec2 scale) {
         for (Vertex& v : verticies) {
-            v.Position -= m_Centre;
-            v.Position /= m_Scale;
+            v.Position -= m_Centre;     // remove old translation
+            v.Position /= m_Scale;      // & scale
 
-            v.Position *= scale;
-            v.Position += m_Centre;
+            v.Position *= scale;        // apply new scale
+            v.Position += m_Centre;     // & add back old translation
         }
-        m_Scale = scale;
+        m_Scale = scale;                // store scale
     }
     
     void SetColor(float r, float g, float b, float a) {
-        verticies[0].Color = {r, g, b, a};
-        verticies[1].Color = {r, g, b, a};
-        verticies[2].Color = {r, g, b, a};
-        verticies[3].Color = {r, g, b, a};
+        glm::vec4 color = {r, g, b, a};
+        verticies[0].Color = color;
+        verticies[1].Color = color;
+        verticies[2].Color = color;
+        verticies[3].Color = color;
     }
    
 };
