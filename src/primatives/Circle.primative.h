@@ -9,9 +9,9 @@
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
 struct Vertex {
-    std::array<float, 2> Position;
-    std::array<float, 2> UV;
-    std::array<float, 4> Color;
+    glm::vec2 Position;
+    glm::vec2 UV;
+    glm::vec4 Color;
 };
 
 namespace Primative {
