@@ -7,12 +7,12 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
-template<int batchSize>
+template<int BatchObjCount>
 class BatchRenderer {
 public:
     std::unique_ptr<Shader> BatchShader;
 private:
-    Batch<batchSize> m_Batch;
+    Batch<BatchObjCount> m_Batch;
     Mesh::Quad* m_SrcObjs;
     int m_ObjCount;
 
@@ -44,7 +44,7 @@ public:
         while (batchptr <= endptr) {
             m_Batch.SetData(batchptr, endptr);
             m_Batch.Draw(*BatchShader);
-            batchptr += batchSize;
+            batchptr += BatchObjCount;
         }
     }
 };
