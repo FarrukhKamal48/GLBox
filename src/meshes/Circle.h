@@ -1,12 +1,8 @@
 #pragma once
 #include <array>
-#include <cstring>
-#include <iostream>
 #include <memory>
 #include "../layer/Renderer.h"
-#include "../layer/Texture.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
 
 struct Vertex {
     glm::vec2 Position;
