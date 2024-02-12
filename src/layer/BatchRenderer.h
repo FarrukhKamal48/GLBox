@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include "../layer/Batch.h"
-#include "../primatives/Rect.primative.h"
+#include "../meshes/Quad.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
@@ -13,7 +13,7 @@ public:
     std::unique_ptr<Shader> BatchShader;
 private:
     Batch<batchSize> m_Batch;
-    Primative::Rect* m_SrcObjs;
+    Mesh::Quad* m_SrcObjs;
     int m_ObjCount;
 
     glm::mat4 m_BatchProj;
@@ -24,7 +24,7 @@ public:
         m_BatchProj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)), 
         m_BatchView(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     { }
-    BatchRenderer(Primative::Rect* srcObjs, int objCount, const glm::mat4& proj, const glm::mat4& view) : 
+    BatchRenderer(Mesh::Quad* srcObjs, int objCount, const glm::mat4& proj, const glm::mat4& view) : 
         m_SrcObjs(srcObjs), m_ObjCount(objCount), m_BatchProj(proj), m_BatchView(view)
     { }
     ~BatchRenderer() {}
@@ -39,8 +39,8 @@ public:
     }
 
     void DrawBatches() {
-        Primative::Rect* batchptr = m_SrcObjs;
-        Primative::Rect* endptr = m_SrcObjs + m_ObjCount-1;
+        Mesh::Quad* batchptr = m_SrcObjs;
+        Mesh::Quad* endptr = m_SrcObjs + m_ObjCount-1;
         while (batchptr <= endptr) {
             m_Batch.SetData(batchptr, endptr);
             m_Batch.Draw(*BatchShader);

@@ -2,7 +2,7 @@
 #include <cstring>
 #include <memory>
 #include "../layer/Renderer.h"
-#include "../primatives/Rect.primative.h"
+#include "../meshes/Quad.h"
 
 template<int batchSize>
 class Batch {
@@ -35,7 +35,7 @@ public:
     }
     ~Batch() {}
 
-    void SetData(const Primative::Rect* srcObjs, const void* endptr) {
+    void SetData(const Mesh::Quad* srcObjs, const void* endptr) {
         for (int i=0; i<batchSize; i++) {
             if (srcObjs+i > endptr) break;
             memcpy(m_VertexData + 4*i, srcObjs[i].verticies, sizeof(srcObjs[i].verticies));

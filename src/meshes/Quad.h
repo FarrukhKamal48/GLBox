@@ -9,7 +9,7 @@ struct Vertex {
 
 namespace Mesh {
 
-class Rect {
+class Quad {
 public:
     Vertex verticies[4];
 private:
@@ -17,7 +17,7 @@ private:
     glm::vec2 m_Scale;
     
 public:
-    Rect() :
+    Quad() :
         m_Centre(glm::vec2(WIDTH/2, HEIGHT/2)),
         m_Scale(glm::vec2(50, 50))
     { 

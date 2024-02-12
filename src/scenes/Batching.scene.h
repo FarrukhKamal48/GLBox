@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "../layer/BatchRenderer.h"
-#include "../primatives/Rect.primative.h"
+#include "../meshes/Quad.h"
 
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
@@ -10,7 +10,7 @@ namespace Scene {
 
 class Batching : public Scene {
 private:
-    Primative::Rect m_Shapes[4];
+    Mesh::Quad m_Shapes[4];
     BatchRenderer<2> m_BatchRenderer;
     
 public:
