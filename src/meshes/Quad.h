@@ -39,6 +39,8 @@ public:
     }
 
     inline const glm::vec2 GetCentre() const { return m_Centre; }
+    inline const glm::vec2 GetScale() const { return m_Scale; }
+    inline const glm::vec4 GetColor() const { return verticies[0].Color; }
 
     void SetCentre(glm::vec2 centre) {
         for (Vertex& v : verticies) {
@@ -47,8 +49,6 @@ public:
         }
         m_Centre = centre;          // store translation
     }
-    
-    inline const glm::vec2 GetScale() const { return m_Scale; }
     
     void SetScale(glm::vec2 scale) {
         for (Vertex& v : verticies) {
