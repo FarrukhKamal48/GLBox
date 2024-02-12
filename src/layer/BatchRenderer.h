@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <memory>
-#include <string>
 #include "../layer/Batch.h"
 #include "../meshes/Quad.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"

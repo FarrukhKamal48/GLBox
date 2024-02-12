@@ -1,5 +1,4 @@
 #pragma once
-#include <cstring>
 #include <memory>
 #include "../layer/Renderer.h"
 #include "../meshes/Quad.h"
