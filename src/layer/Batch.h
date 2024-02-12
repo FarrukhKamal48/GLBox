@@ -4,7 +4,6 @@
 #include "../layer/Renderer.h"
 #include "../primatives/Rect.primative.h"
 
-
 template<int batchSize>
 class Batch {
 private:
@@ -36,9 +35,10 @@ public:
     }
     ~Batch() {}
 
-    void SetData(const Primative::Rect* rects) {
+    void SetData(const Primative::Rect* srcObjs, const void* endptr) {
         for (int i=0; i<batchSize; i++) {
-            memcpy(m_VertexData + 4*i, rects[i].verticies, sizeof(rects[i].verticies));
+            if (srcObjs+i > endptr) break;
+            memcpy(m_VertexData + 4*i, srcObjs[i].verticies, sizeof(srcObjs[i].verticies));
         }
         m_VertexBuffer->SetData(m_VertexData, sizeof(m_VertexData));
     }

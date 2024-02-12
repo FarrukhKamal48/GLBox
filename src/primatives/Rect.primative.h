@@ -12,7 +12,6 @@ namespace Primative {
 class Rect {
 public:
     Vertex verticies[4];
-    VertexBufferLayout layout;
 private:
     glm::vec2 m_Centre;
     glm::vec2 m_Scale;
@@ -37,10 +36,6 @@ public:
         verticies[3].Position = glm::vec2(-1, 1) * m_Scale + m_Centre;
         verticies[3].UV = { 0.0f, 1.0f };
         verticies[3].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
-        
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        layout.Push<float>(4);
     }
 
     inline const glm::vec2 GetCentre() const { return m_Centre; }
