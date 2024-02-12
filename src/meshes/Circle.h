@@ -14,7 +14,7 @@ struct Vertex {
     glm::vec4 Color;
 };
 
-namespace Primative {
+namespace Mesh {
 
 class Circle {
 public:
