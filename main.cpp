@@ -3,7 +3,7 @@
 
 #include "src/scenes/Circle.scene.h"
 #include "src/scenes/ClearColor.scene.h"
-#include "src/scenes/Verlet.scene.h"
+// #include "src/scenes/Verlet.scene.h"
 #include "src/scenes/Batching.scene.h"
 
 int main (int argc, char *argv[])
