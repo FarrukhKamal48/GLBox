@@ -11,7 +11,7 @@ namespace Scene {
 class Batching : public Scene {
 private:
     Mesh::Quad m_Shapes[4];
-    BatchRenderer<2> m_BatchRenderer;
+    BatchRenderer<Mesh::Quad, 8, Vertex::PosUvCol, Mesh::Quad::VertexCount> m_BatchRenderer;
     
 public:
     Batching() : 
