@@ -21,7 +21,7 @@ public:
         Renderer renderer;
         renderer.BasicBlend();
         m_BatchRenderer.ShaderInit("assets/shaders/Batching.vert", 
-                                   "assets/shaders/Batching.frag");
+                                   "assets/shaders/BatchingCircle.frag");
         
         m_BatchRenderer.BatchShader->SetUniform("u_EdgeSmooth", 1.2f/m_Shapes[0].GetScale().x);
         m_BatchRenderer.BatchShader->SetUniform("u_CullRadius", 0.5f);
