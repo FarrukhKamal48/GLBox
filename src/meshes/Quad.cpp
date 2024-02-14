@@ -22,9 +22,27 @@ Quad::Quad() :
     m_Verticies[3].UV = { 0.0f, 1.0f };
     m_Verticies[3].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 }
-Quad::~Quad() {
-    
+Quad::Quad(glm::vec2 centre, glm::vec2 scale) :
+    m_Centre(centre), m_Scale(scale)
+{ 
+    m_Verticies[0].Position = glm::vec2(-1, -1) * m_Scale + m_Centre;
+    m_Verticies[0].UV = { 0.0f, 0.0f };
+    m_Verticies[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+    m_Verticies[1].Position = glm::vec2(1, -1) * m_Scale + m_Centre;
+    m_Verticies[1].UV = { 1.0f, 0.0f };
+    m_Verticies[1].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+    m_Verticies[2].Position = glm::vec2(1, 1) * m_Scale + m_Centre;
+    m_Verticies[2].UV = { 1.0f, 1.0f };
+    m_Verticies[2].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+    m_Verticies[3].Position = glm::vec2(-1, 1) * m_Scale + m_Centre;
+    m_Verticies[3].UV = { 0.0f, 1.0f };
+    m_Verticies[3].Color = { 1.0f, 0.0f, 0.0f, 1.0f };
 }
+
+Quad::~Quad() { }
 
 void Quad::SetCentre(glm::vec2 centre) {
     for (Vertex::PosUvCol& v : m_Verticies) {

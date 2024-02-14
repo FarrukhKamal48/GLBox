@@ -14,6 +14,7 @@ private:
     
 public:
     Quad();
+    Quad(glm::vec2 centre, glm::vec2 scale);
     ~Quad();
 
     inline const Vertex::PosUvCol* GetVerticies() const { return m_Verticies; }
