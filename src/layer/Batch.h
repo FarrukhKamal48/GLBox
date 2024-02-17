@@ -1,12 +1,12 @@
 #pragma once
 #include <memory>
 #include "../layer/Renderer.h"
-#include "../meshes/Quad.h"
+#include "../meshes/Mesh.h"
 
 template<typename MeshType, int MeshesPerBatch>
 class Batch {
 private:
-    float m_VertexData[MeshesPerBatch * MeshType::VertexCount * MeshType::VertexMemeberCount];
+    float m_VertexData[MeshesPerBatch * MeshType::VertexCount * MeshType::VertexFloatCount];
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
@@ -36,7 +36,8 @@ public:
 
     void SetData(const MeshType* srcObjs, int objCount) {
         for (int i=0; i<MeshesPerBatch && i<objCount; i++) {
-            memcpy(m_VertexData + MeshType::VertexCount * MeshType::VertexMemeberCount * i, srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies());
+            memcpy(m_VertexData + srcObjs[i].GetVertexCount() * srcObjs[i].GetVertexFloatCount() * i, 
+                   srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies());
         }
         m_VertexBuffer->SetData(m_VertexData, sizeof(m_VertexData));
     }

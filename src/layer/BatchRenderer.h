@@ -37,7 +37,7 @@ public:
 
     void DrawBatches() {
         for (int i=0; i<m_ObjCount; i++) {
-            m_Batch.SetData(m_SrcObjs+i, m_ObjCount);
+            m_Batch.SetData(m_SrcObjs, m_ObjCount);
             m_Batch.Draw(*BatchShader);
         }
     }
