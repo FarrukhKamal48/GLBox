@@ -6,9 +6,9 @@ namespace Mesh {
 
 class Quad {
 public:
-    static const int VertexCount = 4;
+    static const int VertCount = 4;
 private:
-    Vertex::PosUvCol m_Verticies[VertexCount];
+    Vertex::PosUvCol m_Verticies[VertCount];
     glm::vec2 m_Centre;
     glm::vec2 m_Scale;
     
