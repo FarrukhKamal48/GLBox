@@ -3,10 +3,10 @@
 #include "../layer/Renderer.h"
 #include "../meshes/Quad.h"
 
-template<typename MeshType, int MeshesPerBatch, typename VertexType, int VerticesPerObj>
+template<typename MeshType, int MeshesPerBatch>
 class Batch {
 private:
-    VertexType m_VertexData[MeshesPerBatch*VerticesPerObj];
+    float m_VertexData[MeshesPerBatch * MeshType::VertexCount * MeshType::VertexMemeberCount];
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
@@ -23,7 +23,7 @@ public:
         }
         
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, MeshesPerBatch * 4*sizeof(VertexType));
+        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(m_VertexData));
         m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
         
         VertexBufferLayout layout;
@@ -36,7 +36,7 @@ public:
 
     void SetData(const MeshType* srcObjs, int objCount) {
         for (int i=0; i<MeshesPerBatch && i<objCount; i++) {
-            memcpy(m_VertexData + VerticesPerObj*i, srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies());
+            memcpy(m_VertexData + MeshType::VertexCount * MeshType::VertexMemeberCount * i, srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies());
         }
         m_VertexBuffer->SetData(m_VertexData, sizeof(m_VertexData));
     }

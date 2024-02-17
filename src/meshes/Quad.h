@@ -7,6 +7,7 @@ namespace Mesh {
 class Quad {
 public:
     static const int VertexCount = 4;
+    static const int VertexMemeberCount = 8;
 private:
     Vertex::PosUvCol m_Verticies[VertexCount];
     glm::vec2 m_Centre;
@@ -17,7 +18,7 @@ public:
     Quad(glm::vec2 centre, glm::vec2 scale);
     ~Quad();
 
-    inline const Vertex::PosUvCol* GetVerticies() const { return m_Verticies; }
+    inline const float* GetVerticies() const { return (float*)m_Verticies; }
     inline const int GetSizeOfVerticies() const { return sizeof(m_Verticies); }
     
     inline const glm::vec2 GetCentre() const { return m_Centre; }

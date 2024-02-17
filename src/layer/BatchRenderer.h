@@ -4,12 +4,12 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 
-template<typename MeshType, int MeshesPerBatch, typename VertexType, int VerticesPerObj>
+template<typename MeshType, int MeshesPerBatch>
 class BatchRenderer {
 public:
     std::unique_ptr<Shader> BatchShader;
 private:
-    Batch<MeshType, MeshesPerBatch, VertexType, VerticesPerObj> m_Batch;
+    Batch<MeshType, MeshesPerBatch> m_Batch;
     MeshType* m_SrcObjs;
     int m_ObjCount;
 
