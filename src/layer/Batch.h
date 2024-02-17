@@ -22,9 +22,9 @@ public:
             indices[6*i +5] = 0 + 4*i;
         }
         
-        m_VertexArray =  std::make_unique<VertexArray>();
+        m_VertexArray  = std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(m_VertexData));
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
+        m_IndexBuffer  = std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
         
         VertexBufferLayout layout;
         layout.Push<float>(2);
@@ -42,7 +42,6 @@ public:
     }
 
     void Draw(Shader& shader) {
-        Renderer renderer;
-        renderer.Draw(*m_VertexArray, *m_IndexBuffer, shader);
+        Renderer::Draw(*m_VertexArray, *m_IndexBuffer, shader);
     }
 };
