@@ -1,12 +1,14 @@
 #pragma once
 #include <memory>
 #include "../layer/Renderer.h"
+#include "../meshes/Mesh.h"
 #include "../meshes/Quad.h"
 
-template<typename MeshType, int MeshesPerBatch, typename VertexType, int VerticesPerObj>
-class Batch {
+template<class MeshType, int MeshesPerBatch> class Batch { };
+
+template <int MeshesPerBatch> 
+class Batch<Mesh::Quad, MeshesPerBatch> {
 private:
-    VertexType m_VertexData[MeshesPerBatch*VerticesPerObj];
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
@@ -22,9 +24,10 @@ public:
             indices[6*i +5] = 0 + 4*i;
         }
         
-        m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, MeshesPerBatch * 4*sizeof(VertexType));
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
+        m_VertexArray  = std::make_unique<VertexArray>();
+        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, MeshesPerBatch * Mesh::Quad::VertexCount * 
+                                                        Mesh::Quad::VertexFloatCount * sizeof(float));
+        m_IndexBuffer  = std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
         
         VertexBufferLayout layout;
         layout.Push<float>(2);
@@ -34,15 +37,16 @@ public:
     }
     ~Batch() {}
 
-    void SetData(const MeshType* srcObjs, int objCount) {
+    void SetData(const Mesh::Quad* srcObjs, int objCount) {
+        unsigned int offset = 0;
         for (int i=0; i<MeshesPerBatch && i<objCount; i++) {
-            memcpy(m_VertexData + VerticesPerObj*i, srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies());
+            m_VertexBuffer->SetData(srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies(), offset);
+            offset += srcObjs[i].GetSizeOfVerticies();
         }
-        m_VertexBuffer->SetData(m_VertexData, sizeof(m_VertexData));
     }
 
     void Draw(Shader& shader) {
-        Renderer renderer;
-        renderer.Draw(*m_VertexArray, *m_IndexBuffer, shader);
+        Renderer::Draw(*m_VertexArray, *m_IndexBuffer, shader);
     }
 };
+
