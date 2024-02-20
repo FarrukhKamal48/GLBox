@@ -29,7 +29,7 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::Batching activeScene;
+    Scene::Verlet activeScene;
     activeScene.Start();
 
     double lastTime = glfwGetTime();
