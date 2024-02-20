@@ -2,6 +2,7 @@
 #include "../layer/BatchRenderer.h"
 #include "../meshes/Quad.h"
 #include "Scene.h"
+#include <cmath>
 
 class VerletObject {
 public:
@@ -36,17 +37,24 @@ struct CircleConstraint {
     CircleConstraint() : centre({WIDTH/2, HEIGHT/2}), radius(HEIGHT/2) {}
 };
 
+struct SimulationData {
+    unsigned int EnabledObjCount = 1;
+    unsigned int SubSteps = 8;
+    float ObjSpawnDelay = 0.1f;
+};
+
 namespace Scene {
 class Verlet : public Scene {
 private:
-    const unsigned int m_ObjCount = 32;
+    const unsigned int m_ObjCount = 1024;
     VerletObject* m_Objs = new VerletObject[m_ObjCount];
     Mesh::Quad* m_Shapes = new Mesh::Quad[m_ObjCount];
     
-    BatchRenderer<Mesh::Quad, 256> m_BatchRenderer;
+    BatchRenderer<Mesh::Quad, 1024> m_BatchRenderer;
 
-    glm::vec2 gravity = {0, -2000};
+    glm::vec2 gravity = {0, -3000};
     CircleConstraint m_Constraint;
+    SimulationData m_SimData;
     
 public:
     Verlet() : 
@@ -64,17 +72,24 @@ public:
     }
 
     void Start() override {
+        glm::vec2 velocityDir(0);
+        float iPercent = 0;
         for (unsigned int i=0; i<m_ObjCount; i++) {
+            iPercent = (float)i/m_ObjCount;
+            
             m_Objs[i].Mesh = &m_Shapes[i];
-            // m_Objs[i].SetRadius((i+1)*5 + 10);
-            m_Objs[i].SetRadius(30);
-            m_Objs[i].Mesh->SetColor((float)i/m_ObjCount, 1-(float)i/m_ObjCount, 1, 1);
+            m_Objs[i].SetRadius(5 * (2.0f+sin(iPercent * glm::pi<float>() * 40.0f)));
+            // m_Objs[i].SetRadius(30);
+            m_Objs[i].Mesh->SetColor(iPercent, 1-(float)i/m_ObjCount, 1, 1);
             m_Objs[i].Mesh->SetCentre(m_Objs[i].pos);
                 
-            m_Objs[i].pos = m_Constraint.centre + glm::vec2(i*20 + 100);
-            m_Objs[i].pos_old = m_Objs[i].pos;
+            velocityDir = glm::vec2(cos(iPercent * -glm::pi<float>()*40.0f), 
+                                    sin(iPercent * -glm::pi<float>()*40.0f));
+            m_Objs[i].pos = m_Constraint.centre;
+            m_Objs[i].pos_old = m_Objs[i].pos - velocityDir*10.0f;
             m_Objs[i].updatePosition(0.01);
         }
+        m_SimData.ObjSpawnDelay = 0.05f;
     }
 
     void ConstrainObj(VerletObject& obj) {
@@ -98,23 +113,35 @@ public:
     }
 
     void Update(float dt) override {
-        for (unsigned int i=0; i<m_ObjCount; i++) {
-            m_Objs[i].accelerate(gravity);
-            m_Objs[i].updatePosition(dt);
-            ConstrainObj(m_Objs[i]);
-            // continue;
-            for (unsigned int j=0; j<m_ObjCount; j++) { 
-                if (i == j) continue;
-                Collide(m_Objs[i], m_Objs[j]);
+        static float Time = 0;
+        Time += dt;
+        if (Time > m_SimData.ObjSpawnDelay && m_SimData.EnabledObjCount < m_ObjCount) {
+            m_SimData.EnabledObjCount++;
+            Time = 0;
+        }
+        const float sub_dt = dt/m_SimData.SubSteps;
+        
+        for (unsigned int s = 0; s < m_SimData.SubSteps; s++) {
+            for (unsigned int i = 0; i < m_SimData.EnabledObjCount; i++) {
+                m_Objs[i].accelerate(gravity);
+                ConstrainObj(m_Objs[i]);
+                
+                for (unsigned int j = i+1; j < m_SimData.EnabledObjCount; j++) { 
+                    if (i == j) continue;
+                    Collide(m_Objs[i], m_Objs[j]);
+                }
+                
+                m_Objs[i].updatePosition(sub_dt);
             }
         }
+        
     }
     
     void Render() override {
         Renderer::BasicBlend();
-        Renderer::Clear(1, 1, 1, 1);
+        Renderer::Clear(0, 0, 0, 1);
 
-        m_BatchRenderer.DrawBatches();
+        m_BatchRenderer.DrawBatches(m_SimData.EnabledObjCount);
     }
     
 };}
