@@ -40,7 +40,9 @@ struct CircleConstraint {
 struct SimulationData {
     unsigned int EnabledObjCount = 1;
     unsigned int SubSteps = 8;
+    float Subdt = 0;
     float ObjSpawnDelay = 0.1f;
+    float SpawnTimer = 0;
 };
 
 namespace Scene {
@@ -89,7 +91,8 @@ public:
             m_Objs[i].pos_old = m_Objs[i].pos - velocityDir*10.0f;
             m_Objs[i].updatePosition(0.01);
         }
-        m_SimData.ObjSpawnDelay = 0.05f;
+        m_SimData.ObjSpawnDelay = 0.01f;
+        m_SimData.SubSteps = 8;
     }
 
     void ConstrainObj(VerletObject& obj) {
@@ -105,7 +108,7 @@ public:
         glm::vec2 axis = -objA.pos + objB.pos;
         float dist = glm::length(axis);
 
-        if (dist <= objA.Radius + objB.Radius) {
+        if (dist < objA.Radius + objB.Radius) {
             float overlap = objA.Radius + objB.Radius - dist;
             objA.pos -= axis/dist * overlap/2.0f;
             objB.pos += axis/dist * overlap/2.0f;
@@ -113,13 +116,12 @@ public:
     }
 
     void Update(float dt) override {
-        static float Time = 0;
-        Time += dt;
-        if (Time > m_SimData.ObjSpawnDelay && m_SimData.EnabledObjCount < m_ObjCount) {
+        m_SimData.SpawnTimer += dt;
+        if (m_SimData.SpawnTimer > m_SimData.ObjSpawnDelay && m_SimData.EnabledObjCount < m_ObjCount) {
             m_SimData.EnabledObjCount++;
-            Time = 0;
+            m_SimData.SpawnTimer = 0;
         }
-        const float sub_dt = dt/m_SimData.SubSteps;
+        m_SimData.Subdt = dt/m_SimData.SubSteps;
         
         for (unsigned int s = 0; s < m_SimData.SubSteps; s++) {
             for (unsigned int i = 0; i < m_SimData.EnabledObjCount; i++) {
@@ -131,7 +133,7 @@ public:
                     Collide(m_Objs[i], m_Objs[j]);
                 }
                 
-                m_Objs[i].updatePosition(sub_dt);
+                m_Objs[i].updatePosition(m_SimData.Subdt);
             }
         }
         
