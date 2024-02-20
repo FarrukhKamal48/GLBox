@@ -10,7 +10,7 @@ namespace Scene {
 
 class Batching : public Scene {
 private:
-    Mesh::Quad m_Shapes[4];
+    Mesh::Quad m_Shapes[6];
     BatchRenderer<Mesh::Quad, 8> m_BatchRenderer;
     
 public:
@@ -47,5 +47,5 @@ public:
     }
     
 };
-};
+}
 
