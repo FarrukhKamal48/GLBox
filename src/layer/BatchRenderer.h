@@ -36,9 +36,11 @@ public:
     }
 
     void DrawBatches() {
-        for (int i=0; i<m_ObjCount; i++) {
-            m_Batch.SetData(m_SrcObjs, m_ObjCount);
+        unsigned int drawCalls = 0;
+        for (int i=0; i<m_ObjCount; i+=MeshesPerBatch) {
+            m_Batch.SetData(m_SrcObjs+i, m_ObjCount);
             m_Batch.Draw(*BatchShader);
+            drawCalls++;
         }
     }
 };

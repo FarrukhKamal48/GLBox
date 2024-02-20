@@ -25,8 +25,7 @@ public:
         }
         
         m_VertexArray  = std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, MeshesPerBatch * Mesh::Quad::VertexCount * 
-                                                        Mesh::Quad::VertexFloatCount * sizeof(float));
+        m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, MeshesPerBatch * Mesh::Quad::GetSizeOfVerticies());
         m_IndexBuffer  = std::make_unique<IndexBuffer>(indices, MeshesPerBatch * 6);
         
         VertexBufferLayout layout;
@@ -40,7 +39,7 @@ public:
     void SetData(const Mesh::Quad* srcObjs, int objCount) {
         unsigned int offset = 0;
         for (int i=0; i<MeshesPerBatch && i<objCount; i++) {
-            m_VertexBuffer->SetData(srcObjs[i].GetVerticies(), srcObjs[i].GetSizeOfVerticies(), offset);
+            m_VertexBuffer->SetData(srcObjs[i].GetVerticies(), Mesh::Quad::GetSizeOfVerticies(), offset);
             offset += srcObjs[i].GetSizeOfVerticies();
         }
     }
