@@ -3,6 +3,7 @@
 #include "../meshes/Quad.h"
 #include "Scene.h"
 #include <cmath>
+#define PI (3.141592653589793)
 
 class VerletObject {
 public:
@@ -41,14 +42,14 @@ struct SimulationData {
     unsigned int EnabledObjCount = 1;
     unsigned int SubSteps = 8;
     float Subdt = 0;
-    float ObjSpawnDelay = 0.1f;
+    float ObjSpawnRate = 0.1f;
     float SpawnTimer = 0;
 };
 
 namespace Scene {
 class Verlet : public Scene {
 private:
-    const unsigned int m_ObjCount = 1024;
+    const unsigned int m_ObjCount = 1024/2;
     VerletObject* m_Objs = new VerletObject[m_ObjCount];
     Mesh::Quad* m_Shapes = new Mesh::Quad[m_ObjCount];
     
@@ -79,19 +80,18 @@ public:
         for (unsigned int i=0; i<m_ObjCount; i++) {
             iPercent = (float)i/m_ObjCount;
             
+            
             m_Objs[i].Mesh = &m_Shapes[i];
-            m_Objs[i].SetRadius(5 * (2.0f+sin(iPercent * glm::pi<float>() * 40.0f)));
-            // m_Objs[i].SetRadius(30);
             m_Objs[i].Mesh->SetColor(iPercent, 1-(float)i/m_ObjCount, 1, 1);
-            m_Objs[i].Mesh->SetCentre(m_Objs[i].pos);
-                
-            velocityDir = glm::vec2(cos(iPercent * -glm::pi<float>()*40.0f), 
-                                    sin(iPercent * -glm::pi<float>()*40.0f));
-            m_Objs[i].pos = m_Constraint.centre;
+            // m_Objs[i].SetRadius(5 * (2.0f+sin(iPercent * PI * 40.0f)));
+            m_Objs[i].SetRadius(20);
+            m_Objs[i].Mesh->SetCentre(m_Constraint.centre);
+            
+            velocityDir = glm::vec2(cos(iPercent * -PI * 5), sin(iPercent * -PI * 5));
+            m_Objs[i].pos = m_Constraint.centre - glm::vec2(0.0f, m_Constraint.radius - m_Objs[i].GetRadius());
             m_Objs[i].pos_old = m_Objs[i].pos - velocityDir*10.0f;
-            m_Objs[i].updatePosition(0.01);
         }
-        m_SimData.ObjSpawnDelay = 0.01f;
+        m_SimData.ObjSpawnRate = 100.0f;
         m_SimData.SubSteps = 8;
     }
 
@@ -117,7 +117,7 @@ public:
 
     void Update(float dt) override {
         m_SimData.SpawnTimer += dt;
-        if (m_SimData.SpawnTimer > m_SimData.ObjSpawnDelay && m_SimData.EnabledObjCount < m_ObjCount) {
+        if (m_SimData.SpawnTimer >= 1/m_SimData.ObjSpawnRate && m_SimData.EnabledObjCount < m_ObjCount) {
             m_SimData.EnabledObjCount++;
             m_SimData.SpawnTimer = 0;
         }
@@ -144,6 +144,7 @@ public:
         Renderer::Clear(0, 0, 0, 1);
 
         m_BatchRenderer.DrawBatches(m_SimData.EnabledObjCount);
+        // m_BatchRenderer.DrawBatches();
     }
     
 };}
