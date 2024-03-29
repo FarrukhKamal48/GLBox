@@ -10,21 +10,22 @@ namespace Scene {
 
 class Instancing : public Scene {
 private:
+    glm::vec2 m_Tranlations[4];
     InstanceRenderer m_Renderer;
     
 public:
-    Instancing() { }
+    Instancing() : m_Renderer(m_Tranlations, 4) { }
     ~Instancing() { }
 
     void Start() override {
         for (int i = 0; i < 4; i++) {
-            m_Renderer.GetTransforms()[i] = glm::vec2(100 * (i+1), 100 * i);
+            m_Tranlations[i] = glm::vec2(100 * (i+1), 100 * i);
         }
     }
 
     void Update(float dt) override {
         for (int i = 0; i < 4; i++) {
-            m_Renderer.GetTransforms()[i].x += (i+1) * 100 * dt;
+            m_Tranlations[i].x += (i+1) * 100 * dt;
         }
     }
     
