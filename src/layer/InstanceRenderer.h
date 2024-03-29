@@ -15,7 +15,7 @@ private:
     std::unique_ptr<VertexBuffer> m_TransBuffer;
     std::unique_ptr<Shader> m_Shader;
 
-    float m_CircleRadius = 100;
+    float m_Length = 10;
     glm::vec2* m_Translations;
     unsigned int m_InstaceCount;
     
@@ -24,10 +24,10 @@ public:
         : m_Translations(translations), m_InstaceCount(instaceCount)
     {
         float positions[] = {
-            -m_CircleRadius, -m_CircleRadius, 0.0f, 0.0f,
-             m_CircleRadius, -m_CircleRadius, 1.0f, 0.0f,
-             m_CircleRadius,  m_CircleRadius, 1.0f, 1.0f,
-            -m_CircleRadius,  m_CircleRadius, 0.0f, 1.0f,
+            -m_Length, -m_Length, 0.0f, 0.0f,
+             m_Length, -m_Length, 1.0f, 0.0f,
+             m_Length,  m_Length, 1.0f, 1.0f,
+            -m_Length,  m_Length, 0.0f, 1.0f,
         };
         unsigned int indices[] = {
             0, 1, 2, 
@@ -72,6 +72,6 @@ public:
         
         m_TransBuffer->SetData(m_Translations, m_InstaceCount * sizeof(glm::vec2));
         
-        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *m_Shader, 4);
+        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *m_Shader, m_InstaceCount);
     }
 };
