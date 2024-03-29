@@ -17,10 +17,12 @@ private:
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
+    std::unique_ptr<VertexBuffer> m_TransBuffer;
     std::unique_ptr<Shader> m_Shader;
     std::unique_ptr<Texture> m_Texutre;
 
     float m_CircleRadius = 100;
+    glm::vec2 translations[4];
     
 public:
     Instancing() {
@@ -38,13 +40,18 @@ public:
         Renderer::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique< VertexBuffer>(positions, 4 * 4 * sizeof(float));
+        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+        m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(translations), GL_DYNAMIC_DRAW);
         m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
         
         VertexBufferLayout layout;
         layout.Push<float>(2);
         layout.Push<float>(2);
         m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
+
+        VertexBufferLayout translateLayout;
+        translateLayout.Push<float>(2, 1);
+        m_VertexArray->AddBuffer(*m_TransBuffer, translateLayout);
 
         glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -58,16 +65,38 @@ public:
         m_Shader->Bind();
         m_Shader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
         m_Shader->SetUniformMat4("u_MVP", mvp);
-
-        m_Texutre = std::make_unique<Texture>("assets/textures/tes_1000x1000px.png");
-        m_Texutre->Bind();
-        m_Shader->SetUniform("u_Texture", m_Texutre->GetSlot());
     }
     ~Instancing() { }
+
+    void Start() override {
+        for (int i = 0; i < 4; i++) {
+            translations[i] = glm::vec2(100 * (i+1), 100 * i);
+        }
+        m_TransBuffer->SetData(translations, sizeof(translations));
+    }
+
+    void Update(float dt) override {
+        for (int i = 0; i < 4; i++) {
+            float inc = i * 100;
+            float& posX = translations[i].x;
+            if (posX > WIDTH) {
+                posX = WIDTH;
+                inc *= -1;
+            }
+            else if (posX < 0) {
+                posX = 0;
+                inc *= -1;
+            }
+            posX += inc * dt;
+        }
+    }
     
     void Render() override {
         Renderer::Clear(1, 1, 1, 1);
-        Renderer::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+        
+        m_TransBuffer->SetData(translations, sizeof(translations));
+        
+        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *m_Shader, 4);
     }
     
 };
