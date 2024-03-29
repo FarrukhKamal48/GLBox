@@ -6,6 +6,7 @@ struct VertexBufferLayoutElement {
     unsigned int count;
     unsigned int type;
     unsigned char normalized;
+    unsigned int divisor;
 
     static unsigned int SizeOf(unsigned int type) {
         switch (type) {
@@ -28,6 +29,9 @@ public:
 
     template<typename T>
     void Push(unsigned int count);
+    
+    template<typename T>
+    void Push(unsigned int count, unsigned int divisor);
 
     inline const std::vector<VertexBufferLayoutElement>& GetElements() const { return m_Elements; }
     inline const unsigned int GetStride() const { return m_Stride; }
