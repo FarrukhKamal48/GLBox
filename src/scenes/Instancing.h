@@ -52,8 +52,8 @@ public:
         glm::mat4 mvp = proj * view * model;
         
         m_Shader = std::make_unique<Shader>();
-        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/Basic.vert");
-        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/CircularTexture.frag");
+        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/instancing/Basic.vert");
+        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/instancing/Basic.frag");
         m_Shader->Compile();
         m_Shader->Bind();
         m_Shader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
