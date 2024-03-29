@@ -16,10 +16,13 @@ private:
     std::unique_ptr<Shader> m_Shader;
 
     float m_CircleRadius = 100;
-    glm::vec2 translations[4];
+    glm::vec2* m_Translations;
+    unsigned int m_InstaceCount;
     
 public:
-    InstanceRenderer() {
+    InstanceRenderer(glm::vec2* translations, unsigned int instaceCount) 
+        : m_Translations(translations), m_InstaceCount(instaceCount)
+    {
         float positions[] = {
             -m_CircleRadius, -m_CircleRadius, 0.0f, 0.0f,
              m_CircleRadius, -m_CircleRadius, 1.0f, 0.0f,
@@ -35,7 +38,7 @@ public:
 
         m_VertexArray =  std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
-        m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(translations), GL_DYNAMIC_DRAW);
+        m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, m_InstaceCount * sizeof(glm::vec2), GL_DYNAMIC_DRAW);
         m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
         
         VertexBufferLayout layout;
@@ -62,12 +65,12 @@ public:
     }
     ~InstanceRenderer() { }
 
-    glm::vec2* GetTransforms() { return translations; }
+    glm::vec2* GetTransforms() { return m_Translations; }
 
     void Draw() {
         Renderer::Clear(1, 1, 1, 1);
         
-        m_TransBuffer->SetData(translations, sizeof(translations));
+        m_TransBuffer->SetData(m_Translations, m_InstaceCount * sizeof(glm::vec2));
         
         Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *m_Shader, 4);
     }
