@@ -3,6 +3,7 @@
 
 #include "src/scenes/Verlet.scene.h"
 #include "src/scenes/Batching.scene.h"
+#include "src/scenes/Instancing.h"
 
 int main (int argc, char *argv[])
 {
@@ -29,7 +30,7 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::Verlet activeScene;
+    Scene::Instancing activeScene;
     activeScene.Start();
 
     double lastTime = glfwGetTime();
