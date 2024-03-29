@@ -15,6 +15,12 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     ib.Bind();
     GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
+void Renderer::DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count) {
+    shader.Bind();
+    va.Bind();
+    ib.Bind();
+    GLCall(glDrawElementsInstanced(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr, count));
+}
 
 void Renderer::BasicBlend() {
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
