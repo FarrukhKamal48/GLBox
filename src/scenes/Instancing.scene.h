@@ -7,7 +7,7 @@ namespace Scene {
 
 class Instancer : public Scene {
 private:
-    static const int m_ObjCount = 512500;
+    static const int m_ObjCount = 521190;
     constexpr static const float m_MoveSpeed = 1000;
     constexpr static const float m_Bounciness = 0.9;
     RendererInstanced<QuadData, Pos2D> m_Renderer;
