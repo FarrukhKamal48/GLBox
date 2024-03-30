@@ -18,7 +18,11 @@ private:
     InstanceRenderer m_Renderer;
     
 public:
-    Instancing() : m_Renderer(m_Tranlations, m_ObjCount) { }
+    Instancing() : m_Renderer(m_Tranlations, sizeof(m_Tranlations), m_ObjCount) { 
+        m_Renderer.ShaderInit("assets/shaders/instancing/Basic.vert", 
+                              "assets/shaders/instancing/CircleInRect.frag");
+        m_Renderer.InstanceShader->SetUniform("u_CullRadius", 0.5f);
+    }
     ~Instancing() { }
 
     void Start() override {
@@ -32,24 +36,24 @@ public:
     void Update(float dt) override {
         for (int i = 0; i < m_ObjCount; i++) {
             float& posX = m_Tranlations[i].x;
-            if (posX > WIDTH/2-10) {
+            if (posX > WIDTH-10) {
                 m_Inc[i].x *= -m_Bounciness;
-                posX = WIDTH/2-10;
+                posX = WIDTH-10;
             }
-            else if (posX < -WIDTH/2+10) {
+            else if (posX < 10) {
                 m_Inc[i].x *= -m_Bounciness;
-                posX = -WIDTH/2+10;
+                posX = 10;
             }
             posX += m_Inc[i].x * dt;
             
             float& posY = m_Tranlations[i].y;
-            if (posY > HEIGHT/2-10) {
+            if (posY > HEIGHT-10) {
                 m_Inc[i].y *= -m_Bounciness;
-                posY = HEIGHT/2-10;
+                posY = HEIGHT-10;
             }
-            else if (posY < -HEIGHT/2+10) {
+            else if (posY < 10) {
                 m_Inc[i].y *= -m_Bounciness;
-                posY = -HEIGHT/2+10;
+                posY = 10;
             }
             posY += m_Inc[i].y * dt;
         }

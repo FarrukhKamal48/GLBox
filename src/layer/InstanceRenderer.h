@@ -8,20 +8,24 @@
 #include "VertexBuffer.h"
 
 class InstanceRenderer {
+public:
+    std::unique_ptr<Shader> InstanceShader;
 private:
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
     std::unique_ptr<VertexBuffer> m_VertexBuffer;
     std::unique_ptr<VertexBuffer> m_TransBuffer;
-    std::unique_ptr<Shader> m_Shader;
-
+    glm::mat4 m_Proj;
+    glm::mat4 m_View;
+    
     float m_Length = 10;
-    glm::vec2* m_Translations;
+    void* m_Data;
+    unsigned int m_DataSize;
     unsigned int m_InstaceCount;
     
 public:
-    InstanceRenderer(glm::vec2* translations, unsigned int instaceCount) 
-        : m_Translations(translations), m_InstaceCount(instaceCount)
+    InstanceRenderer(void* data, unsigned int size, unsigned int count) 
+        : m_Data(data), m_DataSize(size), m_InstaceCount(count)
     {
         float positions[] = {
             -m_Length, -m_Length, 0.0f, 0.0f,
@@ -38,7 +42,7 @@ public:
 
         m_VertexArray =  std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
-        m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, m_InstaceCount * sizeof(glm::vec2), GL_DYNAMIC_DRAW);
+        m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
         m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
         
         VertexBufferLayout layout;
@@ -50,28 +54,26 @@ public:
         translateLayout.Push<float>(2, 1);
         m_VertexArray->AddBuffer(*m_TransBuffer, translateLayout);
 
-        glm::mat4 proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(WIDTH/2, HEIGHT/2, 0.0f));
-        glm::mat4 mvp = proj * view * model;
-        
-        m_Shader = std::make_unique<Shader>();
-        m_Shader->Push(GL_VERTEX_SHADER, "assets/shaders/instancing/Basic.vert");
-        m_Shader->Push(GL_FRAGMENT_SHADER, "assets/shaders/instancing/Basic.frag");
-        m_Shader->Compile();
-        m_Shader->Bind();
-        m_Shader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
-        m_Shader->SetUniformMat4("u_MVP", mvp);
+        m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
+        m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
     ~InstanceRenderer() { }
-
-    glm::vec2* GetTransforms() { return m_Translations; }
+    
+    void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
+        InstanceShader = std::make_unique<Shader>();
+        InstanceShader->Push(GL_VERTEX_SHADER, vertSrcPath);
+        InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
+        InstanceShader->Compile();
+        InstanceShader->Bind();
+        InstanceShader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
+        InstanceShader->SetUniformMat4("u_MVP", m_Proj * m_View);
+    }
 
     void Draw() {
         Renderer::Clear(1, 1, 1, 1);
         
-        m_TransBuffer->SetData(m_Translations, m_InstaceCount * sizeof(glm::vec2));
+        m_TransBuffer->SetData(m_Data, m_DataSize);
         
-        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *m_Shader, m_InstaceCount);
+        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstaceCount);
     }
 };
