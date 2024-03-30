@@ -1,9 +1,7 @@
 #pragma once
 #include "../Renderer.h"
 
-namespace Instancing {
-
-class Quad {
+class QuadData {
 private:
     static constexpr const float positions[16] = {
         -10.0f, -10.0f, 0.0f, 0.0f,
@@ -17,8 +15,8 @@ private:
     };
 
 public:
-    Quad() { }
-    ~Quad() { }
+    QuadData() { }
+    ~QuadData() { }
     
     static const float* GetVerticies() { return positions; }
     static const unsigned int SizeofVerticies() { return sizeof(positions); }
@@ -33,5 +31,3 @@ public:
     }
     
 };
-
-}

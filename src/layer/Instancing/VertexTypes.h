@@ -3,28 +3,25 @@
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 
-namespace Instancing {
-
-struct Pos2D {
+class Pos2D {
+public:
     glm::vec2 position;
 
-    static VertexBufferLayout Layout() {
+    static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
-        layout.Push<float>(2);
+        layout.Push<float>(2, divisor);
         return layout;
     }
 };
 
-struct Pos2D_RGBA {
+class Pos2D_RGBA {
     glm::vec2 position;
     glm::vec4 color;
 
-    static VertexBufferLayout Layout() {
+    static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(4);
+        layout.Push<float>(2, divisor);
+        layout.Push<float>(4, divisor);
         return layout;
     }
 };
-
-}
