@@ -6,10 +6,14 @@
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../VertexBuffer.h"
+#include "Quad.h"
 
 namespace Instancing {
 
-class InstanceRenderer {
+template<typename MeshType> class Renderer { };
+
+template<>
+class Renderer<Quad> {
 public:
     std::unique_ptr<Shader> InstanceShader;
 private:
@@ -26,31 +30,17 @@ private:
     unsigned int m_InstaceCount;
     
 public:
-    InstanceRenderer(void* data, unsigned int size, unsigned int count) 
+    Renderer(void* data, unsigned int size, unsigned int count) 
         : m_Data(data), m_DataSize(size), m_InstaceCount(count)
     {
-        float positions[] = {
-            -m_Length, -m_Length, 0.0f, 0.0f,
-             m_Length, -m_Length, 1.0f, 0.0f,
-             m_Length,  m_Length, 1.0f, 1.0f,
-            -m_Length,  m_Length, 0.0f, 1.0f,
-        };
-        unsigned int indices[] = {
-            0, 1, 2, 
-            0, 2, 3
-        };
-        
-        Renderer::BasicBlend();
+        Render::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+        m_VertexBuffer = std::make_unique<VertexBuffer>(Quad::GetVerticies(), Quad::SizeofVerticies());
         m_TransBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(Quad::GetIndicies(), 6);
         
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
+        m_VertexArray->AddBuffer(*m_VertexBuffer, Quad::Layout());
 
         VertexBufferLayout translateLayout;
         translateLayout.Push<float>(2, 1);
@@ -59,7 +49,7 @@ public:
         m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
-    ~InstanceRenderer() { }
+    ~Renderer() { }
     
     void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
         InstanceShader = std::make_unique<Shader>();
@@ -72,11 +62,9 @@ public:
     }
 
     void Draw() {
-        Renderer::Clear(1, 1, 1, 1);
-        
+        Render::Clear(1, 1, 1, 1);
         m_TransBuffer->SetData(m_Data, m_DataSize);
-        
-        Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstaceCount);
+        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstaceCount);
     }
 };
 }

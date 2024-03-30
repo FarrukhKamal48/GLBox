@@ -6,7 +6,7 @@
 #define WIDTH (float)1920
 #define HEIGHT (float)1080
 
-namespace Renderer {
+namespace Render {
     void Clear();
     void Clear(float r, float g, float b, float a);
     void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);

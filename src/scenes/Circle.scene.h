@@ -35,7 +35,7 @@ public:
             0, 2, 3
         };
         
-        Renderer::BasicBlend();
+        Render::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique< VertexBuffer>(positions, 4 * 4 * sizeof(float));
@@ -66,8 +66,8 @@ public:
     ~Circle() { }
     
     void Render() override {
-        Renderer::Clear(1, 1, 1, 1);
-        Renderer::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+        Render::Clear(1, 1, 1, 1);
+        Render::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
     }
     
 };

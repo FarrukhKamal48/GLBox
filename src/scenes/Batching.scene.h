@@ -19,7 +19,7 @@ public:
         m_BatchRenderer(m_Shapes, m_ObjCount, glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f), 
                         glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     {
-        Renderer::BasicBlend();
+        Render::BasicBlend();
         m_BatchRenderer.ShaderInit("assets/shaders/Batching.vert", 
                                    "assets/shaders/BatchingCircle.frag");
         
@@ -41,8 +41,8 @@ public:
     }
     
     void Render() override {
-        Renderer::BasicBlend();
-        Renderer::Clear(1, 1, 1, 1);
+        Render::BasicBlend();
+        Render::Clear(1, 1, 1, 1);
         
         m_BatchRenderer.DrawBatches();
     }

@@ -15,7 +15,7 @@ private:
     constexpr static const float m_Bounciness = 0.9;
     glm::vec2 m_Tranlations[m_ObjCount];
     glm::vec2 m_Inc[m_ObjCount];
-    Instancing::InstanceRenderer m_Renderer;
+    Instancing::Renderer<Instancing::Quad> m_Renderer;
     
 public:
     Instancer() : m_Renderer(m_Tranlations, sizeof(m_Tranlations), m_ObjCount) { 

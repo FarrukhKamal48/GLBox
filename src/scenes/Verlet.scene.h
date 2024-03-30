@@ -140,8 +140,8 @@ public:
     }
     
     void Render() override {
-        Renderer::BasicBlend();
-        Renderer::Clear(0, 0, 0, 1);
+        Render::BasicBlend();
+        Render::Clear(0, 0, 0, 1);
 
         m_BatchRenderer.DrawBatches(m_SimData.EnabledObjCount);
         // m_BatchRenderer.DrawBatches();
