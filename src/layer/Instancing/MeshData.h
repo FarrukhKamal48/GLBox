@@ -4,10 +4,10 @@
 class QuadData {
 private:
     static constexpr const float positions[16] = {
-        -10.0f, -10.0f, 0.0f, 0.0f,
-         10.0f, -10.0f, 1.0f, 0.0f,
-         10.0f,  10.0f, 1.0f, 1.0f,
-        -10.0f,  10.0f, 0.0f, 1.0f,
+        -5.0f, -5.0f, 0.0f, 0.0f,
+         5.0f, -5.0f, 1.0f, 0.0f,
+         5.0f,  5.0f, 1.0f, 1.0f,
+        -5.0f,  5.0f, 0.0f, 1.0f,
     };
     static constexpr const unsigned int indices[6] = {
         0, 1, 2, 
