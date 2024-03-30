@@ -5,12 +5,13 @@
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../layer/Instancing/RendererInstanced.h"
+#include <cmath>
 
 namespace Scene {
 
 class Instancer : public Scene {
 private:
-    static const int m_ObjCount = 1024;
+    static const int m_ObjCount = 131072; // 2^17
     constexpr static const float m_MoveSpeed = 10000;
     constexpr static const float m_Bounciness = 0.9;
     RendererInstanced<QuadData, Pos2D> m_Renderer;
