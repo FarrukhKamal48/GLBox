@@ -4,6 +4,8 @@
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 
+namespace Batching {
+
 template<typename MeshType, int MeshesPerBatch>
 class BatchRenderer {
 public:
@@ -48,4 +50,4 @@ public:
         }
     }
 };
-
+};

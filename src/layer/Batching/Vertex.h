@@ -1,7 +1,7 @@
 #pragma once
 #include "../../vendor/glm/glm.hpp"
 
-namespace Vertex {
+namespace Batching {
 
 struct PosUvCol {
     glm::vec2 Position;

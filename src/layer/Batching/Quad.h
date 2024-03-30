@@ -3,13 +3,13 @@
 #include "Mesh.h"
 #include "../Renderer.h"
 
-namespace Mesh {
+namespace Batching {
 
 class Quad {
 public:
     static const int VertexCount = 4;
 private:
-    Vertex::PosUvCol m_Verticies[VertexCount];
+    Batching::PosUvCol m_Verticies[VertexCount];
     glm::vec2 m_Centre;
     glm::vec2 m_Scale;
     

@@ -1,6 +1,6 @@
 #include "Quad.h"
 
-namespace Mesh {
+namespace Batching {
 
 Quad::Quad() :
     m_Centre(glm::vec2(WIDTH/2, HEIGHT/2)),
@@ -45,7 +45,7 @@ Quad::Quad(glm::vec2 centre, glm::vec2 scale) :
 Quad::~Quad() { }
 
 void Quad::SetCentre(glm::vec2 centre) {
-    for (Vertex::PosUvCol& v : m_Verticies) {
+    for (PosUvCol& v : m_Verticies) {
         v.Position -= m_Centre; // remove old translation
         v.Position += centre;   // apply new tranlation
     }
@@ -53,7 +53,7 @@ void Quad::SetCentre(glm::vec2 centre) {
 }
 
 void Quad::SetScale(glm::vec2 scale) {
-    for (Vertex::PosUvCol& v : m_Verticies) {
+    for (PosUvCol& v : m_Verticies) {
         v.Position -= m_Centre;     // remove old translation
         v.Position /= m_Scale;      // & scale
 

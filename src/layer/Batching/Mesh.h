@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Mesh {
+namespace Batching {
 
 class Mesh {
 public:
