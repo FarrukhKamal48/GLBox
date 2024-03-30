@@ -1,17 +1,13 @@
 #pragma once
-#include "GL/glew.h"
 
 #include "Scene.h"
-#include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../layer/Instancing/RendererInstanced.h"
-#include <cmath>
 
 namespace Scene {
 
 class Instancer : public Scene {
 private:
-    static const int m_ObjCount = 1310;
+    static const int m_ObjCount = 512500;
     constexpr static const float m_MoveSpeed = 1000;
     constexpr static const float m_Bounciness = 0.9;
     RendererInstanced<QuadData, Pos2D> m_Renderer;
@@ -28,7 +24,7 @@ public:
 
     void Start() override {
         for (int i = 0; i < m_ObjCount; i++) {
-            m_Tranlations[i].position = glm::vec2(-WIDTH/2 + 11, 0);
+            m_Tranlations[i].position = glm::vec2(-WIDTH/2 + 5, 0);
             m_Inc[i].x = (i+1.0f)/m_ObjCount * m_MoveSpeed;
             m_Inc[i].y = (i+1.0f)/m_ObjCount * m_MoveSpeed;
         }
@@ -37,24 +33,24 @@ public:
     void Update(float dt) override {
         for (int i = 0; i < m_ObjCount; i++) {
             float& posX = m_Tranlations[i].position.x;
-            if (posX > WIDTH-10) {
+            if (posX > WIDTH-5) {
                 // m_Inc[i].x *= -m_Bounciness;
-                posX = 11;
+                posX = 5;
             }
-            else if (posX < 10) {
+            else if (posX < 5) {
                 // m_Inc[i].x *= -m_Bounciness;
-                posX = WIDTH-11;
+                posX = WIDTH-5;
             }
             posX += m_Inc[i].x * dt;
             
             float& posY = m_Tranlations[i].position.y;
-            if (posY > HEIGHT-10) {
+            if (posY > HEIGHT-5) {
                 // m_Inc[i].y *= -m_Bounciness;
-                posY = 11;
+                posY = 5;
             }
-            else if (posY < 10) {
+            else if (posY < 5) {
                 // m_Inc[i].y *= -m_Bounciness;
-                posY = HEIGHT-11;
+                posY = HEIGHT-5;
             }
             posY += m_Inc[i].y * dt;
         }
