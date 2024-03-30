@@ -1,6 +1,6 @@
 #pragma once
-#include "../layer/BatchRenderer.h"
-#include "../meshes/Quad.h"
+#include "../layer/Batching/BatchRenderer.h"
+#include "../layer/Batching/Quad.h"
 #include "Scene.h"
 #include <cmath>
 #define PI (3.141592653589793)
@@ -10,7 +10,7 @@ public:
     glm::vec2 pos_old;
     glm::vec2 pos;
     glm::vec2 acceleration;
-    Mesh::Quad* Mesh;
+    Batching::Quad* Mesh;
     float Radius;
 
     void SetRadius(float radius) { 
@@ -51,9 +51,9 @@ class Verlet : public Scene {
 private:
     const unsigned int m_ObjCount = 1024/2;
     VerletObject* m_Objs = new VerletObject[m_ObjCount];
-    Mesh::Quad* m_Shapes = new Mesh::Quad[m_ObjCount];
+    Batching::Quad* m_Shapes = new Batching::Quad[m_ObjCount];
     
-    BatchRenderer<Mesh::Quad, 1024> m_BatchRenderer;
+    Batching::BatchRenderer<Batching::Quad, 1024> m_BatchRenderer;
 
     glm::vec2 gravity = {0, -3000};
     CircleConstraint m_Constraint;
