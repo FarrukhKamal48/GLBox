@@ -7,6 +7,8 @@
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../VertexBuffer.h"
 
+namespace Instancing {
+
 class InstanceRenderer {
 public:
     std::unique_ptr<Shader> InstanceShader;
@@ -77,3 +79,4 @@ public:
         Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstaceCount);
     }
 };
+}

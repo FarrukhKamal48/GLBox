@@ -4,26 +4,26 @@
 #include "Scene.h"
 #include "../vendor/glm/ext/matrix_transform.hpp"
 #include "../vendor/glm/ext/matrix_clip_space.hpp"
-#include "../layer/InstanceRenderer.h"
+#include "../layer/Instancing/InstanceRenderer.h"
 
 namespace Scene {
 
-class Instancing : public Scene {
+class Instancer : public Scene {
 private:
     static const int m_ObjCount = 1024;
     constexpr static const float m_MoveSpeed = 10000;
     constexpr static const float m_Bounciness = 0.9;
     glm::vec2 m_Tranlations[m_ObjCount];
     glm::vec2 m_Inc[m_ObjCount];
-    InstanceRenderer m_Renderer;
+    Instancing::InstanceRenderer m_Renderer;
     
 public:
-    Instancing() : m_Renderer(m_Tranlations, sizeof(m_Tranlations), m_ObjCount) { 
+    Instancer() : m_Renderer(m_Tranlations, sizeof(m_Tranlations), m_ObjCount) { 
         m_Renderer.ShaderInit("assets/shaders/instancing/Basic.vert", 
                               "assets/shaders/instancing/CircleInRect.frag");
         m_Renderer.InstanceShader->SetUniform("u_CullRadius", 0.5f);
     }
-    ~Instancing() { }
+    ~Instancer() { }
 
     void Start() override {
         for (int i = 0; i < m_ObjCount; i++) {
