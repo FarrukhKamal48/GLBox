@@ -2,9 +2,9 @@
 #include "GL/glew.h"
 #include <memory>
 
-#include "../Renderer.h"
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
+#include "../Renderer.h"
 #include "../VertexBuffer.h"
 #include "VertexTypes.h"
 #include "MeshData.h"
