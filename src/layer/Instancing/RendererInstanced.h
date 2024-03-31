@@ -36,7 +36,7 @@ public:
         m_VertexArray =  std::make_unique<VertexArray>();
         m_MeshBuffer = std::make_unique<VertexBuffer>(QuadData::GetVerticies(), QuadData::SizeofVerticies());
         m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(QuadData::GetIndicies(), 6);
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(QuadData::GetIndicies(), QuadData::CountofIndicies());
         
         m_VertexArray->AddBuffer(*m_MeshBuffer, QuadData::Layout());
         m_VertexArray->AddBuffer(*m_InstanceBuffer, InstanceDataType::Layout(1));
