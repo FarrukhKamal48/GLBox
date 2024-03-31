@@ -1,5 +1,7 @@
 #pragma once
-#include "../Renderer.h"
+#include "../VertexArray.h"
+
+enum class MeshType { Quad };
 
 class QuadData {
 private:
@@ -15,19 +17,42 @@ private:
     };
 
 public:
-    QuadData() { }
-    ~QuadData() { }
+    QuadData() {}
+    ~QuadData() {}
     
     static const float* GetVerticies() { return positions; }
     static const unsigned int SizeofVerticies() { return sizeof(positions); }
     static const unsigned int* GetIndicies() { return indices; }
-    static const unsigned int SizeofIndicies() { return sizeof(positions); }
+    static const unsigned int CountofIndicies() { return 6; }
 
     static const VertexBufferLayout Layout() { 
         VertexBufferLayout MeshLayout;
         MeshLayout.Push<float>(2);
         MeshLayout.Push<float>(2);
         return MeshLayout; 
+    }
+    
+};
+
+class MeshLookup {
+public:
+    MeshLookup() {}
+    ~MeshLookup() {}
+
+    static const float* GetVerticies() { 
+        return QuadData::GetVerticies();
+    }
+    static unsigned int SizeofVerticies() {
+        return QuadData::SizeofVerticies();
+    }
+    static const unsigned int* GetIndicies() {
+        return QuadData::GetIndicies();
+    }
+    static const unsigned int CountofIndicies() {
+        return QuadData::CountofIndicies();
+    }
+    static VertexBufferLayout Layout() { 
+        return QuadData::Layout();
     }
     
 };
