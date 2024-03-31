@@ -5,20 +5,19 @@ enum class MeshType { Quad };
 
 class QuadData {
 private:
-    static constexpr const float positions[16] = {
+    static constexpr float positions[16] = {
         -5.0f, -5.0f, 0.0f, 0.0f,
          5.0f, -5.0f, 1.0f, 0.0f,
          5.0f,  5.0f, 1.0f, 1.0f,
         -5.0f,  5.0f, 0.0f, 1.0f,
     };
-    static constexpr const unsigned int indices[6] = {
+    static constexpr unsigned int indices[6] = {
         0, 1, 2, 
         0, 2, 3
     };
 
 public:
-    QuadData() {}
-    ~QuadData() {}
+    QuadData() = delete;
     
     static const float* GetVerticies() { return positions; }
     static const unsigned int SizeofVerticies() { return sizeof(positions); }
@@ -36,23 +35,40 @@ public:
 
 class MeshLookup {
 public:
-    MeshLookup() {}
-    ~MeshLookup() {}
+    MeshLookup() = delete;
 
-    static const float* GetVerticies() { 
-        return QuadData::GetVerticies();
+    static const float* GetVerticies(MeshType type) { 
+        switch (type) {
+            case MeshType::Quad: return QuadData::GetVerticies();
+            default: return nullptr;
+        }
     }
-    static unsigned int SizeofVerticies() {
-        return QuadData::SizeofVerticies();
+    static const unsigned int SizeofVerticies(MeshType type) {
+        switch (type) {
+            case MeshType::Quad: return QuadData::SizeofVerticies();
+            default: return 0;
+        }
     }
-    static const unsigned int* GetIndicies() {
-        return QuadData::GetIndicies();
+    static const unsigned int* GetIndicies(MeshType type) {
+        switch (type) {
+            case MeshType::Quad: return QuadData::GetIndicies();
+            default: return nullptr;
+        }
     }
-    static const unsigned int CountofIndicies() {
-        return QuadData::CountofIndicies();
+    static const unsigned int CountofIndicies(MeshType type) {
+        switch (type) {
+            case MeshType::Quad: return QuadData::CountofIndicies();
+            default: return 0;
+        }
     }
-    static VertexBufferLayout Layout() { 
-        return QuadData::Layout();
+    static const VertexBufferLayout Layout(MeshType type) { 
+        switch (type) {
+            case MeshType::Quad: return QuadData::Layout();
+            default: {
+                VertexBufferLayout layout; 
+                return layout;
+            }
+        }
     }
     
 };
