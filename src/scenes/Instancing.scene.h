@@ -7,15 +7,15 @@ namespace Scene {
 
 class Instancer : public Scene {
 private:
-    static const int m_ObjCount = 521190;
+    static const int m_ObjCount = 521000;
     constexpr static const float m_MoveSpeed = 1000;
     constexpr static const float m_Bounciness = 0.9;
-    RendererInstanced<QuadData, Pos2D> m_Renderer;
+    RendererInstanced<MeshType::Quad, VertexType::Pos2D, m_ObjCount> m_Renderer;
     Pos2D m_Tranlations[m_ObjCount];
     glm::vec2 m_Inc[m_ObjCount];
     
 public:
-    Instancer() : m_Renderer(m_Tranlations, m_ObjCount) { 
+    Instancer() : m_Renderer(&m_Tranlations) { 
         m_Renderer.ShaderInit("assets/shaders/instancing/Basic.vert", 
                               "assets/shaders/instancing/CircleInRect.frag");
         m_Renderer.InstanceShader->SetUniform("u_CullRadius", 0.5f);
