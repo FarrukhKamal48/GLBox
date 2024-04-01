@@ -48,7 +48,6 @@ public:
         InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
         InstanceShader->Compile();
         InstanceShader->Bind();
-        InstanceShader->SetUniformVec4("u_Color", 0.0f, 0.5f, 1.0f, 1.0f);
         InstanceShader->SetUniformMat4("u_MVP", m_Proj * m_View);
     }
 
