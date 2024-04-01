@@ -52,5 +52,12 @@ public:
             }
         }
     }
+    static unsigned int SizeOfVertex(VertexType type) {
+        switch (type) {
+            case VertexType::Pos2D     : return sizeof(Pos2D);
+            case VertexType::Pos2D_RGBA: return sizeof(Pos2D_RGBA);
+            default: return 0;
+        }
+    }
     
 };
