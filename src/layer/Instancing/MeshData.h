@@ -1,5 +1,5 @@
 #pragma once
-#include "../VertexArray.h"
+#include "../VertexBufferLayout.h"
 
 enum class MeshType { 
     Triangle,

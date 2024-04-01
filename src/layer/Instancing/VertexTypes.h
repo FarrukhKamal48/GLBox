@@ -1,7 +1,7 @@
 #pragma once
-#include "../Renderer.h"
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
+#include "../VertexBufferLayout.h"
 
 enum class VertexType {
     Pos2D,
