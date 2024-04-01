@@ -1,6 +1,6 @@
 #pragma once
-#include "../../vendor/glm/ext/matrix_transform.hpp"
-#include "../../vendor/glm/ext/matrix_clip_space.hpp"
+#include "../../vendor/glm/ext/vector_float2.hpp"
+#include "../../vendor/glm/ext/vector_float4.hpp"
 #include "../VertexBufferLayout.h"
 
 enum class VertexType {
