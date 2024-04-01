@@ -54,6 +54,7 @@ public:
     }
     
     void Render() override {
+        Render::Clear(1, 1, 1, 1);
         m_Renderer.Draw();
     }
     

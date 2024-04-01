@@ -52,7 +52,6 @@ public:
     }
 
     void Draw() {
-        Render::Clear(1, 1, 1, 1);
         m_InstanceBuffer->SetData(m_Data, m_DataSize);
         Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, InstanceCount);
     }
