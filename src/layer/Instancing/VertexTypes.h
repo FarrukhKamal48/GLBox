@@ -6,6 +6,7 @@
 enum class VertexType {
     Pos2D,
     Pos2D_RGBA,
+    Pos2D_Scale2D_RGBA,
 };
 
 class Pos2D {
@@ -38,6 +39,24 @@ public:
     }
 };
 
+class Pos2D_Scale2D_RGBA {
+public:
+    glm::vec2 position;
+    glm::vec2 scale;
+    glm::vec4 color;
+
+    Pos2D_Scale2D_RGBA() : position(0), scale(0), color(0) { }
+    ~Pos2D_Scale2D_RGBA() { }
+
+    static VertexBufferLayout Layout(unsigned int divisor) {
+        VertexBufferLayout layout;
+        layout.Push<float>(2, divisor);
+        layout.Push<float>(2, divisor);
+        layout.Push<float>(4, divisor);
+        return layout;
+    }
+};
+
 class VertexLookup {
 public:
     VertexLookup() = delete;
@@ -46,6 +65,7 @@ public:
         switch (type) {
             case VertexType::Pos2D     : return Pos2D::Layout(divisor);
             case VertexType::Pos2D_RGBA: return Pos2D_RGBA::Layout(divisor);
+            case VertexType::Pos2D_Scale2D_RGBA: return Pos2D_Scale2D_RGBA::Layout(divisor);
             default: {
                 VertexBufferLayout layout;
                 return layout;
@@ -56,6 +76,7 @@ public:
         switch (type) {
             case VertexType::Pos2D     : return sizeof(Pos2D);
             case VertexType::Pos2D_RGBA: return sizeof(Pos2D_RGBA);
+            case VertexType::Pos2D_Scale2D_RGBA: return sizeof(Pos2D_Scale2D_RGBA);
             default: return 0;
         }
     }

@@ -11,10 +11,10 @@ public:
     TriangleData() = delete;
     
     static constexpr float Verticies[16] = {
-        -5.0f, -5.0f, 0.0f, 0.0f,
-         5.0f, -5.0f, 1.0f, 0.0f,
-         5.0f,  5.0f, 1.0f, 1.0f,
-        -5.0f,  5.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f,
     };
     static constexpr unsigned int Indicies[6] = {
         0, 1, 2, 
@@ -35,10 +35,10 @@ public:
     QuadData() = delete;
     
     static constexpr float Verticies[16] = {
-        -5.0f, -5.0f, 0.0f, 0.0f,
-         5.0f, -5.0f, 1.0f, 0.0f,
-         5.0f,  5.0f, 1.0f, 1.0f,
-        -5.0f,  5.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f,
     };
     static constexpr unsigned int Indicies[6] = {
         0, 1, 2, 
