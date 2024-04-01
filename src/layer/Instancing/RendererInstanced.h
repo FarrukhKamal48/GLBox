@@ -20,11 +20,11 @@ private:
     glm::mat4 m_Proj;
     glm::mat4 m_View;
     
-    Pos2D* m_Data;
+    void* m_Data;
     unsigned int m_DataSize;
     
 public:
-    RendererInstanced(Pos2D* data) 
+    RendererInstanced(void* data) 
         : m_Data(data), m_DataSize(InstanceCount * VertexLookup::SizeOfVertex(VertexT))
     {
         Render::BasicBlend();
