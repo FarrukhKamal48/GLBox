@@ -9,9 +9,9 @@ private:
     constexpr static int m_ObjCount = 200000;
     constexpr static float m_MoveSpeed = 1000;
     constexpr static float m_Bounciness = 0.9;
-    Pos2D_Scale2D_RGBA* m_ObjData = new Pos2D_Scale2D_RGBA[m_ObjCount];
+    Vec2_Vec2_Vec4* m_ObjData = new Vec2_Vec2_Vec4[m_ObjCount];
     float m_Inc;
-    RendererInstanced<MeshType::Quad, VertexType::Pos2D_Scale2D_RGBA, m_ObjCount> m_Renderer;
+    RendererInstanced<MeshType::Quad, VertexType::Vec2_Vec2_Vec4, m_ObjCount> m_Renderer;
     
 public:
     Instancer() : m_Renderer(m_ObjData) { 
