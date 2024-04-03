@@ -30,8 +30,8 @@ public:
         Render::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_MeshBuffer = std::make_unique<VertexBuffer>(MeshLookup<MeshT>::GetVerticies(), MeshLookup<MeshT>::SizeofVerticies());
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(MeshLookup<MeshT>::GetIndicies(), MeshLookup<MeshT>::CountofIndicies());
+        m_MeshBuffer = std::make_unique<VertexBuffer>(MeshLookup<MeshT>::Verticies(), MeshLookup<MeshT>::SizeofVerticies());
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(MeshLookup<MeshT>::Indicies(), MeshLookup<MeshT>::CountofIndicies());
         m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
         
         m_VertexArray->AddBuffer(*m_MeshBuffer, MeshLookup<MeshT>::Layout());

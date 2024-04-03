@@ -55,16 +55,26 @@ public:
 // ################################  MeshLookup  #####################################################
 // ###################################################################################################
 
-template<typename MeshT> class MeshLookup {};
+template<typename MeshT> class MeshLookup {
+public:
+    MeshLookup() = delete;
+
+    static const float* Verticies();
+    static const unsigned int SizeofVerticies(); 
+    static const unsigned int* Indicies(); 
+    static const unsigned int CountofIndicies(); 
+    static const VertexBufferLayout Layout(); 
+    
+};
 
 template<>
 class MeshLookup<QuadData> {
 public:
     MeshLookup() = delete;
 
-    static const float* GetVerticies()          { return QuadData::Verticies; }
+    static const float* Verticies()             { return QuadData::Verticies; }
+    static const unsigned int* Indicies()       { return QuadData::Indicies; }
     static const unsigned int SizeofVerticies() { return sizeof(QuadData::Verticies); }
-    static const unsigned int* GetIndicies()    { return QuadData::Indicies; }
     static const unsigned int CountofIndicies() { return sizeof(QuadData::Indicies); }
     static const VertexBufferLayout Layout()    { return QuadData::Layout(); }
     
@@ -75,9 +85,9 @@ class MeshLookup<TriangleData> {
 public:
     MeshLookup() = delete;
 
-    static const float* GetVerticies()          { return TriangleData::Verticies; }
+    static const float* Verticies()             { return TriangleData::Verticies; }
+    static const unsigned int* Indicies()       { return TriangleData::Indicies; }
     static const unsigned int SizeofVerticies() { return sizeof(TriangleData::Verticies); }
-    static const unsigned int* GetIndicies()    { return TriangleData::Indicies; }
     static const unsigned int CountofIndicies() { return sizeof(TriangleData::Indicies); }
     static const VertexBufferLayout Layout()    { return TriangleData::Layout(); }
     

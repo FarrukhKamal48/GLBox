@@ -55,7 +55,13 @@ public:
 // ##############################  VertexLookup  #####################################################
 // ###################################################################################################
 
-template<typename VertexT> class VertexLookup {};
+template<typename VertexT> class VertexLookup {
+public:
+    VertexLookup() = delete;
+
+    static VertexBufferLayout Layout(unsigned int divisor);
+    static unsigned int SizeOfVertex();
+};
 
 template<>
 class VertexLookup<Vec2> {
