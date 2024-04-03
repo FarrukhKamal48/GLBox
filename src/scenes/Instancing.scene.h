@@ -11,7 +11,7 @@ private:
     constexpr static float m_Bounciness = 0.9;
     Vec2_Vec2_Vec4* m_ObjData = new Vec2_Vec2_Vec4[m_ObjCount];
     float m_Inc;
-    RendererInstanced<MeshType::Quad, VertexType::Vec2_Vec2_Vec4, m_ObjCount> m_Renderer;
+    RendererInstanced<QuadData, Vec2_Vec2_Vec4, m_ObjCount> m_Renderer;
     
 public:
     Instancer() : m_Renderer(m_ObjData) { 

@@ -3,12 +3,6 @@
 #include "../../vendor/glm/ext/vector_float4.hpp"
 #include "../VertexBufferLayout.h"
 
-enum class VertexType {
-    Vec2,
-    Vec2_Vec4,
-    Vec2_Vec2_Vec4,
-};
-
 class Vec2 {
 public:
     glm::vec2 position;
@@ -57,28 +51,48 @@ public:
     }
 };
 
-class VertexLookup {
+// ###################################################################################################
+// ##############################  VertexLookup  #####################################################
+// ###################################################################################################
+
+template<typename VertexT> class VertexLookup {};
+
+template<>
+class VertexLookup<Vec2> {
 public:
     VertexLookup() = delete;
 
-    static VertexBufferLayout Layout(VertexType type, unsigned int divisor) {
-        switch (type) {
-            case VertexType::Vec2     : return Vec2::Layout(divisor);
-            case VertexType::Vec2_Vec4: return Vec2_Vec4::Layout(divisor);
-            case VertexType::Vec2_Vec2_Vec4: return Vec2_Vec2_Vec4::Layout(divisor);
-            default: {
-                VertexBufferLayout layout;
-                return layout;
-            }
-        }
+    static VertexBufferLayout Layout(unsigned int divisor) {
+        return Vec2::Layout(divisor);
     }
-    static unsigned int SizeOfVertex(VertexType type) {
-        switch (type) {
-            case VertexType::Vec2     : return sizeof(Vec2);
-            case VertexType::Vec2_Vec4: return sizeof(Vec2_Vec4);
-            case VertexType::Vec2_Vec2_Vec4: return sizeof(Vec2_Vec2_Vec4);
-            default: return 0;
-        }
+    static unsigned int SizeOfVertex() {
+        return sizeof(Vec2);
+    }
+};
+
+template<>
+class VertexLookup<Vec2_Vec4> {
+public:
+    VertexLookup() = delete;
+
+    static VertexBufferLayout Layout(unsigned int divisor) {
+        return Vec2_Vec4::Layout(divisor);
+    }
+    static unsigned int SizeOfVertex() {
+        return sizeof(Vec2_Vec4);
+    }
+};
+
+template<>
+class VertexLookup<Vec2_Vec2_Vec4> {
+public:
+    VertexLookup() = delete;
+    
+    static VertexBufferLayout Layout(unsigned int divisor) {
+        return Vec2_Vec2_Vec4::Layout(divisor);
+    }
+    static unsigned int SizeOfVertex() {
+        return sizeof(Vec2_Vec2_Vec4);
     }
     
 };

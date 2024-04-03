@@ -1,10 +1,6 @@
 #pragma once
 #include "../VertexBufferLayout.h"
 
-enum class MeshType { 
-    Triangle,
-    Quad,
-};
 
 class TriangleData {
 public:
@@ -55,44 +51,34 @@ public:
     
 };
 
-class MeshLookup {
+// ###################################################################################################
+// ################################  MeshLookup  #####################################################
+// ###################################################################################################
+
+template<typename MeshT> class MeshLookup {};
+
+template<>
+class MeshLookup<QuadData> {
 public:
     MeshLookup() = delete;
 
-    static const float* GetVerticies(MeshType type) { 
-        switch (type) {
-            case MeshType::Triangle: return TriangleData::Verticies;
-            case MeshType::Quad    : return QuadData::Verticies;
-            default                : return nullptr;
-        }
-    }
-    static const unsigned int SizeofVerticies(MeshType type) {
-        switch (type) {
-            case MeshType::Triangle: return sizeof(TriangleData::Verticies);
-            case MeshType::Quad    : return sizeof(QuadData::Verticies);
-            default                : return 0;
-        }
-    }
-    static const unsigned int* GetIndicies(MeshType type) {
-        switch (type) {
-            case MeshType::Triangle: return TriangleData::Indicies;
-            case MeshType::Quad    : return QuadData::Indicies;
-            default                : return nullptr;
-        }
-    }
-    static const unsigned int CountofIndicies(MeshType type) {
-        switch (type) {
-            case MeshType::Triangle: return sizeof(TriangleData::Indicies);
-            case MeshType::Quad    : return sizeof(QuadData::Indicies);
-            default                : return 0;
-        }
-    }
-    static const VertexBufferLayout Layout(MeshType type) { 
-        switch (type) {
-            case MeshType::Triangle: return TriangleData::Layout();
-            case MeshType::Quad    : return QuadData::Layout();
-            default                : { VertexBufferLayout layout; return layout; }
-        }
-    }
+    static const float* GetVerticies()          { return QuadData::Verticies; }
+    static const unsigned int SizeofVerticies() { return sizeof(QuadData::Verticies); }
+    static const unsigned int* GetIndicies()    { return QuadData::Indicies; }
+    static const unsigned int CountofIndicies() { return sizeof(QuadData::Indicies); }
+    static const VertexBufferLayout Layout()    { return QuadData::Layout(); }
+    
+};
+
+template<>
+class MeshLookup<TriangleData> {
+public:
+    MeshLookup() = delete;
+
+    static const float* GetVerticies()          { return TriangleData::Verticies; }
+    static const unsigned int SizeofVerticies() { return sizeof(TriangleData::Verticies); }
+    static const unsigned int* GetIndicies()    { return TriangleData::Indicies; }
+    static const unsigned int CountofIndicies() { return sizeof(TriangleData::Indicies); }
+    static const VertexBufferLayout Layout()    { return TriangleData::Layout(); }
     
 };
