@@ -9,9 +9,9 @@ private:
     constexpr static int m_ObjCount = 200000;
     constexpr static float m_MoveSpeed = 1000;
     constexpr static float m_Bounciness = 0.9;
-    Vec2_Vec2_Vec4* m_ObjData = new Vec2_Vec2_Vec4[m_ObjCount];
+    Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
     float m_Inc;
-    RendererInstanced<QuadData, Vec2_Vec2_Vec4, m_ObjCount> m_Renderer;
+    RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount> m_Renderer;
     
 public:
     Instancer() : m_Renderer(m_ObjData) { 
@@ -19,7 +19,9 @@ public:
                               "assets/shaders/instancing/CircleInRectColor.frag");
         m_Renderer.InstanceShader->SetUniform("u_CullRadius", 0.5f);
     }
-    ~Instancer() { }
+    ~Instancer() { 
+        delete [] m_ObjData;
+    }
 
     void Start() override {
         static float p = 0;

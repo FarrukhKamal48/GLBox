@@ -3,12 +3,12 @@
 #include "../../vendor/glm/ext/vector_float4.hpp"
 #include "../VertexBufferLayout.h"
 
-class Vec2 {
+class Pos {
 public:
     glm::vec2 position;
 
-    Vec2() : position(0) { }
-    ~Vec2() { }
+    Pos() : position(0) { }
+    ~Pos() { }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
@@ -17,13 +17,13 @@ public:
     }
 };
 
-class Vec2_Vec4 {
+class Pos_Col {
 public:
     glm::vec2 position;
     glm::vec4 color;
 
-    Vec2_Vec4() : position(0), color(0) { }
-    ~Vec2_Vec4() { }
+    Pos_Col() : position(0), color(0) { }
+    ~Pos_Col() { }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
@@ -33,14 +33,14 @@ public:
     }
 };
 
-class Vec2_Vec2_Vec4 {
+class Pos_Scale_Col {
 public:
     glm::vec2 position;
     glm::vec2 scale;
     glm::vec4 color;
 
-    Vec2_Vec2_Vec4() : position(0), scale(0), color(0) { }
-    ~Vec2_Vec2_Vec4() { }
+    Pos_Scale_Col() : position(0), scale(0), color(0) { }
+    ~Pos_Scale_Col() { }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
@@ -64,41 +64,41 @@ public:
 };
 
 template<>
-class VertexLookup<Vec2> {
+class VertexLookup<Pos> {
 public:
     VertexLookup() = delete;
 
     static VertexBufferLayout Layout(unsigned int divisor) {
-        return Vec2::Layout(divisor);
+        return Pos::Layout(divisor);
     }
     static unsigned int SizeOfVertex() {
-        return sizeof(Vec2);
+        return sizeof(Pos);
     }
 };
 
 template<>
-class VertexLookup<Vec2_Vec4> {
+class VertexLookup<Pos_Col> {
 public:
     VertexLookup() = delete;
 
     static VertexBufferLayout Layout(unsigned int divisor) {
-        return Vec2_Vec4::Layout(divisor);
+        return Pos_Col::Layout(divisor);
     }
     static unsigned int SizeOfVertex() {
-        return sizeof(Vec2_Vec4);
+        return sizeof(Pos_Col);
     }
 };
 
 template<>
-class VertexLookup<Vec2_Vec2_Vec4> {
+class VertexLookup<Pos_Scale_Col> {
 public:
     VertexLookup() = delete;
     
     static VertexBufferLayout Layout(unsigned int divisor) {
-        return Vec2_Vec2_Vec4::Layout(divisor);
+        return Pos_Scale_Col::Layout(divisor);
     }
     static unsigned int SizeOfVertex() {
-        return sizeof(Vec2_Vec2_Vec4);
+        return sizeof(Pos_Scale_Col);
     }
     
 };
