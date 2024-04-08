@@ -8,6 +8,7 @@ public:
     glm::vec2 pos_old;
     glm::vec2* pos;
     glm::vec2 acceleration;
+    float bouncines;
 
     void updatePosition(float dt) {
         const glm::vec2 deltaPos = *pos - pos_old;
@@ -51,25 +52,28 @@ public:
             vel = pos - rb.pos_old;
             vel.x *= -1;
             pos.x = bottomRight.x - scale.x; 
+            rb.velocity(vel * rb.bouncines);
         }
         else if (pos.x < topLeft.x + scale.x) { // left
             vel = pos - rb.pos_old;
             vel.x *= -1;
             pos.x = topLeft.x + scale.x;
+            rb.velocity(vel * rb.bouncines);
         }
         
         if (pos.y > topLeft.y - scale.y) {      // top
             vel = pos - rb.pos_old;
             vel.y *= -1;
             pos.y = topLeft.y - scale.y;
+            rb.velocity(vel * rb.bouncines);
         }
         else if (pos.y < bottomRight.y + scale.y) { // bottom
             vel = pos - rb.pos_old;
             vel.y *= -1;
             pos.y = bottomRight.y + scale.y;
+            rb.velocity(vel * rb.bouncines);
         }
 
-        rb.velocity(vel);
     }
 };
 
@@ -77,7 +81,8 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 100;
+    constexpr static int m_ObjCount = 100000;
+    int m_SpawnRate = m_ObjCount;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -85,7 +90,7 @@ private:
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount> m_Renderer;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Gravity({0, -200}), m_Renderer(m_ObjData) 
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Gravity({0, -1000}), m_Renderer(m_ObjData) 
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
@@ -100,19 +105,32 @@ public:
         static float p = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             p = (i+1.0f)/m_ObjCount;
-            float diffx = WIDTH/m_ObjCount;
-            m_ObjData[i].position = glm::vec2(WIDTH * p - diffx/2, HEIGHT/2);
-            m_ObjData[i].scale = glm::vec2(20);
+            // float diffx = WIDTH/m_ObjCount;
+            // m_ObjData[i].position = glm::vec2(WIDTH * p - diffx/2, HEIGHT-20);
+            m_ObjData[i].position = glm::vec2(WIDTH - 5, HEIGHT/2);
+            m_ObjData[i].scale = glm::vec2(5);
             m_ObjData[i].color = glm::vec4(1,1,1,1);
             m_Bodies[i].pos = &m_ObjData[i].position;
             m_Bodies[i].pos_old = m_ObjData[i].position;
+            m_Bodies[i].bouncines = 1.0f - p;
+            m_Bodies[i].velocity({-5, 10});
         }
+        m_ObjData[0].color = glm::vec4(0,0.5,1,1);
+        m_ObjData[m_ObjCount-1].color = glm::vec4(1,0.5,0,1);
+        m_SpawnRate = 100000000;
     }
 
     void Update(float dt) override {
-        for (int i = 0; i < m_ObjCount; i++) {
+        static int enabledCount = m_ObjCount;    
+        static float spawnTimer = 0;
+        spawnTimer += dt;
+        if (spawnTimer >= 1.0f/m_SpawnRate && enabledCount < m_ObjCount) {
+            spawnTimer = 0;
+            enabledCount++;
+        }
+        for (int i = 0; i < enabledCount; i++) {
             RigidBody& body = m_Bodies[i];
-            body.accelerate(m_Gravity/(i+1.0f));
+            body.accelerate(m_Gravity);
             m_Constraint.Apply(body, m_ObjData->scale);
             body.updatePosition(dt);
         }
