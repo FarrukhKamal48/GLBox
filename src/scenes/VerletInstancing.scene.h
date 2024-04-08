@@ -3,6 +3,28 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include <cstdlib>
 
+class RigidBody {
+public:
+    glm::vec2 pos_old;
+    glm::vec2* pos;
+    glm::vec2 acceleration;
+
+    void updatePosition(float dt) {
+        const glm::vec2 deltaPos = *pos - pos_old;
+        pos_old = *pos;
+        *pos = *pos + deltaPos + acceleration*dt*dt;
+        acceleration = {};
+    }
+
+    void accelerate(glm::vec2 acc) {
+        acceleration += acc;
+    }
+
+    void velocity(glm::vec2 vel) {
+        pos_old = *pos - vel;
+    }
+};
+
 class Constraint {
 public:
     glm::vec2 topLeft;
@@ -21,37 +43,41 @@ public:
     //         pos = centre + displacement/displaceDist * (m_Constraint.radius - obj.GetRadius());
     //     }
     // }
-    void Apply(glm::vec2& pos, glm::vec2 scale) {
-        if (pos.x > bottomRight.x - scale.x) pos.x = bottomRight.x - scale.x;
-        else if (pos.x < topLeft.x + scale.x) pos.x = topLeft.x + scale.x;
+    void Apply(RigidBody& rb, glm::vec2 scale) {
+        glm::vec2& pos = *rb.pos;
+        glm::vec2 vel = pos - rb.pos_old;
         
-        if (pos.y > topLeft.y - scale.y) pos.y = topLeft.y - scale.y;
-        else if (pos.y < bottomRight.y + scale.y) pos.y = bottomRight.y + scale.y;
+        if (pos.x > bottomRight.x - scale.x) { // right
+            vel = pos - rb.pos_old;
+            vel.x *= -1;
+            pos.x = bottomRight.x - scale.x; 
+        }
+        else if (pos.x < topLeft.x + scale.x) { // left
+            vel = pos - rb.pos_old;
+            vel.x *= -1;
+            pos.x = topLeft.x + scale.x;
+        }
+        
+        if (pos.y > topLeft.y - scale.y) {      // top
+            vel = pos - rb.pos_old;
+            vel.y *= -1;
+            pos.y = topLeft.y - scale.y;
+        }
+        else if (pos.y < bottomRight.y + scale.y) { // bottom
+            vel = pos - rb.pos_old;
+            vel.y *= -1;
+            pos.y = bottomRight.y + scale.y;
+        }
+
+        rb.velocity(vel);
     }
 };
 
-class RigidBody {
-public:
-    glm::vec2 pos_old;
-    glm::vec2* pos;
-    glm::vec2 acceleration;
-    
-    void updatePosition(float dt) {
-        const glm::vec2 deltaPos = *pos - pos_old;
-        pos_old = *pos;
-        *pos = *pos + deltaPos + acceleration*dt*dt;
-        acceleration = {};
-    }
-
-    void accelerate(glm::vec2 acc) {
-        acceleration += acc;
-    }
-};
 
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 10;
+    constexpr static int m_ObjCount = 100;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -59,7 +85,7 @@ private:
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount> m_Renderer;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Gravity({0, -50}), m_Renderer(m_ObjData) 
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Gravity({0, -200}), m_Renderer(m_ObjData) 
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
@@ -86,8 +112,8 @@ public:
     void Update(float dt) override {
         for (int i = 0; i < m_ObjCount; i++) {
             RigidBody& body = m_Bodies[i];
-            body.accelerate(m_Gravity);
-            m_Constraint.Apply(*body.pos, m_ObjData->scale);
+            body.accelerate(m_Gravity/(i+1.0f));
+            m_Constraint.Apply(body, m_ObjData->scale);
             body.updatePosition(dt);
         }
     }
