@@ -107,21 +107,21 @@ public:
             p = (i+1.0f)/m_ObjCount;
             // float diffx = WIDTH/m_ObjCount;
             // m_ObjData[i].position = glm::vec2(WIDTH * p - diffx/2, HEIGHT-20);
-            m_ObjData[i].position = glm::vec2(WIDTH - 5, HEIGHT/2);
+            m_ObjData[i].position = glm::vec2(WIDTH - 10, HEIGHT/2);
             m_ObjData[i].scale = glm::vec2(5);
             m_ObjData[i].color = glm::vec4(1,1,1,1);
             m_Bodies[i].pos = &m_ObjData[i].position;
             m_Bodies[i].pos_old = m_ObjData[i].position;
             m_Bodies[i].bouncines = 1.0f - p;
-            m_Bodies[i].velocity({-5, 10});
+            m_Bodies[i].velocity(glm::vec2(-5, 10));
         }
         m_ObjData[0].color = glm::vec4(0,0.5,1,1);
         m_ObjData[m_ObjCount-1].color = glm::vec4(1,0.5,0,1);
-        m_SpawnRate = 100000000;
+        m_SpawnRate = m_ObjCount;
     }
 
     void Update(float dt) override {
-        static int enabledCount = m_ObjCount;    
+        static int enabledCount = m_ObjCount; 
         static float spawnTimer = 0;
         spawnTimer += dt;
         if (spawnTimer >= 1.0f/m_SpawnRate && enabledCount < m_ObjCount) {
