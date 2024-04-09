@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "../layer/Instancing/RendererInstanced.h"
 #include <cstdlib>
+#include <iostream>
 
 class RigidBody {
 public:
@@ -40,14 +41,28 @@ public:
         glm::vec2 displacement = -centre + *rb.pos;
         float displaceDist = glm::length(displacement);
         displacement /= displaceDist;
-        
+
         glm::vec2 vel = *rb.pos - rb.pos_old;
-        
+
         if (displaceDist > (HEIGHT/2 - scale.x)) {
             *rb.pos = centre + displacement * (HEIGHT/2 - scale.x);
             vel -= (rb.bouncines + 1) * displacement * glm::dot(vel, displacement);
             rb.velocity(vel);
         }
+        
+        // glm::vec2 N = -centre + *rb.pos;
+        // float angle = glm::atan(N.y/N.x);
+        // float Dist = glm::length(N);
+        // float radius = HEIGHT/2 - scale.x;
+        //
+        // if (N.x < 0 && N.y > 0) angle = glm::pi<float>() - angle;
+        // else if (N.x < 0 && N.y < 0) angle = glm::pi<float>() + angle;
+        // else if (N.x > 0 && N.y < 0) angle = 2 * glm::pi<float>() - angle;
+        // std::cout << "angel: " << angle << std::endl;
+        //
+        // if (Dist > radius) {
+        //     *rb.pos = glm::vec2(radius * glm::sin(angle), radius * glm::cos(angle));
+        // }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
         glm::vec2& pos = *rb.pos;
@@ -86,7 +101,7 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 100000;
+    constexpr static int m_ObjCount = 1;
     int m_SpawnRate = m_ObjCount;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
@@ -121,6 +136,9 @@ public:
         m_ObjData[0].color = glm::vec4(0,0.5,1,1);
         m_ObjData[m_ObjCount-1].color = glm::vec4(1,0.5,0,1);
         m_SpawnRate = m_ObjCount;
+
+        // std::cout << "tan y/x " << glm::tan(-1) << std::endl;
+        // std::cout << "x2, y2 " << glm::cos(glm::tan(-1)) << ", " << glm::sin(glm::tan(-1)) << std::endl;
     }
 
     void Update(float dt) override {
