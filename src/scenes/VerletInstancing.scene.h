@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 #include "../layer/Instancing/RendererInstanced.h"
-#include <cstdlib>
 #include <iostream>
 
 class RigidBody {
@@ -101,13 +100,13 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 1;
-    int m_SpawnRate = m_ObjCount;
-    Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
+    constexpr static int m_ObjCount = 10000;
+    float m_SpawnRate = m_ObjCount;
+    Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
     glm::vec2 m_Gravity;
-    RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount> m_Renderer;
+    RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+1> m_Renderer;
 public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Gravity({0, -1000}), m_Renderer(m_ObjData) 
@@ -119,31 +118,31 @@ public:
     }
     ~VerletInstanced() {
         delete [] m_ObjData;
+        delete [] m_Bodies;
     }
 
     void Start() override {
         float p = 0;
         for (int i = 0; i < m_ObjCount; i++) {
-            p = (i+1.0f)/m_ObjCount;
-            m_ObjData[i].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            m_ObjData[i].scale = glm::vec2(10);
-            m_ObjData[i].color = glm::vec4(1,1,1,1);
-            m_Bodies[i].pos = &m_ObjData[i].position;
-            m_Bodies[i].pos_old = m_ObjData[i].position;
+            p = (i+1.0f)/(m_ObjCount);
+            m_ObjData[i+1].position = glm::vec2(WIDTH/2, HEIGHT/2);
+            m_ObjData[i+1].scale = glm::vec2(10);
+            m_ObjData[i+1].color = glm::vec4(p, 0.1, 1-p, 1);
+            m_Bodies[i].pos = &m_ObjData[i+1].position;
+            m_Bodies[i].pos_old = *m_Bodies[i].pos;
             m_Bodies[i].bouncines = 1.0f-p;
-            m_Bodies[i].velocity(glm::vec2(-5, 10));
+            // m_Bodies[i].velocity(glm::vec2(glm::cos(p * 2 * glm::pi<float>()), glm::sin(p * 2 * glm::pi<float>())));
+            m_Bodies[i].velocity({-5, 10});
         }
-        m_ObjData[0].color = glm::vec4(0,0.5,1,1);
-        m_ObjData[m_ObjCount-1].color = glm::vec4(1,0.5,0,1);
+        m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
+        m_ObjData[0].scale = glm::vec2(HEIGHT/2);
+        m_ObjData[0].color = glm::vec4(0,0,0,1);
         m_SpawnRate = m_ObjCount;
-
-        // std::cout << "tan y/x " << glm::tan(-1) << std::endl;
-        // std::cout << "x2, y2 " << glm::cos(glm::tan(-1)) << ", " << glm::sin(glm::tan(-1)) << std::endl;
     }
 
+    int enabledCount = 0; 
+    float spawnTimer = 0;
     void Update(float dt) override {
-        static int enabledCount = m_ObjCount; 
-        static float spawnTimer = 0;
         spawnTimer += dt;
         if (spawnTimer >= 1.0f/m_SpawnRate && enabledCount < m_ObjCount) {
             spawnTimer = 0;
@@ -152,13 +151,13 @@ public:
         for (int i = 0; i < enabledCount; i++) {
             RigidBody& body = m_Bodies[i];
             body.accelerate(m_Gravity);
-            m_Constraint.ApplyCircle(body, m_ObjData->scale);
+            m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             body.updatePosition(dt);
         }
     }
 
     void Render() override {
-        Render::Clear(0, 0, 0, 1);
+        Render::Clear(0.9, 0.9, 0.9, 1);
         m_Renderer.Draw();
     }
 };
