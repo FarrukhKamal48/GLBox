@@ -100,7 +100,7 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 10000;
+    constexpr static int m_ObjCount = 200000;
     float m_SpawnRate = m_ObjCount;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
@@ -146,13 +146,13 @@ public:
         spawnTimer += dt;
         if (spawnTimer >= 1.0f/m_SpawnRate && enabledCount < m_ObjCount) {
             spawnTimer = 0;
-            enabledCount++;
+            enabledCount += 100;
         }
         for (int i = 0; i < enabledCount; i++) {
             RigidBody& body = m_Bodies[i];
             body.accelerate(m_Gravity);
-            m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             body.updatePosition(dt);
+            m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
         }
     }
 
