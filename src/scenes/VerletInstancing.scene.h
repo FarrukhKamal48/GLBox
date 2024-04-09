@@ -36,15 +36,17 @@ public:
         : topLeft(topLeft), bottomRight(bottomRight), centre((bottomRight.x + topLeft.x)/2, ((bottomRight.y + topLeft.y)/2))
     { }
     
-    // void Apply(glm::vec2& pos, glm::vec2 scale) {
-    //     glm::vec2 displacement = -centre + pos;
-    //     float displaceDist = glm::length(displacement);
-    //     
-    //     if (displacement.x > bottomRight.x || displacement.x < topLeft.x || displacement.y > topLeft.y || displacement.y < bottomRight.y) {
-    //         pos = centre + displacement/displaceDist * (m_Constraint.radius - obj.GetRadius());
-    //     }
-    // }
-    void Apply(RigidBody& rb, glm::vec2 scale) {
+    void ApplyCircle(RigidBody& rb, glm::vec2 scale) {
+        glm::vec2& pos = *rb.pos;
+        glm::vec2 displacement = -centre + pos;
+        float displaceDist = displacement.x*displacement.x + displacement.y*displacement.y;
+        float radius = HEIGHT/2;
+        
+        if (displaceDist > (radius - scale.x)*(radius - scale.x)) {
+            pos = centre + glm::normalize(displacement) * (radius - scale.x);
+        }
+    }
+    void ApplyRect(RigidBody& rb, glm::vec2 scale) {
         glm::vec2& pos = *rb.pos;
         glm::vec2 vel = pos - rb.pos_old;
         
@@ -131,7 +133,7 @@ public:
         for (int i = 0; i < enabledCount; i++) {
             RigidBody& body = m_Bodies[i];
             body.accelerate(m_Gravity);
-            m_Constraint.Apply(body, m_ObjData->scale);
+            m_Constraint.ApplyCircle(body, m_ObjData->scale);
             body.updatePosition(dt);
         }
     }
