@@ -38,16 +38,18 @@ public:
     { }
     
     void ApplyCircle(RigidBody& rb, glm::vec2 scale) {
-        glm::vec2 S = -centre + *rb.pos;
-        float A = atan(S.y/S.x);
-        float D = (S.x * S.x) + (S.y * S.y);
-        float R = HEIGHT/2 - scale.x;
-        if (S.x < 0) R *= -1;
+        glm::vec2 displace = -centre + *rb.pos;
+        float theta = atan(displace.y/displace.x);
+        float sqrtDist = (displace.x * displace.x) + (displace.y * displace.y);
+        float radius = HEIGHT/2 - scale.x;
+        if (displace.x < 0) radius *= -1;
+        glm::vec2 vel = *rb.pos - rb.pos_old;
 
-        if (D > R*R) {
-            *rb.pos = centre + R * glm::vec2(glm::cos(A), glm::sin(A));
-            // vel -= (rb.bouncines + 1) * displacement * glm::dot(vel, displacement);
-            // rb.velocity(vel);
+        if (sqrtDist > radius*radius) {
+            *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
+            displace = glm::normalize(displace);
+            vel -= (rb.bouncines + 1) * displace * glm::dot(vel, displace);
+            rb.velocity(vel);
         }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
@@ -87,7 +89,7 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 10000;
+    constexpr static int m_ObjCount = 100000;
     float m_SpawnRate = m_ObjCount;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
