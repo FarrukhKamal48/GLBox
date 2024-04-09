@@ -38,39 +38,16 @@ public:
     { }
     
     void ApplyCircle(RigidBody& rb, glm::vec2 scale) {
-        // glm::vec2 displacement = -centre + *rb.pos;
-        // float displaceDist = glm::length(displacement);
-        // displacement /= displaceDist;
-        //
-        // glm::vec2 vel = *rb.pos - rb.pos_old;
-        //
-        // if (displaceDist > (HEIGHT/2 - scale.x)) {
-        //     *rb.pos = centre + displacement * (HEIGHT/2 - scale.x);
-        //     vel -= (rb.bouncines + 1) * displacement * glm::dot(vel, displacement);
-        //     rb.velocity(vel);
-        // }
-        
-        glm::vec2 N = -centre + *rb.pos;
-        float theta = atan(N.y/N.x);
-        float Dist = glm::length(N);
-        float radius = HEIGHT/2 - scale.x;
+        glm::vec2 S = -centre + *rb.pos;
+        float A = atan(S.y/S.x);
+        float D = (S.x * S.x) + (S.y * S.y);
+        float R = HEIGHT/2 - scale.x;
+        if (S.x < 0) R *= -1;
 
-        if (theta < 0) theta = 2 * PI + theta;
-        if (N.x < 0 && N.y > 0) theta = PI - theta;
-        else if (N.x < 0 && N.y < 0) theta = PI + theta;
-        else if (N.x > 0 && N.y < 0) theta = 2 * PI - theta;
-
-        if (Dist > radius) {
-            if (theta == 0 || theta == 2 * PI)  *rb.pos = centre + glm::vec2(radius, 0);
-            else if (theta == PI/2)             *rb.pos = centre + glm::vec2(0, radius);
-            else if (theta == PI)               *rb.pos = centre + glm::vec2(-radius, 0);
-            else if (theta == 1.5f * PI)        *rb.pos = centre + glm::vec2(0, -radius);
-            else if (theta > 2 * PI) {
-                theta -= 2 * PI;
-                *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
-            }
-            else 
-                *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
+        if (D > R*R) {
+            *rb.pos = centre + R * glm::vec2(glm::cos(A), glm::sin(A));
+            // vel -= (rb.bouncines + 1) * displacement * glm::dot(vel, displacement);
+            // rb.velocity(vel);
         }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
@@ -110,7 +87,7 @@ public:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 1;
+    constexpr static int m_ObjCount = 10000;
     float m_SpawnRate = m_ObjCount;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
