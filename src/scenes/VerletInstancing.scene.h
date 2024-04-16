@@ -87,7 +87,7 @@ public:
 
 struct SimData
 {
-    unsigned int EnabledCount = 1;
+    int EnabledCount = 1;
     float SpawnRate = 100;
     float SpawnTimer = 0;
     float SpawnAngleRate = 2 * PI;
@@ -100,7 +100,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 1000;
+    constexpr static int m_ObjCount = 10000;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -121,23 +121,25 @@ public:
     }
 
     void Start() override {
+        m_SimData.SpawnRate = m_ObjCount * 500;
+        m_SimData.SpawnAngleRate = m_ObjCount/400.0f + 100;
+        m_SimData.SpawnAngleDisplacement = -PI/4;
+        
         float p = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             p = (i+1.0f)/(m_ObjCount);
             m_ObjData[i+1].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            m_ObjData[i+1].scale = glm::vec2(10);
+            m_ObjData[i+1].scale = 5.0f * glm::vec2(2 + glm::sin(p * 200 * PI));
             m_ObjData[i+1].color = glm::vec4(p, 0.1, 1-p, 1);
             m_Bodies[i].pos = &m_ObjData[i+1].position;
             m_Bodies[i].pos_old = *m_Bodies[i].pos;
-            m_Bodies[i].bouncines = 1.0f-p;
+            m_Bodies[i].bouncines = p;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(p * m_SimData.SpawnAngleRate) - 1);
-            m_Bodies[i].velocity(10.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].velocity(30.0f * glm::vec2(cos(theta), sin(theta)));
         }
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
         m_ObjData[0].scale = glm::vec2(HEIGHT/2);
         m_ObjData[0].color = glm::vec4(0,0,0,1);
-        
-        m_SimData.SpawnRate = m_ObjCount;
     }
 
     void Update(float dt) override {
