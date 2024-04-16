@@ -3,6 +3,7 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include <iostream>
 #define PI glm::pi<float>()
+#define TwoPI 2 * glm::pi<float>()
 
 class RigidBody {
 public:
@@ -88,11 +89,13 @@ public:
 struct SimData
 {
     int EnabledCount = 1;
-    float SpawnRate = 100;
+    float SpawnFreq = 100;
     float SpawnTimer = 0;
-    float SpawnAngleRate = 2 * PI;
     float SpawnAngle = PI/2;
-    float SpawnAngleDisplacement = 0;
+    float SpawnAngleDisplacement = -PI/4;
+    float SpawnAngleFreq = TwoPI;
+    float SpawnRadiusFreq = 1/100.0f * TwoPI;
+    float SpawnColorFreq = 1/100.0f * TwoPI;
     glm::vec2 Gravity = {0, -1000};
 };
 
@@ -100,7 +103,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 10000;
+    constexpr static int m_ObjCount = 400;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -121,30 +124,46 @@ public:
     }
 
     void Start() override {
-        m_SimData.SpawnRate = m_ObjCount * 500;
-        m_SimData.SpawnAngleRate = m_ObjCount/400.0f + 100;
+        m_SimData.SpawnFreq = m_ObjCount;
         m_SimData.SpawnAngleDisplacement = -PI/4;
+        m_SimData.SpawnAngleFreq = 1/100.0f * TwoPI;
+        m_SimData.SpawnRadiusFreq = 1/175.0f * TwoPI;
+        m_SimData.SpawnColorFreq = 1/50.0f;
         
         float p = 0;
+        float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             p = (i+1.0f)/(m_ObjCount);
+            ip = i + 1.0f;
             m_ObjData[i+1].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            m_ObjData[i+1].scale = 5.0f * glm::vec2(2 + glm::sin(p * 200 * PI));
+            m_ObjData[i+1].scale = 5.0f * glm::vec2(2 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            // m_ObjData[i+1].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.1, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             m_ObjData[i+1].color = glm::vec4(p, 0.1, 1-p, 1);
             m_Bodies[i].pos = &m_ObjData[i+1].position;
             m_Bodies[i].pos_old = *m_Bodies[i].pos;
-            m_Bodies[i].bouncines = p;
-            float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(p * m_SimData.SpawnAngleRate) - 1);
-            m_Bodies[i].velocity(30.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].bouncines = 0;
+            float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
+            m_Bodies[i].velocity(25.0f * glm::vec2(cos(theta), sin(theta)));
         }
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
         m_ObjData[0].scale = glm::vec2(HEIGHT/2);
         m_ObjData[0].color = glm::vec4(0,0,0,1);
     }
 
+    void Collide(RigidBody& rbA, float radiusA, RigidBody& rbB, float radiusB) {
+        glm::vec2 axis = -*rbA.pos + *rbB.pos;
+        float dist = glm::length(axis);
+
+        if (dist < radiusA + radiusB) {
+            float overlap = radiusA + radiusB - dist;
+            *rbA.pos -= axis/dist * overlap/2.0f;
+            *rbB.pos += axis/dist * overlap/2.0f;
+        }
+    }
+
     void Update(float dt) override {
         m_SimData.SpawnTimer += dt;
-        if (m_SimData.SpawnTimer >= 1.0f/m_SimData.SpawnRate && m_SimData.EnabledCount < m_ObjCount) {
+        if (m_SimData.SpawnTimer >= 1.0f/m_SimData.SpawnFreq && m_SimData.EnabledCount < m_ObjCount) {
             m_SimData.SpawnTimer = 0;
             m_SimData.EnabledCount++;
         }
@@ -152,6 +171,10 @@ public:
             RigidBody& body = m_Bodies[i];
             body.accelerate(m_SimData.Gravity);
             body.updatePosition(dt);
+            for (int j = i+1; j < m_SimData.EnabledCount; j++) { 
+                if (i == j) continue;
+                Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
+            }
             m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
         }
     }
