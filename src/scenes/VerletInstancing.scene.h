@@ -96,6 +96,8 @@ struct SimData
     float SpawnAngleFreq = TwoPI;
     float SpawnRadiusFreq = 1/100.0f * TwoPI;
     float SpawnColorFreq = 1/100.0f * TwoPI;
+    int subSteps = 2;
+    float subDt = 0;
     glm::vec2 Gravity = {0, -1000};
 };
 
@@ -103,7 +105,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 300;
+    constexpr static int m_ObjCount = 500;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -162,20 +164,23 @@ public:
     }
 
     void Update(float dt) override {
+        m_SimData.subDt = dt / (float)m_SimData.subSteps;
         m_SimData.SpawnTimer += dt;
         if (m_SimData.SpawnTimer >= 1.0f/m_SimData.SpawnFreq && m_SimData.EnabledCount < m_ObjCount) {
             m_SimData.SpawnTimer = 0;
             m_SimData.EnabledCount++;
         }
-        for (int i = 0; i < m_SimData.EnabledCount; i++) {
-            RigidBody& body = m_Bodies[i];
-            body.accelerate(m_SimData.Gravity);
-            body.updatePosition(dt);
-            for (int j = i+1; j < m_SimData.EnabledCount; j++) { 
-                if (i == j) continue;
-                Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
+        for (int s = 0; s < m_SimData.subSteps; s++) {
+            for (int i = 0; i < m_SimData.EnabledCount; i++) {
+                RigidBody& body = m_Bodies[i];
+                body.accelerate(m_SimData.Gravity);
+                body.updatePosition(m_SimData.subDt);
+                for (int j = i+1; j < m_SimData.EnabledCount; j++) { 
+                    if (i == j) continue;
+                    Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
+                }
+                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             }
-            m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
         }
     }
 
