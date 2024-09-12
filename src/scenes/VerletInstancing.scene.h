@@ -127,7 +127,7 @@ public:
     }
 
     void Start() override {
-        m_SimData.SpawnFreq = m_ObjCount/1.0f;
+        m_SimData.SpawnFreq = m_ObjCount/10.0f;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/100.0f * TwoPI;
         m_SimData.SpawnRadiusFreq = 1/175.0f * TwoPI;
@@ -147,7 +147,7 @@ public:
             m_Bodies[i].bouncines = 0.0f;
             m_Bodies[i].boundBouncines = 0.0f;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Bodies[i].velocity(15.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].velocity(10.0f * glm::vec2(cos(theta), sin(theta)));
         }
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
         m_ObjData[0].scale = glm::vec2(HEIGHT/2);
