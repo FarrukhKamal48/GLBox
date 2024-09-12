@@ -103,7 +103,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 400;
+    constexpr static int m_ObjCount = 300;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+1];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount];
     Constraint m_Constraint;
@@ -124,7 +124,7 @@ public:
     }
 
     void Start() override {
-        m_SimData.SpawnFreq = m_ObjCount;
+        m_SimData.SpawnFreq = m_ObjCount/10.0f;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/100.0f * TwoPI;
         m_SimData.SpawnRadiusFreq = 1/175.0f * TwoPI;
@@ -143,7 +143,7 @@ public:
             m_Bodies[i].pos_old = *m_Bodies[i].pos;
             m_Bodies[i].bouncines = 0;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Bodies[i].velocity(25.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].velocity(10.0f * glm::vec2(cos(theta), sin(theta)));
         }
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
         m_ObjData[0].scale = glm::vec2(HEIGHT/2);
