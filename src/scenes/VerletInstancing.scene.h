@@ -11,6 +11,7 @@ public:
     glm::vec2* pos;
     glm::vec2 acceleration;
     float bouncines;
+    float boundBouncines;
 
     void updatePosition(float dt) {
         const glm::vec2 deltaPos = *pos - pos_old;
@@ -49,7 +50,7 @@ public:
         if (sqrtDist > radius*radius) {
             *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
             displace = glm::normalize(displace);
-            vel -= (rb.bouncines + 1) * displace * glm::dot(vel, displace);
+            vel -= (rb.boundBouncines + 1) * displace * glm::dot(vel, displace);
             rb.velocity(vel);
         }
     }
@@ -126,7 +127,7 @@ public:
     }
 
     void Start() override {
-        m_SimData.SpawnFreq = m_ObjCount/10.0f;
+        m_SimData.SpawnFreq = m_ObjCount/1.0f;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/100.0f * TwoPI;
         m_SimData.SpawnRadiusFreq = 1/175.0f * TwoPI;
@@ -143,9 +144,10 @@ public:
             m_ObjData[i+1].color = glm::vec4(p, 0.1, 1-p, 1);
             m_Bodies[i].pos = &m_ObjData[i+1].position;
             m_Bodies[i].pos_old = *m_Bodies[i].pos;
-            m_Bodies[i].bouncines = 0;
+            m_Bodies[i].bouncines = 0.0f;
+            m_Bodies[i].boundBouncines = 0.0f;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Bodies[i].velocity(10.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].velocity(15.0f * glm::vec2(cos(theta), sin(theta)));
         }
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
         m_ObjData[0].scale = glm::vec2(HEIGHT/2);
@@ -158,8 +160,16 @@ public:
 
         if (dist < radiusA + radiusB) {
             float overlap = radiusA + radiusB - dist;
+            
             *rbA.pos -= axis/dist * overlap/2.0f;
+            glm::vec2 velA = *rbA.pos - rbA.pos_old;
+            velA -= (rbA.bouncines) * glm::length(velA);
+            rbA.velocity(velA);
+                
             *rbB.pos += axis/dist * overlap/2.0f;
+            glm::vec2 velB = *rbB.pos - rbB.pos_old;
+            velA -= (rbB.bouncines) * glm::length(velB);
+            rbB.velocity(velB);
         }
     }
 
