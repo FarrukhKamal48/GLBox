@@ -16,7 +16,7 @@ namespace Input {
 
 void Init(GLFWwindow* _window) {
     window = _window;
-    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     // glfwSetMouseButtonCallback(_window, mouse_button_callback);
 }
 

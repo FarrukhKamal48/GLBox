@@ -118,7 +118,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 400;
+    constexpr static int m_ObjCount = 2000;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     Constraint m_Constraint;
@@ -151,9 +151,10 @@ public:
             p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
             m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            m_ObjData[i+2].scale = 5.0f * glm::vec2(2 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            // m_ObjData[i+1].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.1, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
-            m_ObjData[i+2].color = glm::vec4(p, 0.1, 1-p, 1);
+            // m_ObjData[i+2].scale = 5.0f * glm::vec2(2 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            m_ObjData[i+2].scale = glm::vec2(10.0f);
+            m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
+            // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             m_Bodies[i+1].pos = &m_ObjData[i+2].position;
             m_Bodies[i+1].pos_old = *m_Bodies[i+1].pos;
             m_Bodies[i+1].bouncines = 0.0f;
@@ -170,7 +171,7 @@ public:
         // set graphic for god hand
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         m_ObjData[1].scale = glm::vec2(50.0f);
-        m_ObjData[1].color = glm::vec4(1,1,1,1);
+        m_ObjData[1].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].pos = &m_ObjData[1].position;
         m_Bodies[0].pos_old = *m_Bodies[0].pos;
         m_Bodies[0].bouncines = 0.0f;
