@@ -1,24 +1,27 @@
 #include "Input.h"
 
+static GLFWwindow* window;
 static double MousePosX;
 static double MousePosY;
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+    // if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         glfwGetCursorPos(window, &MousePosX, &MousePosY);
-    }
+    // }
 }
 
 namespace Input {
 
 
-void Init(GLFWwindow* window) {
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
+void Init(GLFWwindow* _window) {
+    window = _window;
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetMouseButtonCallback(_window, mouse_button_callback);
 }
 
 glm::vec2 GetMousePos() {
+    glfwGetCursorPos(window, &MousePosX, &MousePosY);
     return glm::vec2(MousePosX, MousePosY);
 }
 
