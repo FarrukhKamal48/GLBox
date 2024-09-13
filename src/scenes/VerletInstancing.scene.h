@@ -60,6 +60,7 @@ public:
 
         if (sqrtDist > radius*radius) {
             *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
+            // rb.pos_old = glm::vec2(0);
             displace = glm::normalize(displace);
             vel -= (rb.boundBouncines + 1) * displace * glm::dot(vel, displace);
             rb.velocity(vel);
@@ -110,7 +111,7 @@ struct SimData
     float SpawnAngleFreq = TwoPI;
     float SpawnRadiusFreq = 1/100.0f * TwoPI;
     float SpawnColorFreq = 1/100.0f * TwoPI;
-    float maxSpeed = 100;
+    float maxSpeed = 10;
     int subSteps = 5;
     float subDt = 0;
     glm::vec2 Gravity = {0, -1000};
@@ -209,7 +210,7 @@ public:
         // float speedSqared = (rb.pos->x - rb.pos_old.x)*(rb.pos->x - rb.pos_old.x) + (rb.pos->y - rb.pos_old.y)*(rb.pos->y - rb.pos_old.y);
         float speedSqared = glm::length(*rb.pos - rb.pos_old);
         if (speedSqared > m_SimData.maxSpeed) {
-            rb.velocity(glm::vec2((*rb.pos - rb.pos_old)/speedSqared * m_SimData.maxSpeed));
+            rb.velocity(glm::vec2((*rb.pos - rb.pos_old))/speedSqared * m_SimData.maxSpeed);
         }
     }
 
@@ -230,6 +231,7 @@ public:
                     if (i == j) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                     // ApplyMaxSpeed(m_Bodies[j]);
+                    // m_Constraint.ApplyCircle(m_Bodies[j], m_ObjData[j+1].scale);
                 }
                 m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
                 // ApplyMaxSpeed(body);
@@ -237,10 +239,15 @@ public:
         }
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         
+        // if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
+        //     m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
+        // else
+        //     m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
+        
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
+            m_ObjData[1].scale = glm::vec2(8.0f);
         else
-            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
+            m_ObjData[1].scale = glm::vec2(50.0f);
     }
 
     glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float p) {
