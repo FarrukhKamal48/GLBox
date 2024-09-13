@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
+#include <GLFW/glfw3.h>
 // #include <iostream>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -235,6 +236,15 @@ public:
             }
         }
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        
+        if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
+            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
+        else
+            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
+    }
+
+    glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float p) {
+        return a + p * (b-a);
     }
 
     void Render() override {
