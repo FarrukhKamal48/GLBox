@@ -46,7 +46,7 @@ int main (int argc, char *argv[])
     activeScene.Start();
 
     double lastTime = glfwGetTime();
-    double deltaTime = 0.016;
+    double deltaTime = 0.002;
     
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
