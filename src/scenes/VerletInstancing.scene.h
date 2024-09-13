@@ -109,6 +109,7 @@ struct SimData
     float SpawnAngleFreq = TwoPI;
     float SpawnRadiusFreq = 1/100.0f * TwoPI;
     float SpawnColorFreq = 1/100.0f * TwoPI;
+    float maxSpeed = 100;
     int subSteps = 5;
     float subDt = 0;
     glm::vec2 Gravity = {0, -1000};
@@ -118,7 +119,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 2000;
+    constexpr static int m_ObjCount = 2500;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     Constraint m_Constraint;
@@ -152,7 +153,7 @@ public:
             ip = i + 1.0f;
             m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
             // m_ObjData[i+2].scale = 5.0f * glm::vec2(2 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_ObjData[i+2].scale = glm::vec2(10.0f);
+            m_ObjData[i+2].scale = glm::vec2(8.0f);
             m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             m_Bodies[i+1].pos = &m_ObjData[i+2].position;
@@ -203,6 +204,14 @@ public:
         }
     }
 
+    void ApplyMaxSpeed (RigidBody& rb) {
+        // float speedSqared = (rb.pos->x - rb.pos_old.x)*(rb.pos->x - rb.pos_old.x) + (rb.pos->y - rb.pos_old.y)*(rb.pos->y - rb.pos_old.y);
+        float speedSqared = glm::length(*rb.pos - rb.pos_old);
+        if (speedSqared > m_SimData.maxSpeed) {
+            rb.velocity(glm::vec2((*rb.pos - rb.pos_old)/speedSqared * m_SimData.maxSpeed));
+        }
+    }
+
     void Update(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
         m_SimData.SpawnTimer += dt;
@@ -219,8 +228,10 @@ public:
                 for (int j = i+1; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
+                    // ApplyMaxSpeed(m_Bodies[j]);
                 }
                 m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
+                // ApplyMaxSpeed(body);
             }
         }
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
