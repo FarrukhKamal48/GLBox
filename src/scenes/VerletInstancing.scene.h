@@ -104,8 +104,8 @@ public:
 struct SimData
 {
     int EnabledCount = 1;
-    float SpawnFreq = 100;
-    float SpawnTimer = 0;
+    double SpawnFreq = 999999999999999;
+    double SpawnTimer = 0;
     float SpawnAngle = PI/2;
     float SpawnAngleDisplacement = -PI/4;
     float SpawnAngleFreq = TwoPI;
@@ -142,10 +142,10 @@ public:
     }
 
     void Start() override {
-        m_SimData.SpawnFreq = m_ObjCount/10.0f;
+        m_SimData.SpawnFreq = 200;
         m_SimData.SpawnAngleDisplacement = -PI/4;
-        m_SimData.SpawnAngleFreq = 1/100.0f * TwoPI;
-        m_SimData.SpawnRadiusFreq = 1/175.0f * TwoPI;
+        m_SimData.SpawnAngleFreq = 1/600.0f * TwoPI;
+        m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
         
         float p = 0;
@@ -154,8 +154,8 @@ public:
             p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
             m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            // m_ObjData[i+2].scale = 5.0f * glm::vec2(2 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_ObjData[i+2].scale = glm::vec2(8.0f);
+            m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            // m_ObjData[i+2].scale = glm::vec2(8.0f);
             m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             m_Bodies[i+1].pos = &m_ObjData[i+2].position;
@@ -164,7 +164,7 @@ public:
             m_Bodies[i+1].boundBouncines = 0.0f;
             m_Bodies[i+1].iskinematic = false;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Bodies[i+1].velocity(10.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i+1].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
@@ -187,20 +187,21 @@ public:
         glm::vec2 axis = -*rbA.pos + *rbB.pos;
         float dist = glm::length(axis);
 
-        if (dist < radiusA + radiusB) {
+        if (dist <= radiusA + radiusB) {
             float overlap = radiusA + radiusB - dist;
+            axis /= dist;
             
             if (!rbA.iskinematic) {
-                *rbA.pos -= axis/dist * overlap/2.0f;
+                *rbA.pos -= axis * overlap/2.0f;
                 glm::vec2 velA = *rbA.pos - rbA.pos_old;
-                velA -= (rbA.bouncines) * glm::length(velA);
+                velA += (rbA.bouncines) * velA;
                 rbA.velocity(velA);
             }
             
             if (!rbB.iskinematic) {
-                *rbB.pos += axis/dist * overlap/2.0f;
+                *rbB.pos += axis * overlap/2.0f;
                 glm::vec2 velB = *rbB.pos - rbB.pos_old;
-                velB -= (rbB.bouncines) * glm::length(velB);
+                velB += (rbB.bouncines) * velB;
                 rbB.velocity(velB);
             }
         }
@@ -216,13 +217,14 @@ public:
 
     void Update(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
-        m_SimData.SpawnTimer += dt;
-        if (m_SimData.SpawnTimer >= 1.0f/m_SimData.SpawnFreq && m_SimData.EnabledCount < m_ObjCount) {
-            m_SimData.SpawnTimer = 0;
-            m_SimData.EnabledCount++;
-        }
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        
         for (int s = 0; s < m_SimData.subSteps; s++) {
+            m_SimData.SpawnTimer += m_SimData.subDt;
+            if (m_SimData.SpawnTimer >= 1.0/m_SimData.SpawnFreq && m_SimData.EnabledCount < m_ObjCount) {
+                m_SimData.SpawnTimer = 0;
+                m_SimData.EnabledCount++;
+            }
             for (int i = 0; i < m_SimData.EnabledCount+1; i++) {
                 RigidBody& body = m_Bodies[i];
                 body.accelerate(m_SimData.Gravity);
