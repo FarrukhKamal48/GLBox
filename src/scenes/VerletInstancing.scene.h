@@ -3,6 +3,8 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
 #include <GLFW/glfw3.h>
+#include <array>
+#include <vector>
 // #include <iostream>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -15,6 +17,7 @@ public:
     float bouncines;
     float boundBouncines;
     bool iskinematic;
+    bool isBound;
 
     void updatePosition(float dt) {
         if (iskinematic) 
@@ -49,7 +52,7 @@ public:
     { }
     
     void ApplyCircle(RigidBody& rb, glm::vec2 scale) {
-        if (rb.iskinematic)
+        if (!rb.isBound)
             return;
         glm::vec2 displace = -centre + *rb.pos;
         float theta = atan(displace.y/displace.x);
@@ -67,7 +70,7 @@ public:
         }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
-        if (rb.iskinematic)
+        if (!rb.isBound)
             return;
         glm::vec2& pos = *rb.pos;
         glm::vec2 vel = pos - rb.pos_old;
@@ -117,6 +120,28 @@ struct SimData
     glm::vec2 Gravity = {0, -1000};
 };
 
+template<int rows, int cols, int width, int height>
+class Grid {
+public:
+    Grid() : 
+        m_CellWidth((float)width/cols), 
+        m_CellHeight((float)height/rows) 
+    { }
+    ~Grid() { }
+    
+    void AddObject(glm::vec2 pos, int objID) {
+        int index = (pos.y / m_CellHeight) * cols + (pos.x / m_CellWidth);
+        m_Grid[index].push_back(objID);
+    }
+    std::vector<int> Get(int r, int c) {
+        return m_Grid[r * cols + c];
+    }
+
+private:
+    std::array<std::vector<int>, rows * cols> m_Grid;
+    float m_CellWidth;
+    float m_CellHeight;
+};
 
 namespace Scene {
 class VerletInstanced : public Scene {
@@ -127,6 +152,7 @@ private:
     Constraint m_Constraint;
     SimData m_SimData;
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+2> m_Renderer;
+    Grid<4, 7, (int)WIDTH, (int)HEIGHT> m_Grid;
 public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData) 
@@ -154,8 +180,8 @@ public:
             p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
             m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
-            m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            // m_ObjData[i+2].scale = glm::vec2(8.0f);
+            // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            m_ObjData[i+2].scale = glm::vec2(8.0f);
             m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             m_Bodies[i+1].pos = &m_ObjData[i+2].position;
@@ -163,8 +189,10 @@ public:
             m_Bodies[i+1].bouncines = 0.0f;
             m_Bodies[i+1].boundBouncines = 0.0f;
             m_Bodies[i+1].iskinematic = false;
+            m_Bodies[i+1].isBound = true;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
             m_Bodies[i+1].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Grid.AddObject(m_ObjData[i+2].position, i+2);
         }
         // set graphic for contraint
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
@@ -180,6 +208,7 @@ public:
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
         m_Bodies[0].iskinematic = true;
+        m_Bodies[0].isBound = false;
         m_Bodies[0].velocity(glm::vec2(0.0f));
     }
 
@@ -208,7 +237,6 @@ public:
     }
 
     void ApplyMaxSpeed (RigidBody& rb) {
-        // float speedSqared = (rb.pos->x - rb.pos_old.x)*(rb.pos->x - rb.pos_old.x) + (rb.pos->y - rb.pos_old.y)*(rb.pos->y - rb.pos_old.y);
         float speedSqared = glm::length(*rb.pos - rb.pos_old);
         if (speedSqared > m_SimData.maxSpeed) {
             rb.velocity(glm::vec2((*rb.pos - rb.pos_old))/speedSqared * m_SimData.maxSpeed);
@@ -217,7 +245,6 @@ public:
 
     void Update(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
-        m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         
         for (int s = 0; s < m_SimData.subSteps; s++) {
             m_SimData.SpawnTimer += m_SimData.subDt;
@@ -229,27 +256,20 @@ public:
                 RigidBody& body = m_Bodies[i];
                 body.accelerate(m_SimData.Gravity);
                 body.updatePosition(m_SimData.subDt);
-                for (int j = i+1; j < m_SimData.EnabledCount+1; j++) { 
+                for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
-                    // ApplyMaxSpeed(m_Bodies[j]);
-                    // m_Constraint.ApplyCircle(m_Bodies[j], m_ObjData[j+1].scale);
                 }
                 m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
-                // ApplyMaxSpeed(body);
             }
         }
-        m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
-        
-        // if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-        //     m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
-        // else
-        //     m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
+        m_ObjData[1].position = Lerp(m_ObjData[1].position, 
+                                     glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
         
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-            m_ObjData[1].scale = glm::vec2(8.0f);
+            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
         else
-            m_ObjData[1].scale = glm::vec2(50.0f);
+            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
     glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float p) {
