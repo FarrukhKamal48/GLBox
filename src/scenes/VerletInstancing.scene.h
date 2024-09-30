@@ -120,19 +120,93 @@ struct SimData
     glm::vec2 Gravity = {0, -1000};
 };
 
+struct Boundry
+{
+    glm::vec2 centre;
+    glm::vec2 scale;
+
+    bool contains(glm::vec2 point) {
+        return (
+            point.x <= centre.x + scale.x/2 && 
+            point.x >= centre.x - scale.x/2 && 
+            point.y <= centre.y + scale.y/2 && 
+            point.y >= centre.y - scale.y/2
+        );
+    }
+};
+
+class QuadTree {
+public:
+    QuadTree(glm::vec2 centre, glm::vec2 scale, unsigned int cellCapacity) : 
+        m_Boundry({centre, scale}), m_CellCapacity(cellCapacity), isDivided(false) {
+        for (int i=0; i < 4; i++)
+            m_Cells[i] = nullptr;
+    }
+    ~QuadTree() {
+        Delete(this);
+    }
+
+    bool Insert(glm::vec2 pos, int objID) {
+        if (!m_Boundry.contains(pos))
+            return false;
+        if (m_Objects.size() < m_CellCapacity) {
+            m_Objects.push_back(objID);
+            return true;
+        }
+        if (!isDivided) {
+            SubDivide();
+        }
+        for (int i=0; i < 4; i++) {
+            if (m_Cells[i]->Insert(pos, objID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+private:
+    Boundry m_Boundry;
+    unsigned int m_CellCapacity;
+    bool isDivided;
+    // union {
+        std::vector<int> m_Objects;
+        QuadTree* m_Cells[4];
+    // };
+
+    void SubDivide() {
+        glm::vec2& C = m_Boundry.centre;
+        glm::vec2& S = m_Boundry.scale;
+        m_Cells[0] = new QuadTree(glm::vec2(C + S/4.0f), S/2.0f, m_CellCapacity);
+        m_Cells[1] = new QuadTree(glm::vec2(C.x - S.x/4.0f, C.y + S.y/4.0f), S/2.0f, m_CellCapacity);
+        m_Cells[2] = new QuadTree(glm::vec2(C.x + S.x/4.0f, C.y - S.y/4.0f), S/2.0f, m_CellCapacity);
+        m_Cells[3] = new QuadTree(glm::vec2(C - S/4.0f), S/2.0f, m_CellCapacity);
+        isDivided = true;
+    }
+
+    void Delete(QuadTree* tree) {
+        if (tree->m_Cells[0] == nullptr) // if one child cell is null, all child cells are null 
+            return;
+        for (int i=0; i < 4; i++) {
+            Delete(m_Cells[i]); // delete all children's child cells
+            delete m_Cells[i];  // delete chilren
+        }
+    }
+};
+
 
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 2500;
+    constexpr static int m_ObjCount = 4;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     Constraint m_Constraint;
     SimData m_SimData;
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+2> m_Renderer;
+    QuadTree m_QTree;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData) 
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData), m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}, 4) 
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
@@ -151,10 +225,10 @@ public:
         m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
         
-        float p = 0;
+        // float p = 0;
         float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
-            p = (i+1.0f)/(m_ObjCount);
+            // p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
             m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
@@ -169,6 +243,7 @@ public:
             m_Bodies[i+1].isBound = true;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
             m_Bodies[i+1].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
+            m_QTree.Insert(m_ObjData[i+2].position, i+2);
         }
         // set graphic for contraint
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
