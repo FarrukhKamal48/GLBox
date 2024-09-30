@@ -120,28 +120,6 @@ struct SimData
     glm::vec2 Gravity = {0, -1000};
 };
 
-template<int rows, int cols, int width, int height>
-class Grid {
-public:
-    Grid() : 
-        m_CellWidth((float)width/cols), 
-        m_CellHeight((float)height/rows) 
-    { }
-    ~Grid() { }
-    
-    void AddObject(glm::vec2 pos, int objID) {
-        int index = (pos.y / m_CellHeight) * cols + (pos.x / m_CellWidth);
-        m_Grid[index].push_back(objID);
-    }
-    std::vector<int> Get(int r, int c) {
-        return m_Grid[r * cols + c];
-    }
-
-private:
-    std::array<std::vector<int>, rows * cols> m_Grid;
-    float m_CellWidth;
-    float m_CellHeight;
-};
 
 namespace Scene {
 class VerletInstanced : public Scene {
@@ -152,7 +130,6 @@ private:
     Constraint m_Constraint;
     SimData m_SimData;
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+2> m_Renderer;
-    Grid<4, 7, (int)WIDTH, (int)HEIGHT> m_Grid;
 public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData) 
@@ -192,7 +169,6 @@ public:
             m_Bodies[i+1].isBound = true;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
             m_Bodies[i+1].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
-            m_Grid.AddObject(m_ObjData[i+2].position, i+2);
         }
         // set graphic for contraint
         m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
@@ -280,6 +256,7 @@ public:
         Render::Clear(0.9, 0.9, 0.9, 1);
         m_Renderer.Draw();
     }
+
 };
 }
 
