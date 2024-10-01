@@ -30,47 +30,41 @@ public:
     bool isDivided;
 public:
     QuadTree(glm::vec2 centre, glm::vec2 scale) : 
-        isDivided(false), m_Boundry({centre, scale}), m_ObjectCount(0) {
-        for (int i=0; i < 4; i++)
-            m_Cells[i] = nullptr;
+        isDivided(false), m_Boundry({centre, scale}), m_Count(0) {
+        m_Cells[0] = nullptr; m_Cells[1] = nullptr;
+        m_Cells[2] = nullptr; m_Cells[3] = nullptr;
     }
     ~QuadTree() {
         // Delete(this);
     }
 
-    bool Insert(glm::vec2* pos, int objID) {
-        if (!m_Boundry.contains(*pos))
+    bool Insert(glm::vec2 pointPos, int pointID) {
+        if (!m_Boundry.contains(pointPos))
             return false;
-        if (m_ObjectCount < Capacity) {
-            m_ObjectCount++;
-            m_Objects[m_ObjectCount-1].ID = objID;
-            m_Objects[m_ObjectCount-1].pos = pos;
+        if (m_Count < Capacity) {
+            m_Count++;
+            m_Points[m_Count-1].ID = pointID;
+            m_Points[m_Count-1].pos = pointPos;
             return true;
         }
         if (!isDivided) {
             SubDivide();
         }
-        if (m_Cells[0]->Insert(pos, objID))
-            return true;
-        if (m_Cells[1]->Insert(pos, objID))
-            return true;
-        if (m_Cells[2]->Insert(pos, objID))
-            return true;
-        if (m_Cells[3]->Insert(pos, objID))
-            return true;
+        if (m_Cells[0]->Insert(pointPos, pointID)) return true;
+        if (m_Cells[1]->Insert(pointPos, pointID)) return true;
+        if (m_Cells[2]->Insert(pointPos, pointID)) return true;
+        if (m_Cells[3]->Insert(pointPos, pointID)) return true;
         return false;
     }
 
     void Query(Boundry& range, std::vector<int>& result) {
         if (!m_Boundry.intersects(range))
             return;
-
-        for (int i = 0; i < m_ObjectCount; i++) {
-            if (range.contains(*m_Objects[i].pos)) {
-                result.push_back(m_Objects[i].ID);
+        for (int i = 0; i < m_Count; i++) {
+            if (range.contains(m_Points[i].pos)) {
+                result.push_back(m_Points[i].ID);
             }
         }
-
         if (isDivided) {
             m_Cells[0]->Query(range, result);
             m_Cells[1]->Query(range, result);
@@ -80,33 +74,31 @@ public:
     }
 
 private:
-    Boundry m_Boundry;
-    unsigned int m_ObjectCount;
-    struct point {
+    struct Point {
         int ID;
-        glm::vec2* pos;
-    };
-    union {
-        point m_Objects[Capacity];
-        QuadTree<Capacity>* m_Cells[4];
+        glm::vec2 pos;
     };
 
+private:
+    Boundry m_Boundry;
+    QuadTree<Capacity>* m_Cells[4];
+    unsigned int m_Count;
+    Point m_Points[Capacity];
+
     void SubDivide() {
-        glm::vec2& C = m_Boundry.centre;
-        glm::vec2& S = m_Boundry.scale;
-        m_Cells[0] = new QuadTree<Capacity>(glm::vec2(C + S/4.0f), S/2.0f);
-        m_Cells[1] = new QuadTree<Capacity>(glm::vec2(C.x - S.x/4.0f, C.y + S.y/4.0f), S/2.0f);
-        m_Cells[2] = new QuadTree<Capacity>(glm::vec2(C.x + S.x/4.0f, C.y - S.y/4.0f), S/2.0f);
-        m_Cells[3] = new QuadTree<Capacity>(glm::vec2(C - S/4.0f), S/2.0f);
+        m_Cells[0] = new QuadTree<Capacity>(glm::vec2(m_Boundry.centre + m_Boundry.scale/4.0f), m_Boundry.scale/2.0f);
+        m_Cells[1] = new QuadTree<Capacity>(glm::vec2(m_Boundry.centre.x - m_Boundry.scale.x/4.0f, m_Boundry.centre.y + m_Boundry.scale.y/4.0f), m_Boundry.scale/2.0f);
+        m_Cells[2] = new QuadTree<Capacity>(glm::vec2(m_Boundry.centre.x + m_Boundry.scale.x/4.0f, m_Boundry.centre.y - m_Boundry.scale.y/4.0f), m_Boundry.scale/2.0f);
+        m_Cells[3] = new QuadTree<Capacity>(glm::vec2(m_Boundry.centre - m_Boundry.scale/4.0f), m_Boundry.scale/2.0f);
         isDivided = true;
     }
 
     void Delete(QuadTree<Capacity>* tree) {
-        if (!tree->isDivided) // if one child cell is null, all child cells are null 
+        if (!tree->isDivided) 
             return;
         for (int i=0; i < 4; i++) {
-            Delete(m_Cells[i]); // delete all children's child cells
-            delete m_Cells[i];  // delete chilren
+            Delete(tree->m_Cells[i]);
+            delete tree->m_Cells[i];
         }
     }
 };
@@ -143,14 +135,14 @@ public:
             // m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             // float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_QTree.Insert(&m_ObjData[i].position, i);
+            m_QTree.Insert(m_ObjData[i].position, i);
         }
     }
 
 
     void Update(float dt) override {
         m_CheckRange.centre = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
-        m_CheckRange.scale = glm::vec2(500);
+        m_CheckRange.scale = glm::vec2(1000);
         
         std::vector<int> points;
         m_QTree.Query(m_CheckRange, points);
