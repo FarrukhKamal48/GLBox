@@ -2,7 +2,8 @@
 #include <GLFW/glfw3.h>
 
 #include "src/layer/Input.h"
-#include "src/scenes/VerletInstancing.scene.h"
+// #include "src/scenes/VerletInstancing.scene.h"
+#include "src/scenes/QuadTreeTest.scene.h"
 
 int main (int argc, char *argv[])
 {
@@ -31,7 +32,7 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::VerletInstanced activeScene;
+    Scene::QuadTreeTest activeScene;
     activeScene.Start();
 
     double lastTime = glfwGetTime();

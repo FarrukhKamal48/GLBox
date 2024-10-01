@@ -3,6 +3,7 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
 #include <GLFW/glfw3.h>
+#include <vector>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
 
@@ -130,6 +131,11 @@ struct Boundry
             point.y >= centre.y - scale.y/2
         );
     }
+
+    bool intersects(const Boundry& box) {
+        return (box.centre.x - centre.x) <= box.scale.x+scale.x || (box.centre.x - centre.x) >= -box.scale.x-scale.x && 
+                (box.centre.y - centre.y) <= box.scale.y+scale.y || (box.centre.y - centre.y) >= -box.scale.y-scale.y;
+    }
 };
 
 template<int Capacity>
@@ -157,19 +163,40 @@ public:
         if (!isDivided) {
             SubDivide();
         }
-        for (int i=0; i < 4; i++) {
-            if (m_Cells[i]->Insert(pos, objID)) {
-                return true;
+        if (m_Cells[0]->Insert(pos, objID))
+            return true;
+        if (m_Cells[1]->Insert(pos, objID))
+            return true;
+        if (m_Cells[2]->Insert(pos, objID))
+            return true;
+        if (m_Cells[3]->Insert(pos, objID))
+            return true;
+        return false;
+    }
+
+    void Query(const Boundry& range, const std::vector<int>& result) {
+        if (!m_Boundry.intersects(range))
+            return;
+
+        for (int i = 0; i < Capacity; i++) {
+            if (range.contains(m_Objects[i])) {
+                result.push_back(m_Objects[i]);
             }
         }
-        return false;
+
+        if (isDivided) {
+            m_Cells[0]->Query(range, result);
+            m_Cells[1]->Query(range, result);
+            m_Cells[2]->Query(range, result);
+            m_Cells[3]->Query(range, result);
+        }
     }
 
 private:
     Boundry m_Boundry;
     unsigned int m_ObjectCount;
     union {
-        int m_Objects[4];
+        int m_Objects[Capacity];
         QuadTree<Capacity>* m_Cells[4];
     };
 
