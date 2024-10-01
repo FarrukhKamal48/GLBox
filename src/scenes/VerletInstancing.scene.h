@@ -3,8 +3,6 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
 #include <GLFW/glfw3.h>
-#include <vector>
-// #include <iostream>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
 
@@ -134,10 +132,13 @@ struct Boundry
     }
 };
 
+template<int Capacity>
 class QuadTree {
 public:
-    QuadTree(glm::vec2 centre, glm::vec2 scale, unsigned int cellCapacity) : 
-        m_Boundry({centre, scale}), m_CellCapacity(cellCapacity), isDivided(false) {
+    bool isDivided;
+public:
+    QuadTree(glm::vec2 centre, glm::vec2 scale) : 
+        isDivided(false), m_Boundry({centre, scale}), m_ObjectCount(0) {
         for (int i=0; i < 4; i++)
             m_Cells[i] = nullptr;
     }
@@ -148,8 +149,9 @@ public:
     bool Insert(glm::vec2 pos, int objID) {
         if (!m_Boundry.contains(pos))
             return false;
-        if (m_Objects.size() < m_CellCapacity) {
-            m_Objects.push_back(objID);
+        if (m_ObjectCount < Capacity) {
+            m_ObjectCount++;
+            m_Objects[m_ObjectCount-1] = objID;
             return true;
         }
         if (!isDivided) {
@@ -165,25 +167,24 @@ public:
 
 private:
     Boundry m_Boundry;
-    unsigned int m_CellCapacity;
-    bool isDivided;
-    // union {
-        std::vector<int> m_Objects;
-        QuadTree* m_Cells[4];
-    // };
+    unsigned int m_ObjectCount;
+    union {
+        int m_Objects[4];
+        QuadTree<Capacity>* m_Cells[4];
+    };
 
     void SubDivide() {
         glm::vec2& C = m_Boundry.centre;
         glm::vec2& S = m_Boundry.scale;
-        m_Cells[0] = new QuadTree(glm::vec2(C + S/4.0f), S/2.0f, m_CellCapacity);
-        m_Cells[1] = new QuadTree(glm::vec2(C.x - S.x/4.0f, C.y + S.y/4.0f), S/2.0f, m_CellCapacity);
-        m_Cells[2] = new QuadTree(glm::vec2(C.x + S.x/4.0f, C.y - S.y/4.0f), S/2.0f, m_CellCapacity);
-        m_Cells[3] = new QuadTree(glm::vec2(C - S/4.0f), S/2.0f, m_CellCapacity);
+        m_Cells[0] = new QuadTree<Capacity>(glm::vec2(C + S/4.0f), S/2.0f);
+        m_Cells[1] = new QuadTree<Capacity>(glm::vec2(C.x - S.x/4.0f, C.y + S.y/4.0f), S/2.0f);
+        m_Cells[2] = new QuadTree<Capacity>(glm::vec2(C.x + S.x/4.0f, C.y - S.y/4.0f), S/2.0f);
+        m_Cells[3] = new QuadTree<Capacity>(glm::vec2(C - S/4.0f), S/2.0f);
         isDivided = true;
     }
 
-    void Delete(QuadTree* tree) {
-        if (tree->m_Cells[0] == nullptr) // if one child cell is null, all child cells are null 
+    void Delete(QuadTree<Capacity>* tree) {
+        if (!tree->isDivided) // if one child cell is null, all child cells are null 
             return;
         for (int i=0; i < 4; i++) {
             Delete(m_Cells[i]); // delete all children's child cells
@@ -196,16 +197,16 @@ private:
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 4;
+    constexpr static int m_ObjCount = 5;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
-    Constraint m_Constraint;
     SimData m_SimData;
+    Constraint m_Constraint;
     RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+2> m_Renderer;
-    QuadTree m_QTree;
+    QuadTree<4> m_QTree;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData), m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}, 4) 
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData), m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}) 
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
