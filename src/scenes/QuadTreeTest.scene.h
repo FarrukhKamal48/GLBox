@@ -19,8 +19,8 @@ struct Boundry
     }
 
     bool intersects(const Boundry& box) {
-        return (box.centre.x - centre.x) <= box.scale.x+scale.x || (box.centre.x - centre.x) >= -box.scale.x-scale.x && 
-                (box.centre.y - centre.y) <= box.scale.y+scale.y || (box.centre.y - centre.y) >= -box.scale.y-scale.y;
+        return (box.centre.x - centre.x <= box.scale.x+scale.x || box.centre.x - centre.x >= -box.scale.x-scale.x) && 
+                (box.centre.y - centre.y <= box.scale.y+scale.y || (box.centre.y - centre.y) >= -box.scale.y-scale.y);
     }
 };
 
@@ -35,7 +35,7 @@ public:
         m_Cells[2] = nullptr; m_Cells[3] = nullptr;
     }
     ~QuadTree() {
-        // Delete(this);
+        Delete();
     }
 
     bool Insert(glm::vec2 pointPos, int pointID) {
@@ -60,7 +60,7 @@ public:
     void Query(Boundry& range, std::vector<int>& result) {
         if (!m_Boundry.intersects(range))
             return;
-        for (int i = 0; i < m_Count; i++) {
+        for (unsigned int i = 0; i < m_Count; i++) {
             if (range.contains(m_Points[i].pos)) {
                 result.push_back(m_Points[i].ID);
             }
@@ -93,12 +93,12 @@ private:
         isDivided = true;
     }
 
-    void Delete(QuadTree<Capacity>* tree) {
-        if (!tree->isDivided) 
+    void Delete() {
+        if (!isDivided) {}
             return;
-        for (int i=0; i < 4; i++) {
-            Delete(tree->m_Cells[i]);
-            delete tree->m_Cells[i];
+        for (int i = 0; i < 4; i++) {
+            m_Cells[i]->Delete();
+            delete m_Cells[i];
         }
     }
 };
@@ -150,7 +150,7 @@ public:
         for (int i = 0; i < m_ObjCount; i++) {
             m_ObjData[i].color = {0, 0, 0, 0};
         }
-        for (int p = 0; p < points.size(); p++) {
+        for (int p = 0; p < (int)points.size(); p++) {
             m_ObjData[points[p]].color = {0, 1, 0, 0};
         }
 
