@@ -73,6 +73,15 @@ public:
         }
     }
 
+    void Delete() {
+        if (!isDivided) {}
+            return;
+        for (int i = 0; i < 4; i++) {
+            m_Cells[i]->Delete();
+            delete m_Cells[i];
+        }
+    }
+    
 private:
     struct Point {
         int ID;
@@ -93,14 +102,6 @@ private:
         isDivided = true;
     }
 
-    void Delete() {
-        if (!isDivided) {}
-            return;
-        for (int i = 0; i < 4; i++) {
-            m_Cells[i]->Delete();
-            delete m_Cells[i];
-        }
-    }
 };
 
 namespace Scene {
@@ -144,9 +145,14 @@ public:
         m_CheckRange.centre = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         m_CheckRange.scale = glm::vec2(1000);
         
+        m_QTree.Delete();
+        for (int i = 0; i < m_ObjCount; i++) {
+            m_QTree.Insert(m_ObjData[i].position, i);
+        }
+        
         std::vector<int> points;
         m_QTree.Query(m_CheckRange, points);
-
+        
         for (int i = 0; i < m_ObjCount; i++) {
             m_ObjData[i].color = {0, 0, 0, 0};
         }
