@@ -3,6 +3,8 @@
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
 #include <GLFW/glfw3.h>
+#include <cstdlib>
+#include <utility>
 #include <vector>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -119,7 +121,6 @@ struct SimData
 };
 
 
-
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
@@ -197,16 +198,16 @@ public:
             
             if (!rbA.iskinematic) {
                 *rbA.pos -= axis * overlap/2.0f;
-                glm::vec2 velA = *rbA.pos - rbA.pos_old;
-                velA += (rbA.bouncines) * velA;
-                rbA.velocity(velA);
+                // glm::vec2 velA = *rbA.pos - rbA.pos_old;
+                // velA += (rbA.bouncines) * velA;
+                // rbA.velocity(velA);
             }
             
             if (!rbB.iskinematic) {
                 *rbB.pos += axis * overlap/2.0f;
-                glm::vec2 velB = *rbB.pos - rbB.pos_old;
-                velB += (rbB.bouncines) * velB;
-                rbB.velocity(velB);
+                // glm::vec2 velB = *rbB.pos - rbB.pos_old;
+                // velB += (rbB.bouncines) * velB;
+                // rbB.velocity(velB);
             }
         }
     }
@@ -233,6 +234,8 @@ public:
                 body.updatePosition(m_SimData.subDt);
                 for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
+                    if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
+                        std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
                 m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
