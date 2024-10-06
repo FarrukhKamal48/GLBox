@@ -8,6 +8,7 @@
 #include <vector>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
+#define MAXSPEED (float)5
 
 class RigidBody {
 public:
@@ -23,6 +24,17 @@ public:
         if (iskinematic) 
             return;
         const glm::vec2 deltaPos = *pos - pos_old;
+
+        if (deltaPos.x > MAXSPEED)
+            pos_old.x = pos->x;
+        else if (deltaPos.x < -MAXSPEED)
+            pos_old.x = pos->x;
+
+        if (deltaPos.y > MAXSPEED)
+            pos_old.y = pos->y;
+        else if (deltaPos.y < -MAXSPEED)
+            pos_old.y = pos->y;
+        
         pos_old = *pos;
         *pos = *pos + deltaPos + acceleration*dt*dt;
         acceleration = {};
@@ -59,14 +71,26 @@ public:
         float sqrtDist = (displace.x * displace.x) + (displace.y * displace.y);
         float radius = HEIGHT/2 - scale.x;
         if (displace.x < 0) radius *= -1;
-        glm::vec2 vel = *rb.pos - rb.pos_old;
+        glm::vec2 vel = rb.pos_old;
 
         if (sqrtDist > radius*radius) {
             *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
-            // rb.pos_old = glm::vec2(0);
+            vel = *rb.pos - vel;
             displace = glm::normalize(displace);
             vel -= (rb.boundBouncines + 1) * displace * glm::dot(vel, displace);
             rb.velocity(vel);
+            
+            vel = *rb.pos - rb.pos_old;
+            
+            if (vel.x > MAXSPEED)
+                rb.pos_old.x = rb.pos->x;
+            else if (vel.x < -MAXSPEED)
+                rb.pos_old.x = rb.pos->x;
+
+            if (vel.y > MAXSPEED)
+                rb.pos_old.y = rb.pos->y;
+            else if (vel.y < -MAXSPEED)
+                rb.pos_old.y = rb.pos->y;
         }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
@@ -190,24 +214,25 @@ public:
 
     void Collide(RigidBody& rbA, float radiusA, RigidBody& rbB, float radiusB) {
         glm::vec2 axis = -*rbA.pos + *rbB.pos;
-        float dist = glm::length(axis);
+        float sqrDist = axis.x*axis.x + axis.y*axis.y;
 
-        if (dist <= radiusA + radiusB) {
+        if (sqrDist <= (radiusA + radiusB)*(radiusA + radiusB)) {
+            float dist = glm::length(axis);
             float overlap = radiusA + radiusB - dist;
             axis /= dist;
             
             if (!rbA.iskinematic) {
                 *rbA.pos -= axis * overlap/2.0f;
-                // glm::vec2 velA = *rbA.pos - rbA.pos_old;
-                // velA += (rbA.bouncines) * velA;
-                // rbA.velocity(velA);
+                glm::vec2 velA = *rbA.pos - rbA.pos_old;
+                velA += (rbA.bouncines) * velA;
+                rbA.velocity(velA);
             }
             
             if (!rbB.iskinematic) {
                 *rbB.pos += axis * overlap/2.0f;
-                // glm::vec2 velB = *rbB.pos - rbB.pos_old;
-                // velB += (rbB.bouncines) * velB;
-                // rbB.velocity(velB);
+                glm::vec2 velB = *rbB.pos - rbB.pos_old;
+                velB += (rbB.bouncines) * velB;
+                rbB.velocity(velB);
             }
         }
     }
@@ -234,8 +259,8 @@ public:
                 body.updatePosition(m_SimData.subDt);
                 for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
-                    if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
-                        std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
+                    // if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
+                    //     std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
                 m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
