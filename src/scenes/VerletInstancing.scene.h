@@ -103,26 +103,26 @@ public:
             vel = pos - rb.pos_old;
             vel.x *= -1;
             pos.x = bottomRight.x - scale.x; 
-            rb.velocity(vel * rb.bouncines);
+            rb.velocity(vel * (rb.bouncines+1));
         }
         else if (pos.x < topLeft.x + scale.x) { // left
             vel = pos - rb.pos_old;
             vel.x *= -1;
             pos.x = topLeft.x + scale.x;
-            rb.velocity(vel * rb.bouncines);
+            rb.velocity(vel * (rb.bouncines+1));
         }
         
         if (pos.y > topLeft.y - scale.y) {      // top
             vel = pos - rb.pos_old;
             vel.y *= -1;
             pos.y = topLeft.y - scale.y;
-            rb.velocity(vel * rb.bouncines);
+            rb.velocity(vel * (rb.bouncines+1));
         }
         else if (pos.y < bottomRight.y + scale.y) { // bottom
             vel = pos - rb.pos_old;
             vel.y *= -1;
             pos.y = bottomRight.y + scale.y;
-            rb.velocity(vel * rb.bouncines);
+            rb.velocity(vel * (rb.bouncines+1));
         }
 
     }
@@ -259,11 +259,11 @@ public:
                 body.updatePosition(m_SimData.subDt);
                 for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
-                    // if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
-                    //     std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
+                    if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
+                        std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
-                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
+                m_Constraint.ApplyRect(body, m_ObjData[i+1].scale);
             }
         }
         m_ObjData[1].position = Lerp(m_ObjData[1].position, 
