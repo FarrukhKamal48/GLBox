@@ -148,7 +148,7 @@ struct SimData
 namespace Scene {
 class VerletInstanced : public Scene {
 private:
-    constexpr static int m_ObjCount = 2500;
+    constexpr static int m_ObjCount = 2000;
     Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     SimData m_SimData;
@@ -263,7 +263,7 @@ public:
                         std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
-                m_Constraint.ApplyRect(body, m_ObjData[i+1].scale);
+                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             }
         }
         m_ObjData[1].position = Lerp(m_ObjData[1].position, 
