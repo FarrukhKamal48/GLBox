@@ -8,7 +8,7 @@
 #include "VertexTypes.h"
 #include "MeshData.h"
 
-class RendererInstanced {
+class InstanceRenderer {
 public:
     std::unique_ptr<Shader> InstanceShader;
 private:
@@ -24,7 +24,7 @@ private:
     unsigned int m_DataSize;
     
 public:
-    RendererInstanced(unsigned int InstanceCount, void* data, const VertexLookup& Lookup) 
+    InstanceRenderer(unsigned int InstanceCount, void* data, const VertexLookup& Lookup) 
         : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup.SizeOfVertex())
     {
         Render::BasicBlend();
@@ -40,7 +40,7 @@ public:
         m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
-    ~RendererInstanced() { }
+    ~InstanceRenderer() { }
     
     void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
         InstanceShader = std::make_unique<Shader>();

@@ -153,10 +153,10 @@ private:
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
-    RendererInstanced<Pos_Scale_Col_Quad> m_Renderer;
+    InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData)
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, VertexLookupType<Pos_Scale_Col_Quad>())
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
