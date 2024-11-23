@@ -8,7 +8,7 @@
 #include "VertexTypes.h"
 #include "MeshData.h"
 
-template<typename MeshT, typename VertexT, int InstanceCount>
+template<typename VertexT, int InstanceCount>
 class RendererInstanced {
 public:
     std::unique_ptr<Shader> InstanceShader;
@@ -30,12 +30,12 @@ public:
         Render::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_MeshBuffer = std::make_unique<VertexBuffer>(MeshLookup<MeshT>::Verticies(), MeshLookup<MeshT>::SizeofVerticies());
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(MeshLookup<MeshT>::Indicies(), MeshLookup<MeshT>::CountofIndicies());
+        m_MeshBuffer = std::make_unique<VertexBuffer>(VertexLookup<VertexT>::MeshData(), VertexLookup<VertexT>::SizeofVerticies());
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(VertexLookup<VertexT>::Indicies(), VertexLookup<VertexT>::CountofIndicies());
         m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
         
-        m_VertexArray->AddBuffer(*m_MeshBuffer, MeshLookup<MeshT>::Layout());
-        m_VertexArray->AddBuffer(*m_InstanceBuffer, VertexLookup<VertexT>::Layout(1));
+        m_VertexArray->AddBuffer(*m_MeshBuffer, VertexLookup<VertexT>::MeshLayout());
+        m_VertexArray->AddBuffer(*m_InstanceBuffer, VertexLookup<VertexT>::VertLayout(1));
 
         m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

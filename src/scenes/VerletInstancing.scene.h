@@ -69,7 +69,7 @@ public:
         glm::vec2 displace = -centre + *rb.pos;
         float theta = atan(displace.y/displace.x);
         float sqrtDist = (displace.x * displace.x) + (displace.y * displace.y);
-        float radius = HEIGHT/2 - scale.x;
+        float radius = (topLeft.y - bottomRight.y)/2.0f - scale.x;
         if (displace.x < 0) radius *= -1;
         glm::vec2 vel = rb.pos_old;
 
@@ -149,11 +149,11 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
-    Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount+2];
+    Pos_Scale_Col_Quad* m_ObjData = new Pos_Scale_Col_Quad[m_ObjCount+2];
     RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
-    RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount+2> m_Renderer;
+    RendererInstanced<Pos_Scale_Col_Quad, m_ObjCount+2> m_Renderer;
 public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjData)
@@ -201,13 +201,13 @@ public:
 
         // set graphic for god hand
         m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
-        m_ObjData[1].scale = glm::vec2(50.0f);
+        m_ObjData[1].scale = glm::vec2(15.0f);
         m_ObjData[1].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].pos = &m_ObjData[1].position;
         m_Bodies[0].pos_old = *m_Bodies[0].pos;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
-        m_Bodies[0].iskinematic = true;
+        m_Bodies[0].iskinematic = false;
         m_Bodies[0].isBound = false;
         m_Bodies[0].velocity(glm::vec2(0.0f));
     }
@@ -263,7 +263,8 @@ public:
                         std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
-                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
+                if (i != 0)
+                    m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             }
         }
         m_ObjData[1].position = Lerp(m_ObjData[1].position, 
