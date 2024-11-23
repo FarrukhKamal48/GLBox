@@ -5,18 +5,20 @@
 #include <algorithm>
 #include <vector>
 
-template<typename VertexT> 
 class VertexLookup {
 public:
-    VertexLookup() = delete;
-    static VertexBufferLayout VertLayout(unsigned int divisor);
-    static unsigned int SizeOfVertex();
-    static const float* MeshData();
-    static const unsigned int SizeofMeshData(); 
-    static const unsigned int* Indicies(); 
-    static const unsigned int CountofIndicies(); 
-    static const VertexBufferLayout MeshLayout(); 
+    virtual ~VertexLookup() {}
+    virtual VertexBufferLayout VertLayout(unsigned int divisor) const = 0;
+    virtual unsigned int SizeOfVertex() const = 0;
+    virtual const float* MeshData() const = 0;
+    virtual const unsigned int SizeOfMeshData() const = 0; 
+    virtual const unsigned int* Indicies() const = 0; 
+    virtual const unsigned int CountofIndicies() const = 0; 
+    virtual const VertexBufferLayout MeshLayout() const = 0; 
 };
+
+template<typename VertexT> 
+class VertexLookupType : public VertexLookup { };
 
 class Pos_Quad {
 public:
@@ -54,16 +56,17 @@ public:
 };
 
 template<>
-class VertexLookup<Pos_Quad> {
+class VertexLookupType<Pos_Quad> : public VertexLookup {
 public:
-    VertexLookup() = delete;
-    static VertexBufferLayout Layout(unsigned int divisor)  { return Pos_Quad::VertLayout(divisor); }
-    static unsigned int SizeOfVertex()                      { return sizeof(Pos_Quad); }
-    static const float* MeshData()                          { return Pos_Quad::Verticies; }
-    static const unsigned int* Indicies()                   { return Pos_Quad::Indicies; }
-    static const unsigned int SizeofVerticies()             { return sizeof(Pos_Quad::Verticies); }
-    static const unsigned int CountofIndicies()             { return sizeof(Pos_Quad::Indicies); }
-    static const VertexBufferLayout MeshLayout()            { return Pos_Quad::MeshLayout(); }
+    VertexLookupType() {}
+    ~VertexLookupType() {}
+    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Quad::VertLayout(divisor); }
+    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Quad); }
+    const float* MeshData()                             const override { return Pos_Quad::Verticies; }
+    const unsigned int* Indicies()                      const override { return Pos_Quad::Indicies; }
+    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Quad::Verticies); }
+    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Quad::Indicies); }
+    const VertexBufferLayout MeshLayout()               const override { return Pos_Quad::MeshLayout(); }
 };
 
 class Pos_Col_Quad {
@@ -104,16 +107,17 @@ public:
 };
 
 template<>
-class VertexLookup<Pos_Col_Quad> {
+class VertexLookupType<Pos_Col_Quad> : public VertexLookup {
 public:
-    VertexLookup() = delete;
-    static VertexBufferLayout Layout(unsigned int divisor)  { return Pos_Col_Quad::VertLayout(divisor); }
-    static unsigned int SizeOfVertex()                      { return sizeof(Pos_Col_Quad); }
-    static const float* MeshData()                          { return Pos_Col_Quad::Verticies; }
-    static const unsigned int* Indicies()                   { return Pos_Col_Quad::Indicies; }
-    static const unsigned int SizeofVerticies()             { return sizeof(Pos_Col_Quad::Verticies); }
-    static const unsigned int CountofIndicies()             { return sizeof(Pos_Col_Quad::Indicies); }
-    static const VertexBufferLayout MeshLayout()            { return Pos_Col_Quad::MeshLayout(); }
+    VertexLookupType() {}
+    ~VertexLookupType() {}
+    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Col_Quad::VertLayout(divisor); }
+    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Col_Quad); }
+    const float* MeshData()                             const override { return Pos_Col_Quad::Verticies; }
+    const unsigned int* Indicies()                      const override { return Pos_Col_Quad::Indicies; }
+    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Col_Quad::Verticies); }
+    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Col_Quad::Indicies); }
+    const VertexBufferLayout MeshLayout()               const override { return Pos_Col_Quad::MeshLayout(); }
 };
 
 class Pos_Scale_Col_Quad {
@@ -156,15 +160,16 @@ public:
 };
 
 template<>
-class VertexLookup<Pos_Scale_Col_Quad> {
+class VertexLookupType<Pos_Scale_Col_Quad> : public VertexLookup {
 public:
-    VertexLookup() = delete;
-    static VertexBufferLayout VertLayout(unsigned int divisor)  { return Pos_Scale_Col_Quad::VertLayout(divisor); }
-    static unsigned int SizeOfVertex()                          { return sizeof(Pos_Scale_Col_Quad); }
-    static const float* MeshData()                              { return Pos_Scale_Col_Quad::Verticies; }
-    static const unsigned int* Indicies()                       { return Pos_Scale_Col_Quad::Indicies; }
-    static const unsigned int SizeofVerticies()                 { return sizeof(Pos_Scale_Col_Quad::Verticies); }
-    static const unsigned int CountofIndicies()                 { return sizeof(Pos_Scale_Col_Quad::Indicies); }
-    static const VertexBufferLayout MeshLayout()                { return Pos_Scale_Col_Quad::MeshLayout(); }
+    VertexLookupType() {}
+    ~VertexLookupType() {}
+    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Scale_Col_Quad::VertLayout(divisor); }
+    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Scale_Col_Quad); }
+    const float* MeshData()                             const override { return Pos_Scale_Col_Quad::Verticies; }
+    const unsigned int* Indicies()                      const override { return Pos_Scale_Col_Quad::Indicies; }
+    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Scale_Col_Quad::Verticies); }
+    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Scale_Col_Quad::Indicies); }
+    const VertexBufferLayout MeshLayout()               const override { return Pos_Scale_Col_Quad::MeshLayout(); }
 };
 
