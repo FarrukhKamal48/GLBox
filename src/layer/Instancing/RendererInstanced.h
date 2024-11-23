@@ -8,7 +8,7 @@
 #include "VertexTypes.h"
 #include "MeshData.h"
 
-template<typename VertexT, int InstanceCount>
+template<typename VertexT>
 class RendererInstanced {
 public:
     std::unique_ptr<Shader> InstanceShader;
@@ -20,12 +20,13 @@ private:
     glm::mat4 m_Proj;
     glm::mat4 m_View;
     
+    unsigned int m_InstanceCount;
     void* m_Data;
     unsigned int m_DataSize;
     
 public:
-    RendererInstanced(void* data) 
-        : m_Data(data), m_DataSize(InstanceCount * VertexLookup<VertexT>::SizeOfVertex())
+    RendererInstanced(unsigned int InstanceCount, void* data) 
+        : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * VertexLookup<VertexT>::SizeOfVertex())
     {
         Render::BasicBlend();
 
@@ -53,6 +54,6 @@ public:
 
     void Draw() {
         m_InstanceBuffer->SetData(m_Data, m_DataSize);
-        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, InstanceCount);
+        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
     }
 };
