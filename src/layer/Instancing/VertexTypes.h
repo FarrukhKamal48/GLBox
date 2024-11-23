@@ -2,13 +2,20 @@
 #include "../../vendor/glm/ext/vector_float2.hpp"
 #include "../../vendor/glm/ext/vector_float4.hpp"
 #include "../VertexBufferLayout.h"
+#include <algorithm>
+#include <vector>
 
 class Pos {
 public:
+    inline static std::vector<Pos*> instances;
     glm::vec2 position;
 
-    Pos() : position(0) { }
-    ~Pos() { }
+    Pos() : position(0) { instances.push_back(this); }
+    ~Pos() { 
+        auto it = std::find(instances.begin(), instances.end(), this);
+        if (it != instances.end())
+            instances.erase(it);
+    }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
@@ -19,11 +26,16 @@ public:
 
 class Pos_Col {
 public:
+    inline static std::vector<Pos_Col*> instances;
     glm::vec2 position;
     glm::vec4 color;
 
-    Pos_Col() : position(0), color(0) { }
-    ~Pos_Col() { }
+    Pos_Col() : position(0), color(0) { instances.push_back(this); }
+    ~Pos_Col() {
+        auto it = std::find(instances.begin(), instances.end(), this);
+        if (it != instances.end())
+            instances.erase(it);
+    }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
@@ -35,12 +47,17 @@ public:
 
 class Pos_Scale_Col {
 public:
+    inline static std::vector<Pos_Scale_Col*> instances;
     glm::vec2 position;
     glm::vec2 scale;
     glm::vec4 color;
 
-    Pos_Scale_Col() : position(0), scale(0), color(0) { }
-    ~Pos_Scale_Col() { }
+    Pos_Scale_Col() : position(0), scale(0), color(0) { instances.push_back(this); }
+    ~Pos_Scale_Col() { 
+        auto it = std::find(instances.begin(), instances.end(), this);
+        if (it != instances.end())
+            instances.erase(it);
+    }
 
     static VertexBufferLayout Layout(unsigned int divisor) {
         VertexBufferLayout layout;
