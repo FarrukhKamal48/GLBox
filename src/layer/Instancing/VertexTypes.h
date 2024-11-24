@@ -17,9 +17,6 @@ public:
     virtual const VertexBufferLayout MeshLayout() const = 0; 
 };
 
-template<typename VertexT> 
-class VertexLookupType : public VertexLookup { };
-
 class Pos_Quad {
 public:
     inline static std::vector<Pos_Quad*> instances;
@@ -55,11 +52,10 @@ public:
     }
 };
 
-template<>
-class VertexLookupType<Pos_Quad> : public VertexLookup {
+class Pos_Quad_Lookup : public VertexLookup {
 public:
-    VertexLookupType() {}
-    ~VertexLookupType() {}
+    Pos_Quad_Lookup() {}
+    ~Pos_Quad_Lookup() {}
     VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Quad::VertLayout(divisor); }
     unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Quad); }
     const float* MeshData()                             const override { return Pos_Quad::Verticies; }
@@ -106,11 +102,10 @@ public:
     }
 };
 
-template<>
-class VertexLookupType<Pos_Col_Quad> : public VertexLookup {
+class Pos_Col_Quad_Lookup : public VertexLookup {
 public:
-    VertexLookupType() {}
-    ~VertexLookupType() {}
+    Pos_Col_Quad_Lookup() {}
+    ~Pos_Col_Quad_Lookup() {}
     VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Col_Quad::VertLayout(divisor); }
     unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Col_Quad); }
     const float* MeshData()                             const override { return Pos_Col_Quad::Verticies; }
@@ -159,11 +154,10 @@ public:
     }
 };
 
-template<>
-class VertexLookupType<Pos_Scale_Col_Quad> : public VertexLookup {
+class Pos_Scale_Col_Quad_Lookup : public VertexLookup {
 public:
-    VertexLookupType() {}
-    ~VertexLookupType() {}
+    Pos_Scale_Col_Quad_Lookup() {}
+    ~Pos_Scale_Col_Quad_Lookup() {}
     VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Scale_Col_Quad::VertLayout(divisor); }
     unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Scale_Col_Quad); }
     const float* MeshData()                             const override { return Pos_Scale_Col_Quad::Verticies; }

@@ -156,7 +156,7 @@ private:
     InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, VertexLookupType<Pos_Scale_Col_Quad>())
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, Pos_Scale_Col_Quad_Lookup())
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
