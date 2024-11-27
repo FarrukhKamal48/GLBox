@@ -149,8 +149,8 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
-    Pos_Scale_Col_Quad* m_ObjData = new Pos_Scale_Col_Quad[m_ObjCount+2];
-    RigidBody* m_Bodies = new RigidBody[m_ObjCount+1];
+    Pos_Scale_Col_Quad m_ObjData[m_ObjCount+2];
+    RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
     InstanceRenderer m_Renderer;
@@ -163,10 +163,7 @@ public:
         m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
-    ~VerletInstanced() {
-        delete [] m_ObjData;
-        delete [] m_Bodies;
-    }
+    ~VerletInstanced() { }
 
     void Start() override {
         m_SimData.SpawnFreq = 200;
@@ -207,7 +204,7 @@ public:
         m_Bodies[0].pos_old = *m_Bodies[0].pos;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
-        m_Bodies[0].iskinematic = false;
+        m_Bodies[0].iskinematic = true;
         m_Bodies[0].isBound = false;
         m_Bodies[0].velocity(glm::vec2(0.0f));
     }
@@ -263,12 +260,12 @@ public:
                         std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
                     Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
                 }
-                if (i != 0)
-                    m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
+                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
             }
         }
-        m_ObjData[1].position = Lerp(m_ObjData[1].position, 
-                                     glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
+        // m_ObjData[1].position = Lerp(m_ObjData[1].position, 
+        //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
+        m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
             m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
