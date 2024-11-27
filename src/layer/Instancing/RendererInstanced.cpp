@@ -51,7 +51,7 @@ Pos_Quad::~Pos_Quad() { }
 Pos_Quad* Pos_Quad::Instantiate(unsigned int count) {
     instances.insert(instances.end(), count, Pos_Quad());
     if (!renderer) {
-        Renderers.push_back(InstanceRenderer(new Pos_Quad_Lookup()));
+        Renderers.emplace_back(InstanceRenderer(new Pos_Quad_Lookup()));
         renderer = &Renderers.back();
     }
     renderer->SetData(instances.size(), instances.data());
@@ -75,7 +75,7 @@ Pos_Col_Quad::~Pos_Col_Quad() { }
 Pos_Col_Quad* Pos_Col_Quad::Instantiate(unsigned int count) {
     instances.insert(instances.end(), count, Pos_Col_Quad());
     if (!renderer) {
-        Renderers.push_back(InstanceRenderer(new Pos_Col_Quad_Lookup()));
+        Renderers.emplace_back(InstanceRenderer(new Pos_Col_Quad_Lookup()));
         renderer = &Renderers.back();
     }
     renderer->SetData(instances.size(), instances.data());
@@ -101,7 +101,7 @@ Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad::Instantiate(unsigned int count) {
     instances.insert(instances.end(), count, Pos_Scale_Col_Quad());
     if (!renderer) {
-        Renderers.push_back(InstanceRenderer(new Pos_Scale_Col_Quad_Lookup()));
+        Renderers.emplace_back(InstanceRenderer(new Pos_Scale_Col_Quad_Lookup()));
         renderer = &Renderers.back();
     }
     renderer->SetData(instances.size(), instances.data());
