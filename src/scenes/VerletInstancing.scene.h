@@ -2,10 +2,7 @@
 #include "Scene.h"
 #include "../layer/Instancing/RendererInstanced.h"
 #include "../layer/Input.h"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <utility>
-#include <vector>
+#include <functional>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
 #define MAXSPEED (float)5
@@ -153,16 +150,21 @@ private:
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
-    InstanceRenderer m_Renderer;
+    // InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_ObjData(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2)), m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, Pos_Scale_Col_Quad_Lookup())
+        : m_ObjData(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2))
+        , m_Constraint({0, HEIGHT}, {WIDTH, 0})
+        // , m_Renderer(new Pos_Scale_Col_Quad_Lookup())
     {
-        m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
-                              "assets/shaders/instancing/CircleInRectColor.frag");
-        m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
-        m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
-        // Render::InitAll();
+        Render::InitAllInstanced();
+
+        // m_Renderer.SetData(m_ObjCount+2, Pos_Scale_Col_Quad::instances.data());
+        // m_Renderer.Init();
+        // m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
+        //                       "assets/shaders/instancing/CircleInRectColor.frag");
+        // m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
+        // m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
     ~VerletInstanced() { }
 
@@ -274,16 +276,23 @@ public:
             m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
-    glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float p) {
-        return a + p * (b-a);
-    }
 
     void Render() override {
         Render::Clear(0.9, 0.9, 0.9, 1);
-        m_Renderer.Draw();
-        // Render::DrawAll();
+        // m_Renderer.Draw();
+        Render::DrawAllInstanced();
+    }
+private:
+    inline void ShaderInit(InstanceRenderer& renderer) {
+        renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
+                            "assets/shaders/instancing/CircleInRectColor.frag");
+        renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
+        renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
 
+    glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float p) {
+        return a + p * (b-a);
+    }
 };
 }
 

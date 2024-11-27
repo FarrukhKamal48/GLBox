@@ -1,9 +1,5 @@
 #pragma once
-#include "GL/glew.h"
-#include <iostream>
 #include <memory>
-#include <vector>
-#include <algorithm>
 
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
@@ -35,58 +31,26 @@ private:
     unsigned int m_InstanceCount;
     void* m_Data;
     unsigned int m_DataSize;
-    const VertexLookup& m_Lookup;
+    VertexLookup* m_Lookup;
     
 public:
-    InstanceRenderer(const VertexLookup& Lookup) : m_Lookup(Lookup) { }
-    InstanceRenderer(unsigned int InstanceCount, void* data, const VertexLookup& Lookup) 
-        : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup.SizeOfVertex())
-        , m_Lookup(Lookup) {
-        Init();
-    }
-    ~InstanceRenderer() { }
+    InstanceRenderer(const InstanceRenderer& cp);
+    InstanceRenderer(VertexLookup* Lookup);
+    InstanceRenderer(unsigned int InstanceCount, void* data, VertexLookup* Lookup);
+    ~InstanceRenderer();
 
-    void SetData(unsigned int InstanceCount, void* data) {
-        m_InstanceCount = InstanceCount;
-        m_Data = data;
-        m_DataSize = InstanceCount * m_Lookup.SizeOfVertex();
-    }
-
-    void Init() {
-        Render::BasicBlend();
-
-        m_VertexArray =  std::make_unique<VertexArray>();
-        m_MeshBuffer = std::make_unique<VertexBuffer>(m_Lookup.MeshData(), m_Lookup.SizeOfMeshData());
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(m_Lookup.Indicies(), m_Lookup.CountofIndicies());
-        m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
-        
-        m_VertexArray->AddBuffer(*m_MeshBuffer, m_Lookup.MeshLayout());
-        m_VertexArray->AddBuffer(*m_InstanceBuffer, m_Lookup.VertLayout(1));
-
-        m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
-        m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    }
-    
-    void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
-        InstanceShader = std::make_unique<Shader>();
-        InstanceShader->Push(GL_VERTEX_SHADER, vertSrcPath);
-        InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
-        InstanceShader->Compile();
-        InstanceShader->Bind();
-        InstanceShader->SetUniformMat4("u_MVP", m_Proj * m_View);
-    }
-
-    void Draw() {
-        m_InstanceBuffer->SetData(m_Data, m_DataSize);
-        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
-    }
+    void SetData(unsigned int InstanceCount, void* data);
+    void Init();
+    void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath);
+    void Draw();
 };
 
 static std::vector<InstanceRenderer> Renderers;
 
 class Pos_Quad {
 public:
-    inline static std::vector<Pos_Quad*> instances;
+    inline static std::vector<Pos_Quad> instances;
+    inline static InstanceRenderer* renderer;
     glm::vec2 position;
     static constexpr float Verticies[16] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -99,24 +63,12 @@ public:
         0, 2, 3
     };
 
-    Pos_Quad() : position(0) { instances.push_back(this); }
-    ~Pos_Quad() { 
-        auto it = std::find(instances.begin(), instances.end(), this);
-        if (it != instances.end())
-            instances.erase(it);
-    }
+    Pos_Quad();
+    ~Pos_Quad();
 
-    static VertexBufferLayout VertLayout(unsigned int divisor) {
-        VertexBufferLayout layout;
-        layout.Push<float>(2, divisor);
-        return layout;
-    }
-    static const VertexBufferLayout MeshLayout() { 
-        VertexBufferLayout MeshLayout;
-        MeshLayout.Push<float>(2);
-        MeshLayout.Push<float>(2);
-        return MeshLayout; 
-    }
+    static Pos_Quad* Instantiate(unsigned int count);
+    static const VertexBufferLayout VertLayout(unsigned int divisor);
+    static const VertexBufferLayout MeshLayout();
 };
 
 class Pos_Quad_Lookup : public VertexLookup {
@@ -134,7 +86,8 @@ public:
 
 class Pos_Col_Quad {
 public:
-    inline static std::vector<Pos_Col_Quad*> instances;
+    inline static std::vector<Pos_Col_Quad> instances;
+    inline static InstanceRenderer* renderer = nullptr;
     glm::vec2 position;
     glm::vec4 color;
     static constexpr float Verticies[16] = {
@@ -148,25 +101,12 @@ public:
         0, 2, 3
     };
 
-    Pos_Col_Quad() : position(0), color(0) { instances.push_back(this); }
-    ~Pos_Col_Quad() {
-        auto it = std::find(instances.begin(), instances.end(), this);
-        if (it != instances.end())
-            instances.erase(it);
-    }
+    Pos_Col_Quad();
+    ~Pos_Col_Quad();
 
-    static VertexBufferLayout VertLayout(unsigned int divisor) {
-        VertexBufferLayout layout;
-        layout.Push<float>(2, divisor);
-        layout.Push<float>(4, divisor);
-        return layout;
-    }
-    static const VertexBufferLayout MeshLayout() { 
-        VertexBufferLayout MeshLayout;
-        MeshLayout.Push<float>(2);
-        MeshLayout.Push<float>(2);
-        return MeshLayout; 
-    }
+    static Pos_Col_Quad* Instantiate(unsigned int count);
+    static const VertexBufferLayout VertLayout(unsigned int divisor);
+    static const VertexBufferLayout MeshLayout();
 };
 
 class Pos_Col_Quad_Lookup : public VertexLookup {
@@ -200,32 +140,12 @@ public:
         0, 2, 3
     };
 
-    Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
-    ~Pos_Scale_Col_Quad() { }
+    Pos_Scale_Col_Quad();
+    ~Pos_Scale_Col_Quad();
 
-    static Pos_Scale_Col_Quad* Instantiate(unsigned int count) {
-        instances.insert(instances.end(), count, Pos_Scale_Col_Quad());
-        // if (!renderer) {
-        //     Renderers.push_back(InstanceRenderer(Pos_Col_Quad_Lookup()));
-        //     renderer = &Renderers.back();
-        // }
-        // renderer->SetData(instances.size(), instances.data());
-        return instances.data();
-    }
-
-    static VertexBufferLayout VertLayout(unsigned int divisor) {
-        VertexBufferLayout layout;
-        layout.Push<float>(2, divisor);
-        layout.Push<float>(2, divisor);
-        layout.Push<float>(4, divisor);
-        return layout;
-    }
-    static const VertexBufferLayout MeshLayout() { 
-        VertexBufferLayout MeshLayout;
-        MeshLayout.Push<float>(2);
-        MeshLayout.Push<float>(2);
-        return MeshLayout; 
-    }
+    static Pos_Scale_Col_Quad* Instantiate(unsigned int count);
+    static const VertexBufferLayout VertLayout(unsigned int divisor);
+    static const VertexBufferLayout MeshLayout();
 };
 
 class Pos_Scale_Col_Quad_Lookup : public VertexLookup {
@@ -240,3 +160,9 @@ public:
     const unsigned int CountofIndicies()                const override { return sizeof(Pos_Scale_Col_Quad::Indicies); }
     const VertexBufferLayout MeshLayout()               const override { return Pos_Scale_Col_Quad::MeshLayout(); }
 };
+
+
+namespace Render {
+    void InitAllInstanced();
+    void DrawAllInstanced(); 
+}
