@@ -149,19 +149,20 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
-    Pos_Scale_Col_Quad m_ObjData[m_ObjCount+2];
+    Pos_Scale_Col_Quad* m_ObjData;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
     InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, Pos_Scale_Col_Quad_Lookup())
+        : m_ObjData(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2)), m_Constraint({0, HEIGHT}, {WIDTH, 0}), m_Renderer(m_ObjCount+2, m_ObjData, Pos_Scale_Col_Quad_Lookup())
     {
         m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
         m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
+        // Render::InitAll();
     }
     ~VerletInstanced() { }
 
@@ -280,6 +281,7 @@ public:
     void Render() override {
         Render::Clear(0.9, 0.9, 0.9, 1);
         m_Renderer.Draw();
+        // Render::DrawAll();
     }
 
 };

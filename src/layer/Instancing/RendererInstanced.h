@@ -1,5 +1,6 @@
 #pragma once
 #include "GL/glew.h"
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <algorithm>
@@ -34,25 +35,37 @@ private:
     unsigned int m_InstanceCount;
     void* m_Data;
     unsigned int m_DataSize;
+    const VertexLookup& m_Lookup;
     
 public:
+    InstanceRenderer(const VertexLookup& Lookup) : m_Lookup(Lookup) { }
     InstanceRenderer(unsigned int InstanceCount, void* data, const VertexLookup& Lookup) 
         : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup.SizeOfVertex())
-    {
+        , m_Lookup(Lookup) {
+        Init();
+    }
+    ~InstanceRenderer() { }
+
+    void SetData(unsigned int InstanceCount, void* data) {
+        m_InstanceCount = InstanceCount;
+        m_Data = data;
+        m_DataSize = InstanceCount * m_Lookup.SizeOfVertex();
+    }
+
+    void Init() {
         Render::BasicBlend();
 
         m_VertexArray =  std::make_unique<VertexArray>();
-        m_MeshBuffer = std::make_unique<VertexBuffer>(Lookup.MeshData(), Lookup.SizeOfMeshData());
-        m_IndexBuffer =  std::make_unique<IndexBuffer>(Lookup.Indicies(), Lookup.CountofIndicies());
+        m_MeshBuffer = std::make_unique<VertexBuffer>(m_Lookup.MeshData(), m_Lookup.SizeOfMeshData());
+        m_IndexBuffer =  std::make_unique<IndexBuffer>(m_Lookup.Indicies(), m_Lookup.CountofIndicies());
         m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
         
-        m_VertexArray->AddBuffer(*m_MeshBuffer, Lookup.MeshLayout());
-        m_VertexArray->AddBuffer(*m_InstanceBuffer, Lookup.VertLayout(1));
+        m_VertexArray->AddBuffer(*m_MeshBuffer, m_Lookup.MeshLayout());
+        m_VertexArray->AddBuffer(*m_InstanceBuffer, m_Lookup.VertLayout(1));
 
         m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
         m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
-    ~InstanceRenderer() { }
     
     void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
         InstanceShader = std::make_unique<Shader>();
@@ -69,7 +82,7 @@ public:
     }
 };
 
-static std::vector<InstanceRenderer> renderers;
+static std::vector<InstanceRenderer> Renderers;
 
 class Pos_Quad {
 public:
@@ -171,7 +184,8 @@ public:
 
 class Pos_Scale_Col_Quad {
 public:
-    inline static std::vector<Pos_Scale_Col_Quad*> instances;
+    inline static std::vector<Pos_Scale_Col_Quad> instances;
+    inline static InstanceRenderer* renderer = nullptr;
     glm::vec2 position;
     glm::vec2 scale;
     glm::vec4 color;
@@ -186,11 +200,17 @@ public:
         0, 2, 3
     };
 
-    Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { instances.push_back(this); }
-    ~Pos_Scale_Col_Quad() { 
-        auto it = std::find(instances.begin(), instances.end(), this);
-        if (it != instances.end())
-            instances.erase(it);
+    Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
+    ~Pos_Scale_Col_Quad() { }
+
+    static Pos_Scale_Col_Quad* Instantiate(unsigned int count) {
+        instances.insert(instances.end(), count, Pos_Scale_Col_Quad());
+        // if (!renderer) {
+        //     Renderers.push_back(InstanceRenderer(Pos_Col_Quad_Lookup()));
+        //     renderer = &Renderers.back();
+        // }
+        // renderer->SetData(instances.size(), instances.data());
+        return instances.data();
     }
 
     static VertexBufferLayout VertLayout(unsigned int divisor) {
