@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <memory>
 
 #include "../../vendor/glm/ext/matrix_transform.hpp"
@@ -164,5 +165,6 @@ public:
 
 namespace Render {
     void InitAllInstanced();
+    void InitAllInstanced(void (*shaderInit)(InstanceRenderer&));
     void DrawAllInstanced(); 
 }

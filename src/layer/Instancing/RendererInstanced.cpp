@@ -133,6 +133,12 @@ namespace Render {
             Renderers[i].InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);               
         }
     } 
+    void InitAllInstanced(void (*shaderInit)(InstanceRenderer&)) {
+        for (int i=0; i < (int)Renderers.size(); i++) {
+            Renderers[i].Init();
+            shaderInit(Renderers[i]);
+        }
+    } 
     void DrawAllInstanced() {
         for (int i=0; i < (int)Renderers.size(); i++) {
             Renderers[i].Draw();

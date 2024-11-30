@@ -154,17 +154,8 @@ private:
 public:
     VerletInstanced() 
         : m_ObjData(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2))
-        , m_Constraint({0, HEIGHT}, {WIDTH, 0})
-        // , m_Renderer(new Pos_Scale_Col_Quad_Lookup())
-    {
-        Render::InitAllInstanced();
-
-        // m_Renderer.SetData(m_ObjCount+2, Pos_Scale_Col_Quad::instances.data());
-        // m_Renderer.Init();
-        // m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
-        //                       "assets/shaders/instancing/CircleInRectColor.frag");
-        // m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
-        // m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
+        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) {
+        Render::InitAllInstanced(&ShaderInit);
     }
     ~VerletInstanced() { }
 
@@ -283,7 +274,7 @@ public:
         Render::DrawAllInstanced();
     }
 private:
-    inline void ShaderInit(InstanceRenderer& renderer) {
+    static void ShaderInit(InstanceRenderer& renderer) {
         renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
                             "assets/shaders/instancing/CircleInRectColor.frag");
         renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
