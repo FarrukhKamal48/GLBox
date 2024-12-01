@@ -46,80 +46,44 @@ void InstanceRenderer::Draw() {
 }
 
 
-Pos_Quad::Pos_Quad() : position(0) { }
-Pos_Quad::~Pos_Quad() { }
-Pos_Quad* Pos_Quad::Instantiate(unsigned int count) {
-    instances.insert(instances.end(), count, Pos_Quad());
+template <class Object, class Lookup>
+ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int count, InstanceRenderer*& renderer, Lookup* lookup) {
+    instances.insert(instances.end(), count, Object());
     if (!renderer) {
-        Renderers.emplace_back(new Pos_Quad_Lookup());
+        Renderers.emplace_back(lookup);
         renderer = &Renderers.back();
     }
     renderer->SetData(instances.size(), instances.data());
-    return instances.data();
+    return ObjectPool<Object>(&instances[instances.size()-count], count);
 }
-const VertexBufferLayout Pos_Quad::VertLayout(unsigned int divisor) {
-    VertexBufferLayout layout;
-    layout.Push<float>(2, divisor);
-    return layout;
-}
-const VertexBufferLayout Pos_Quad::MeshLayout() { 
-    VertexBufferLayout MeshLayout;
-    MeshLayout.Push<float>(2);
-    MeshLayout.Push<float>(2);
-    return MeshLayout; 
-}
-
-
-Pos_Col_Quad::Pos_Col_Quad() : position(0), color(0) { }
-Pos_Col_Quad::~Pos_Col_Quad() { }
-Pos_Col_Quad* Pos_Col_Quad::Instantiate(unsigned int count) {
-    instances.insert(instances.end(), count, Pos_Col_Quad());
-    if (!renderer) {
-        Renderers.emplace_back(new Pos_Col_Quad_Lookup());
-        renderer = &Renderers.back();
-    }
-    renderer->SetData(instances.size(), instances.data());
-    return instances.data();
-}
-const VertexBufferLayout Pos_Col_Quad::VertLayout(unsigned int divisor) {
-    VertexBufferLayout layout;
-    layout.Push<float>(2, divisor);
-    layout.Push<float>(4, divisor);
-    return layout;
-}
-const VertexBufferLayout Pos_Col_Quad::MeshLayout() { 
-    VertexBufferLayout MeshLayout;
-    MeshLayout.Push<float>(2);
-    MeshLayout.Push<float>(2);
-    return MeshLayout; 
-}
-
-
 
 Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
 Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
-Pos_Scale_Col_Quad* Pos_Scale_Col_Quad::Instantiate(unsigned int count) {
-    instances.insert(instances.end(), count, Pos_Scale_Col_Quad());
-    if (!renderer) {
-        Renderers.emplace_back(new Pos_Scale_Col_Quad_Lookup());
-        renderer = &Renderers.back();
-    }
-    renderer->SetData(instances.size(), instances.data());
-    return instances.data();
+ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad::Instantiate(unsigned int count) {
+    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Lookup());
 }
-const VertexBufferLayout Pos_Scale_Col_Quad::VertLayout(unsigned int divisor) {
+std::vector<Pos_Scale_Col_Quad>& Pos_Scale_Col_Quad::Instances() {
+    return m_Instances;
+}
+
+VertexBufferLayout Pos_Scale_Col_Quad_Lookup::VertLayout(unsigned int divisor) const {
     VertexBufferLayout layout;
     layout.Push<float>(2, divisor);
     layout.Push<float>(2, divisor);
     layout.Push<float>(4, divisor);
     return layout;
 }
-const VertexBufferLayout Pos_Scale_Col_Quad::MeshLayout() { 
+const VertexBufferLayout Pos_Scale_Col_Quad_Lookup::MeshLayout() const { 
     VertexBufferLayout MeshLayout;
     MeshLayout.Push<float>(2);
     MeshLayout.Push<float>(2);
     return MeshLayout; 
 }
+unsigned int Pos_Scale_Col_Quad_Lookup::SizeOfVertex()          const { return sizeof(Pos_Scale_Col_Quad); }
+const float* Pos_Scale_Col_Quad_Lookup::MeshData()              const { return m_Mesh; }
+const unsigned int* Pos_Scale_Col_Quad_Lookup::Indicies()       const { return m_Indicies; }
+const unsigned int Pos_Scale_Col_Quad_Lookup::SizeOfMeshData()  const { return sizeof(m_Mesh); }
+const unsigned int Pos_Scale_Col_Quad_Lookup::CountofIndicies() const { return sizeof(m_Indicies); }
 
 
 
@@ -133,10 +97,10 @@ namespace Render {
             Renderers[i].InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);               
         }
     } 
-    void InitAllInstanced(void (*shaderInit)(InstanceRenderer&)) {
+    void InitAllInstanced(void (*ShaderInit)(InstanceRenderer&)) {
         for (int i=0; i < (int)Renderers.size(); i++) {
             Renderers[i].Init();
-            shaderInit(Renderers[i]);
+            ShaderInit(Renderers[i]);
         }
     } 
     void DrawAllInstanced() {

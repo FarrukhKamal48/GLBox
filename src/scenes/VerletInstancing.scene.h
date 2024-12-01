@@ -146,14 +146,15 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
-    Pos_Scale_Col_Quad* m_ObjData;
+    // Pos_Scale_Col_Quad* m_ObjData;
+    ObjectPool<Pos_Scale_Col_Quad> m_ObjPool;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
     // InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_ObjData(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2))
+        : m_ObjPool(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2))
         , m_Constraint({0, HEIGHT}, {WIDTH, 0}) {
         Render::InitAllInstanced(&ShaderInit);
     }
@@ -171,12 +172,12 @@ public:
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_ObjData[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
+            m_ObjPool[i+2].position = glm::vec2(WIDTH/2, HEIGHT/2);
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_ObjData[i+2].scale = glm::vec2(8.0f);
-            m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
+            m_ObjPool[i+2].scale = glm::vec2(8.0f);
+            m_ObjPool[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
-            m_Bodies[i+1].pos = &m_ObjData[i+2].position;
+            m_Bodies[i+1].pos = &m_ObjPool[i+2].position;
             m_Bodies[i+1].pos_old = *m_Bodies[i+1].pos;
             m_Bodies[i+1].bouncines = 0.0f;
             m_Bodies[i+1].boundBouncines = 0.0f;
@@ -186,15 +187,15 @@ public:
             m_Bodies[i+1].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
-        m_ObjData[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
-        m_ObjData[0].scale = glm::vec2(HEIGHT/2);
-        m_ObjData[0].color = glm::vec4(0,0,0,1);
+        m_ObjPool[0].position = glm::vec2(WIDTH/2, HEIGHT/2);
+        m_ObjPool[0].scale = glm::vec2(HEIGHT/2);
+        m_ObjPool[0].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
-        m_ObjData[1].scale = glm::vec2(15.0f);
-        m_ObjData[1].color = glm::vec4(0.1, 1.0, 0.0, 1); 
-        m_Bodies[0].pos = &m_ObjData[1].position;
+        m_ObjPool[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_ObjPool[1].scale = glm::vec2(15.0f);
+        m_ObjPool[1].color = glm::vec4(0.1, 1.0, 0.0, 1); 
+        m_Bodies[0].pos = &m_ObjPool[1].position;
         m_Bodies[0].pos_old = *m_Bodies[0].pos;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
@@ -250,21 +251,21 @@ public:
                 body.updatePosition(m_SimData.subDt);
                 for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
-                    if (std::abs(-m_ObjData[i+1].position.x + m_ObjData[j+1].position.x) > m_ObjData[i+1].scale.x + m_ObjData[j+1].scale.x || 
-                        std::abs(-m_ObjData[i+1].position.y + m_ObjData[j+1].position.y) > m_ObjData[i+1].scale.y + m_ObjData[j+1].scale.y) continue;
-                    Collide(m_Bodies[i], m_ObjData[i+1].scale.x, m_Bodies[j], m_ObjData[j+1].scale.x);
+                    if (std::abs(-m_ObjPool[i+1].position.x + m_ObjPool[j+1].position.x) > m_ObjPool[i+1].scale.x + m_ObjPool[j+1].scale.x || 
+                        std::abs(-m_ObjPool[i+1].position.y + m_ObjPool[j+1].position.y) > m_ObjPool[i+1].scale.y + m_ObjPool[j+1].scale.y) continue;
+                    Collide(m_Bodies[i], m_ObjPool[i+1].scale.x, m_Bodies[j], m_ObjPool[j+1].scale.x);
                 }
-                m_Constraint.ApplyCircle(body, m_ObjData[i+1].scale);
+                m_Constraint.ApplyCircle(body, m_ObjPool[i+1].scale);
             }
         }
         // m_ObjData[1].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_ObjData[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_ObjPool[1].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(8.0f), dt * 10.0f);
+            m_ObjPool[1].scale = Lerp(m_ObjPool[1].scale, glm::vec2(8.0f), dt * 10.0f);
         else
-            m_ObjData[1].scale = Lerp(m_ObjData[1].scale, glm::vec2(50.0f), dt * 10.0f);
+            m_ObjPool[1].scale = Lerp(m_ObjPool[1].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
 

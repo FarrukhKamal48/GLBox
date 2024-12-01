@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 
 #include "../../vendor/glm/ext/matrix_transform.hpp"
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
@@ -47,123 +48,62 @@ public:
 
 static std::vector<InstanceRenderer> Renderers;
 
-class Pos_Quad {
-public:
-    inline static std::vector<Pos_Quad> instances;
-    inline static InstanceRenderer* renderer;
-    glm::vec2 position;
-    static constexpr float Verticies[16] = {
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, 0.0f, 1.0f,
-    };
-    static constexpr unsigned int Indicies[6] = {
-        0, 1, 2, 
-        0, 2, 3
-    };
+template <class Object>
+class ObjectPool {
+public:    
+    ObjectPool(Object* pool, unsigned int count) : m_Pool(pool), m_Count(count) { }
+    ObjectPool(const ObjectPool<Object>& cp) : m_Pool(cp.m_Pool), m_Count(cp.m_Count) { }
+    ~ObjectPool() { }
 
-    Pos_Quad();
-    ~Pos_Quad();
-
-    static Pos_Quad* Instantiate(unsigned int count);
-    static const VertexBufferLayout VertLayout(unsigned int divisor);
-    static const VertexBufferLayout MeshLayout();
-};
-
-class Pos_Quad_Lookup : public VertexLookup {
-public:
-    Pos_Quad_Lookup() {}
-    ~Pos_Quad_Lookup() {}
-    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Quad::VertLayout(divisor); }
-    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Quad); }
-    const float* MeshData()                             const override { return Pos_Quad::Verticies; }
-    const unsigned int* Indicies()                      const override { return Pos_Quad::Indicies; }
-    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Quad::Verticies); }
-    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Quad::Indicies); }
-    const VertexBufferLayout MeshLayout()               const override { return Pos_Quad::MeshLayout(); }
-};
-
-class Pos_Col_Quad {
-public:
-    inline static std::vector<Pos_Col_Quad> instances;
-    inline static InstanceRenderer* renderer = nullptr;
-    glm::vec2 position;
-    glm::vec4 color;
-    static constexpr float Verticies[16] = {
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, 0.0f, 1.0f,
-    };
-    static constexpr unsigned int Indicies[6] = {
-        0, 1, 2, 
-        0, 2, 3
-    };
-
-    Pos_Col_Quad();
-    ~Pos_Col_Quad();
-
-    static Pos_Col_Quad* Instantiate(unsigned int count);
-    static const VertexBufferLayout VertLayout(unsigned int divisor);
-    static const VertexBufferLayout MeshLayout();
-};
-
-class Pos_Col_Quad_Lookup : public VertexLookup {
-public:
-    Pos_Col_Quad_Lookup() {}
-    ~Pos_Col_Quad_Lookup() {}
-    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Col_Quad::VertLayout(divisor); }
-    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Col_Quad); }
-    const float* MeshData()                             const override { return Pos_Col_Quad::Verticies; }
-    const unsigned int* Indicies()                      const override { return Pos_Col_Quad::Indicies; }
-    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Col_Quad::Verticies); }
-    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Col_Quad::Indicies); }
-    const VertexBufferLayout MeshLayout()               const override { return Pos_Col_Quad::MeshLayout(); }
+    Object& operator[](const unsigned int i) { return m_Pool[i]; }
+private:
+    Object* m_Pool;
+    unsigned int m_Count;
 };
 
 class Pos_Scale_Col_Quad {
 public:
-    inline static std::vector<Pos_Scale_Col_Quad> instances;
-    inline static InstanceRenderer* renderer = nullptr;
-    glm::vec2 position;
-    glm::vec2 scale;
-    glm::vec4 color;
-    static constexpr float Verticies[16] = {
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, 0.0f, 1.0f,
-    };
-    static constexpr unsigned int Indicies[6] = {
-        0, 1, 2, 
-        0, 2, 3
-    };
-
     Pos_Scale_Col_Quad();
     ~Pos_Scale_Col_Quad();
 
-    static Pos_Scale_Col_Quad* Instantiate(unsigned int count);
-    static const VertexBufferLayout VertLayout(unsigned int divisor);
-    static const VertexBufferLayout MeshLayout();
+    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count);
+    static std::vector<Pos_Scale_Col_Quad>& Instances();
+public:
+    glm::vec2 position;
+    glm::vec2 scale;
+    glm::vec4 color;
+private:
+    inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
+    inline static InstanceRenderer* m_Renderer = nullptr;
 };
 
 class Pos_Scale_Col_Quad_Lookup : public VertexLookup {
 public:
     Pos_Scale_Col_Quad_Lookup() {}
     ~Pos_Scale_Col_Quad_Lookup() {}
-    VertexBufferLayout VertLayout(unsigned int divisor) const override { return Pos_Scale_Col_Quad::VertLayout(divisor); }
-    unsigned int SizeOfVertex()                         const override { return sizeof(Pos_Scale_Col_Quad); }
-    const float* MeshData()                             const override { return Pos_Scale_Col_Quad::Verticies; }
-    const unsigned int* Indicies()                      const override { return Pos_Scale_Col_Quad::Indicies; }
-    const unsigned int SizeOfMeshData()                 const override { return sizeof(Pos_Scale_Col_Quad::Verticies); }
-    const unsigned int CountofIndicies()                const override { return sizeof(Pos_Scale_Col_Quad::Indicies); }
-    const VertexBufferLayout MeshLayout()               const override { return Pos_Scale_Col_Quad::MeshLayout(); }
+    VertexBufferLayout VertLayout(unsigned int divisor) const override;
+    unsigned int SizeOfVertex()                         const override;
+    const float* MeshData()                             const override;
+    const unsigned int* Indicies()                      const override;
+    const unsigned int SizeOfMeshData()                 const override;
+    const unsigned int CountofIndicies()                const override;
+    const VertexBufferLayout MeshLayout()               const override;
+private:
+    static constexpr float m_Mesh[16] = {
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f,
+        1.0f,  1.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f,
+    };
+    static constexpr unsigned int m_Indicies[6] = {
+        0, 1, 2, 
+        0, 2, 3
+    };
 };
 
 
 namespace Render {
     void InitAllInstanced();
-    void InitAllInstanced(void (*shaderInit)(InstanceRenderer&));
+    void InitAllInstanced(void (*ShaderInit)(InstanceRenderer&));
     void DrawAllInstanced(); 
 }
