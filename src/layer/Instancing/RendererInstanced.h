@@ -1,5 +1,4 @@
 #pragma once
-#include <functional>
 #include <memory>
 
 #include "../../vendor/glm/ext/matrix_transform.hpp"
