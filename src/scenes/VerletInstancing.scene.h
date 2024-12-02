@@ -146,18 +146,15 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
-    // Pos_Scale_Col_Quad* m_ObjData;
     ObjectPool<Pos_Scale_Col_Quad> m_ObjPool;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
-    // InstanceRenderer m_Renderer;
 public:
     VerletInstanced() 
-        : m_ObjPool(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2))
-        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) {
-        Render::InitAllInstanced(&ShaderInit);
-    }
+        : m_ObjPool(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2, &ConfigureShader))
+        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+    { }
     ~VerletInstanced() { }
 
     void Start() override {
@@ -271,12 +268,11 @@ public:
 
     void Render() override {
         Render::Clear(0.9, 0.9, 0.9, 1);
-        // m_Renderer.Draw();
         Render::DrawAllInstanced();
     }
 private:
-    static void ShaderInit(InstanceRenderer& renderer) {
-        renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
+    static void ConfigureShader(InstanceRenderer& renderer) {
+        renderer.CreateShader("assets/shaders/instancing/BasicColorScale.vert", 
                             "assets/shaders/instancing/CircleInRectColor.frag");
         renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);

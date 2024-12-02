@@ -3,8 +3,8 @@
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : m_Lookup(cp.m_Lookup) 
 { }
-InstanceRenderer::InstanceRenderer(VertexLookup* Lookup) 
-    : m_Lookup(Lookup) 
+InstanceRenderer::InstanceRenderer(VertexLookup* Lookup)
+    : m_Lookup(Lookup)
 { }
 InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexLookup* Lookup) 
 : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup->SizeOfVertex()), m_Lookup(Lookup) {
@@ -32,7 +32,7 @@ void InstanceRenderer::Init() {
     m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 }
-void InstanceRenderer::ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath) {
+void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath) {
     InstanceShader = std::make_unique<Shader>();
     InstanceShader->Push(GL_VERTEX_SHADER, vertSrcPath);
     InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
@@ -47,20 +47,24 @@ void InstanceRenderer::Draw() {
 
 
 template <class Object, class Lookup>
-ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int count, InstanceRenderer*& renderer, Lookup* lookup) {
+ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int count, InstanceRenderer*& renderer, 
+                                  Lookup* lookup, void (*ConfigureShader)(InstanceRenderer&)) {
     instances.insert(instances.end(), count, Object());
     if (!renderer) {
         Renderers.emplace_back(lookup);
         renderer = &Renderers.back();
-    }
-    renderer->SetData(instances.size(), instances.data());
+        renderer->SetData(instances.size(), instances.data());
+        renderer->Init();
+        ConfigureShader(*renderer);
+    } else
+        renderer->SetData(instances.size(), instances.data());
     return ObjectPool<Object>(&instances[instances.size()-count], count);
 }
 
 Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
 Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
-ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad::Instantiate(unsigned int count) {
-    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Lookup());
+ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
+    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Lookup(), ConfigureShader);
 }
 std::vector<Pos_Scale_Col_Quad>& Pos_Scale_Col_Quad::Instances() {
     return m_Instances;
@@ -88,21 +92,6 @@ const unsigned int Pos_Scale_Col_Quad_Lookup::CountofIndicies() const { return s
 
 
 namespace Render {
-    void InitAllInstanced() {
-        for (int i=0; i < (int)Renderers.size(); i++) {
-            Renderers[i].Init();
-            Renderers[i].ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
-                                    "assets/shaders/instancing/CircleInRectColor.frag");        
-            Renderers[i].InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
-            Renderers[i].InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);               
-        }
-    } 
-    void InitAllInstanced(void (*ShaderInit)(InstanceRenderer&)) {
-        for (int i=0; i < (int)Renderers.size(); i++) {
-            Renderers[i].Init();
-            ShaderInit(Renderers[i]);
-        }
-    } 
     void DrawAllInstanced() {
         for (int i=0; i < (int)Renderers.size(); i++) {
             Renderers[i].Draw();

@@ -42,7 +42,7 @@ public:
 
     void SetData(unsigned int InstanceCount, void* data);
     void Init();
-    void ShaderInit(const std::string& vertSrcPath, const std::string& fragSrcPath);
+    void CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath);
     void Draw();
 };
 
@@ -66,7 +66,7 @@ public:
     Pos_Scale_Col_Quad();
     ~Pos_Scale_Col_Quad();
 
-    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count);
+    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
     static std::vector<Pos_Scale_Col_Quad>& Instances();
 public:
     glm::vec2 position;
@@ -75,6 +75,7 @@ public:
 private:
     inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
     inline static InstanceRenderer* m_Renderer = nullptr;
+    inline static void (*m_ShaderInit)(InstanceRenderer&) = nullptr;
 };
 
 class Pos_Scale_Col_Quad_Lookup : public VertexLookup {
@@ -103,7 +104,5 @@ private:
 
 
 namespace Render {
-    void InitAllInstanced();
-    void InitAllInstanced(void (*ShaderInit)(InstanceRenderer&));
     void DrawAllInstanced(); 
 }
