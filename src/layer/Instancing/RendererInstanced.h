@@ -67,7 +67,6 @@ public:
     ~Pos_Scale_Col_Quad();
 
     static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
-    static std::vector<Pos_Scale_Col_Quad>& Instances();
 public:
     glm::vec2 position;
     glm::vec2 scale;
@@ -75,7 +74,6 @@ public:
 private:
     inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
     inline static InstanceRenderer* m_Renderer = nullptr;
-    inline static void (*m_ShaderInit)(InstanceRenderer&) = nullptr;
 };
 
 class Pos_Scale_Col_Quad_Lookup : public VertexLookup {

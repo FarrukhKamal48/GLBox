@@ -66,9 +66,6 @@ Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
 ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
     return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Lookup(), ConfigureShader);
 }
-std::vector<Pos_Scale_Col_Quad>& Pos_Scale_Col_Quad::Instances() {
-    return m_Instances;
-}
 
 VertexBufferLayout Pos_Scale_Col_Quad_Lookup::VertLayout(unsigned int divisor) const {
     VertexBufferLayout layout;
