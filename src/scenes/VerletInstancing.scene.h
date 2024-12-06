@@ -152,7 +152,7 @@ private:
     Constraint m_Constraint;
 public:
     VerletInstanced() 
-        : m_ObjPool(Pos_Scale_Col_Quad::Instantiate(m_ObjCount+2, &ConfigureShader))
+        : m_ObjPool(Pos_Scale_Col_Quad_Manager::Instantiate(m_ObjCount+2, &ConfigureShader))
         , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     { }
     ~VerletInstanced() { }

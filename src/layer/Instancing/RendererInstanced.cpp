@@ -3,10 +3,10 @@
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : m_Lookup(cp.m_Lookup) 
 { }
-InstanceRenderer::InstanceRenderer(VertexLookup* Lookup)
+InstanceRenderer::InstanceRenderer(VertexManager* Lookup)
     : m_Lookup(Lookup)
 { }
-InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexLookup* Lookup) 
+InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* Lookup) 
 : m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup->SizeOfVertex()), m_Lookup(Lookup) {
     Init();
 }
@@ -46,6 +46,28 @@ void InstanceRenderer::Draw() {
 }
 
 
+Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
+Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
+
+VertexBufferLayout Pos_Scale_Col_Quad_Manager::VertLayout(unsigned int divisor) const {
+    VertexBufferLayout layout;
+    layout.Push<float>(2, divisor);
+    layout.Push<float>(2, divisor);
+    layout.Push<float>(4, divisor);
+    return layout;
+}
+const VertexBufferLayout Pos_Scale_Col_Quad_Manager::MeshLayout() const { 
+    VertexBufferLayout MeshLayout;
+    MeshLayout.Push<float>(2);
+    MeshLayout.Push<float>(2);
+    return MeshLayout; 
+}
+unsigned int Pos_Scale_Col_Quad_Manager::SizeOfVertex()          const { return sizeof(Pos_Scale_Col_Quad); }
+const float* Pos_Scale_Col_Quad_Manager::MeshData()              const { return m_Mesh; }
+const unsigned int* Pos_Scale_Col_Quad_Manager::Indicies()       const { return m_Indicies; }
+const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()  const { return sizeof(m_Mesh); }
+const unsigned int Pos_Scale_Col_Quad_Manager::CountofIndicies() const { return sizeof(m_Indicies); }
+
 template <class Object, class Lookup>
 ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int count, InstanceRenderer*& renderer, 
                                   Lookup* lookup, void (*ConfigureShader)(InstanceRenderer&)) {
@@ -61,31 +83,9 @@ ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int c
     return ObjectPool<Object>(&instances[instances.size()-count], count);
 }
 
-Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
-Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
-ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Lookup(), ConfigureShader);
+ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
+    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Manager(), ConfigureShader);
 }
-
-VertexBufferLayout Pos_Scale_Col_Quad_Lookup::VertLayout(unsigned int divisor) const {
-    VertexBufferLayout layout;
-    layout.Push<float>(2, divisor);
-    layout.Push<float>(2, divisor);
-    layout.Push<float>(4, divisor);
-    return layout;
-}
-const VertexBufferLayout Pos_Scale_Col_Quad_Lookup::MeshLayout() const { 
-    VertexBufferLayout MeshLayout;
-    MeshLayout.Push<float>(2);
-    MeshLayout.Push<float>(2);
-    return MeshLayout; 
-}
-unsigned int Pos_Scale_Col_Quad_Lookup::SizeOfVertex()          const { return sizeof(Pos_Scale_Col_Quad); }
-const float* Pos_Scale_Col_Quad_Lookup::MeshData()              const { return m_Mesh; }
-const unsigned int* Pos_Scale_Col_Quad_Lookup::Indicies()       const { return m_Indicies; }
-const unsigned int Pos_Scale_Col_Quad_Lookup::SizeOfMeshData()  const { return sizeof(m_Mesh); }
-const unsigned int Pos_Scale_Col_Quad_Lookup::CountofIndicies() const { return sizeof(m_Indicies); }
-
 
 
 namespace Render {

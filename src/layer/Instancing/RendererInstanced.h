@@ -6,9 +6,9 @@
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../Renderer.h"
 
-class VertexLookup {
+class VertexManager {
 public:
-    virtual ~VertexLookup() {}
+    virtual ~VertexManager() {}
     virtual VertexBufferLayout VertLayout(unsigned int divisor) const = 0;
     virtual unsigned int SizeOfVertex() const = 0;
     virtual const float* MeshData() const = 0;
@@ -32,12 +32,12 @@ private:
     unsigned int m_InstanceCount;
     void* m_Data;
     unsigned int m_DataSize;
-    VertexLookup* m_Lookup;
+    VertexManager* m_Lookup;
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
-    InstanceRenderer(VertexLookup* Lookup);
-    InstanceRenderer(unsigned int InstanceCount, void* data, VertexLookup* Lookup);
+    InstanceRenderer(VertexManager* Lookup);
+    InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* Lookup);
     ~InstanceRenderer();
 
     void SetData(unsigned int InstanceCount, void* data);
@@ -65,28 +65,24 @@ class Pos_Scale_Col_Quad {
 public:
     Pos_Scale_Col_Quad();
     ~Pos_Scale_Col_Quad();
-
-    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
-public:
     glm::vec2 position;
     glm::vec2 scale;
     glm::vec4 color;
-private:
-    inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
-    inline static InstanceRenderer* m_Renderer = nullptr;
 };
 
-class Pos_Scale_Col_Quad_Lookup : public VertexLookup {
+class Pos_Scale_Col_Quad_Manager : public VertexManager {
 public:
-    Pos_Scale_Col_Quad_Lookup() {}
-    ~Pos_Scale_Col_Quad_Lookup() {}
+    Pos_Scale_Col_Quad_Manager() {}
+    ~Pos_Scale_Col_Quad_Manager() {}
     VertexBufferLayout VertLayout(unsigned int divisor) const override;
+    const VertexBufferLayout MeshLayout()               const override;
     unsigned int SizeOfVertex()                         const override;
     const float* MeshData()                             const override;
     const unsigned int* Indicies()                      const override;
     const unsigned int SizeOfMeshData()                 const override;
     const unsigned int CountofIndicies()                const override;
-    const VertexBufferLayout MeshLayout()               const override;
+    
+    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
 private:
     static constexpr float m_Mesh[16] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -98,6 +94,8 @@ private:
         0, 1, 2, 
         0, 2, 3
     };
+    inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
+    inline static InstanceRenderer* m_Renderer = nullptr;
 };
 
 
