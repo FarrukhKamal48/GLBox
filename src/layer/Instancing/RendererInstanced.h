@@ -16,6 +16,8 @@ public:
     virtual const unsigned int* Indicies() const = 0; 
     virtual const unsigned int CountofIndicies() const = 0; 
     virtual const VertexBufferLayout MeshLayout() const = 0; 
+    virtual const void* GetInstances() const = 0;
+    virtual const void* GetRenderer() const = 0;
 };
 
 class InstanceRenderer {
@@ -81,6 +83,8 @@ public:
     const unsigned int* Indicies()                      const override;
     const unsigned int SizeOfMeshData()                 const override;
     const unsigned int CountofIndicies()                const override;
+    const void* GetInstances()                          const override;
+    const void* GetRenderer()                           const override;
     
     static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
 private:
@@ -94,6 +98,7 @@ private:
         0, 1, 2, 
         0, 2, 3
     };
+public:
     inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
     inline static InstanceRenderer* m_Renderer = nullptr;
 };

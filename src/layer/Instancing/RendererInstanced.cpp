@@ -62,29 +62,33 @@ const VertexBufferLayout Pos_Scale_Col_Quad_Manager::MeshLayout() const {
     MeshLayout.Push<float>(2);
     return MeshLayout; 
 }
-unsigned int Pos_Scale_Col_Quad_Manager::SizeOfVertex()          const { return sizeof(Pos_Scale_Col_Quad); }
-const float* Pos_Scale_Col_Quad_Manager::MeshData()              const { return m_Mesh; }
-const unsigned int* Pos_Scale_Col_Quad_Manager::Indicies()       const { return m_Indicies; }
-const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()  const { return sizeof(m_Mesh); }
-const unsigned int Pos_Scale_Col_Quad_Manager::CountofIndicies() const { return sizeof(m_Indicies); }
+unsigned int Pos_Scale_Col_Quad_Manager::SizeOfVertex()             const { return sizeof(Pos_Scale_Col_Quad); }
+const float* Pos_Scale_Col_Quad_Manager::MeshData()                 const { return m_Mesh; }
+const unsigned int* Pos_Scale_Col_Quad_Manager::Indicies()          const { return m_Indicies; }
+const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()     const { return sizeof(m_Mesh); }
+const unsigned int Pos_Scale_Col_Quad_Manager::CountofIndicies()    const { return sizeof(m_Indicies); }
+const void* Pos_Scale_Col_Quad_Manager::GetInstances()              const { return &m_Instances; }
+const void* Pos_Scale_Col_Quad_Manager::GetRenderer()               const { return m_Renderer; }
 
-template <class Object, class Lookup>
-ObjectPool<Object> InstantiateObj(std::vector<Object>& instances, unsigned int count, InstanceRenderer*& renderer, 
-                                  Lookup* lookup, void (*ConfigureShader)(InstanceRenderer&)) {
-    instances.insert(instances.end(), count, Object());
+
+template <class Object>
+ObjectPool<Object> InstantiateObj(unsigned int count, VertexManager* lookup, void (*ConfigureShader)(InstanceRenderer&)) {
+    std::vector<Object>* instances = (std::vector<Object>*)lookup->GetInstances();
+    InstanceRenderer* renderer = (InstanceRenderer*)lookup->GetRenderer();
+    instances->insert(instances->end(), count, Object());
     if (!renderer) {
         Renderers.emplace_back(lookup);
         renderer = &Renderers.back();
-        renderer->SetData(instances.size(), instances.data());
+        renderer->SetData(instances->size(), instances->data());
         renderer->Init();
         ConfigureShader(*renderer);
     } else
-        renderer->SetData(instances.size(), instances.data());
-    return ObjectPool<Object>(&instances[instances.size()-count], count);
+        renderer->SetData(instances->size(), instances->data());
+    return ObjectPool<Object>(&(*instances)[instances->size()-count], count);
 }
 
 ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    return InstantiateObj(m_Instances, count, m_Renderer, new Pos_Scale_Col_Quad_Manager(), ConfigureShader);
+    return InstantiateObj<Pos_Scale_Col_Quad>(count, new Pos_Scale_Col_Quad_Manager(), ConfigureShader);
 }
 
 
