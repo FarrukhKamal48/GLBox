@@ -1,33 +1,33 @@
 #include "RendererInstanced.h"
 
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
-    : m_Lookup(cp.m_Lookup) 
+    : m_VManager(cp.m_VManager) 
 { }
-InstanceRenderer::InstanceRenderer(VertexManager* Lookup)
-    : m_Lookup(Lookup)
+InstanceRenderer::InstanceRenderer(VertexManager* VManager)
+    : m_VManager(VManager)
 { }
-InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* Lookup) 
-: m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * Lookup->SizeOfVertex()), m_Lookup(Lookup) {
+InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
+: m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * VManager->SizeOfObject()), m_VManager(VManager) {
     Init();
 }
 InstanceRenderer::~InstanceRenderer() {
-    delete m_Lookup;
+    delete m_VManager;
 }
 void InstanceRenderer::SetData(unsigned int InstanceCount, void* data) {
     m_InstanceCount = InstanceCount;
     m_Data = data;
-    m_DataSize = InstanceCount * m_Lookup->SizeOfVertex();
+    m_DataSize = InstanceCount * m_VManager->SizeOfObject();
 }
 void InstanceRenderer::Init() {
     Render::BasicBlend();
 
     m_VertexArray =  std::make_unique<VertexArray>();
-    m_MeshBuffer = std::make_unique<VertexBuffer>(m_Lookup->MeshData(), m_Lookup->SizeOfMeshData());
-    m_IndexBuffer =  std::make_unique<IndexBuffer>(m_Lookup->Indicies(), m_Lookup->CountofIndicies());
+    m_MeshBuffer = std::make_unique<VertexBuffer>(m_VManager->MeshData(), m_VManager->SizeOfMeshData());
+    m_IndexBuffer =  std::make_unique<IndexBuffer>(m_VManager->Indicies(), m_VManager->CountofIndicies());
     m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
     
-    m_VertexArray->AddBuffer(*m_MeshBuffer, m_Lookup->MeshLayout());
-    m_VertexArray->AddBuffer(*m_InstanceBuffer, m_Lookup->VertLayout(1));
+    m_VertexArray->AddBuffer(*m_MeshBuffer, m_VManager->MeshLayout());
+    m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
 
     m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -62,7 +62,7 @@ const VertexBufferLayout Pos_Scale_Col_Quad_Manager::MeshLayout() const {
     MeshLayout.Push<float>(2);
     return MeshLayout; 
 }
-unsigned int Pos_Scale_Col_Quad_Manager::SizeOfVertex()             const { return sizeof(Pos_Scale_Col_Quad); }
+unsigned int Pos_Scale_Col_Quad_Manager::SizeOfObject()             const { return sizeof(Pos_Scale_Col_Quad); }
 const float* Pos_Scale_Col_Quad_Manager::MeshData()                 const { return m_Mesh; }
 const unsigned int* Pos_Scale_Col_Quad_Manager::Indicies()          const { return m_Indicies; }
 const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()     const { return sizeof(m_Mesh); }
@@ -72,11 +72,11 @@ const void* Pos_Scale_Col_Quad_Manager::GetRenderer()               const { retu
 
 
 template <class Object>
-ObjectPool<Object> InstantiateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), 
-                                  VertexManager* lookup, std::vector<Object>& instances, InstanceRenderer*& renderer) {
+ObjectPool<Object> InstantiateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
+                                  std::vector<Object>& instances, InstanceRenderer*& renderer) {
     instances.insert(instances.end(), count, Object());
     if (!renderer) {
-        Renderers.emplace_back(lookup);
+        Renderers.emplace_back(VManager);
         renderer = &Renderers.back();
         renderer->SetData(instances.size(), instances.data());
         renderer->Init();

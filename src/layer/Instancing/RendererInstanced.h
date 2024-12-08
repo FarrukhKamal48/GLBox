@@ -10,7 +10,7 @@ class VertexManager {
 public:
     virtual ~VertexManager() {}
     virtual VertexBufferLayout VertLayout(unsigned int divisor) const = 0;
-    virtual unsigned int SizeOfVertex() const = 0;
+    virtual unsigned int SizeOfObject() const = 0;
     virtual const float* MeshData() const = 0;
     virtual const unsigned int SizeOfMeshData() const = 0; 
     virtual const unsigned int* Indicies() const = 0; 
@@ -34,12 +34,12 @@ private:
     unsigned int m_InstanceCount;
     void* m_Data;
     unsigned int m_DataSize;
-    VertexManager* m_Lookup;
+    VertexManager* m_VManager;
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
-    InstanceRenderer(VertexManager* Lookup);
-    InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* Lookup);
+    InstanceRenderer(VertexManager* VManager);
+    InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager);
     ~InstanceRenderer();
 
     void SetData(unsigned int InstanceCount, void* data);
@@ -78,7 +78,7 @@ public:
     ~Pos_Scale_Col_Quad_Manager() {}
     VertexBufferLayout VertLayout(unsigned int divisor) const override;
     const VertexBufferLayout MeshLayout()               const override;
-    unsigned int SizeOfVertex()                         const override;
+    unsigned int SizeOfObject()                         const override;
     const float* MeshData()                             const override;
     const unsigned int* Indicies()                      const override;
     const unsigned int SizeOfMeshData()                 const override;
