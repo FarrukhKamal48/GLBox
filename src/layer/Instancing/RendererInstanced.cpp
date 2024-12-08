@@ -83,7 +83,7 @@ ObjectPool<Object> InstantiateObj(unsigned int count, void (*ConfigureShader)(In
         ConfigureShader(*renderer);
     } else
         renderer->SetData(instances.size(), instances.data());
-    return ObjectPool<Object>(&instances[instances.size()-count], count);
+    return ObjectPool<Pos_Scale_Col_Quad>(&*(instances.end()-count), count);
 }
 
 ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
