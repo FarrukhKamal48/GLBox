@@ -72,7 +72,7 @@ const void* Pos_Scale_Col_Quad_Manager::GetRenderer()               const { retu
 
 
 template <class Object>
-ObjectPool<Object> InstantiateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
+Object* InstantiateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
                                   std::vector<Object>& instances, InstanceRenderer*& renderer) {
     instances.insert(instances.end(), count, Object());
     if (!renderer) {
@@ -83,10 +83,10 @@ ObjectPool<Object> InstantiateObj(unsigned int count, void (*ConfigureShader)(In
         ConfigureShader(*renderer);
     } else
         renderer->SetData(instances.size(), instances.data());
-    return ObjectPool<Pos_Scale_Col_Quad>(&*(instances.end()-count), count);
+    return instances.end().base()-count;
 }
 
-ObjectPool<Pos_Scale_Col_Quad> Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
+Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
     return InstantiateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
 }
 

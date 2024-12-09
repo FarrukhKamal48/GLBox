@@ -50,18 +50,18 @@ public:
 
 static std::vector<InstanceRenderer> Renderers;
 
-template <class Object>
-class ObjectPool {
-public:    
-    ObjectPool(Object* pool, unsigned int count) : m_Pool(pool), m_Count(count) { }
-    ObjectPool(const ObjectPool<Object>& cp) : m_Pool(cp.m_Pool), m_Count(cp.m_Count) { }
-    ~ObjectPool() { }
-
-    Object& operator[](const unsigned int i) { return m_Pool[i]; }
-private:
-    Object* m_Pool;
-    unsigned int m_Count;
-};
+// template <class Object>
+// class ObjectPool {
+// public:    
+//     ObjectPool(Object* pool, unsigned int count) : m_Pool(pool), m_Count(count) { }
+//     ObjectPool(const ObjectPool<Object>& cp) : m_Pool(cp.m_Pool), m_Count(cp.m_Count) { }
+//     ~ObjectPool() { }
+//
+//     Object& operator[](const unsigned int i) { return m_Pool[i]; }
+// private:
+//     Object* m_Pool;
+//     unsigned int m_Count;
+// };
 
 class Pos_Scale_Col_Quad {
 public:
@@ -86,7 +86,7 @@ public:
     const void* GetInstances()                          const override;
     const void* GetRenderer()                           const override;
     
-    static ObjectPool<Pos_Scale_Col_Quad> Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
+    static Pos_Scale_Col_Quad* Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
 private:
     static constexpr float m_Mesh[16] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
