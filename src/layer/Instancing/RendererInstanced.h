@@ -6,6 +6,8 @@
 #include "../../vendor/glm/ext/matrix_clip_space.hpp"
 #include "../Renderer.h"
 
+class InstanceRenderer;
+
 class VertexManager {
 public:
     virtual ~VertexManager() {}
@@ -18,6 +20,7 @@ public:
     virtual const VertexBufferLayout MeshLayout() const = 0; 
     virtual const void* GetInstances() const = 0;
     virtual const void* GetRenderer() const = 0;
+    virtual const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const = 0;
 };
 
 class InstanceRenderer {
@@ -85,8 +88,9 @@ public:
     const unsigned int CountofIndicies()                const override;
     const void* GetInstances()                          const override;
     const void* GetRenderer()                           const override;
+    const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const override;
     
-    static Pos_Scale_Col_Quad* Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
+    Pos_Scale_Col_Quad* Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
 private:
     static constexpr float m_Mesh[16] = {
         -1.0f, -1.0f, 0.0f, 0.0f,

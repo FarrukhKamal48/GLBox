@@ -46,6 +46,22 @@ void InstanceRenderer::Draw() {
 }
 
 
+template <class Object>
+static unsigned int AllocateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
+                                  std::vector<Object>& instances, InstanceRenderer*& renderer) {
+    instances.insert(instances.end(), count, Object());
+    if (!renderer) {
+        Renderers.emplace_back(VManager);
+        renderer = &Renderers.back();
+        renderer->SetData(instances.size(), instances.data());
+        renderer->Init();
+        ConfigureShader(*renderer);
+    } else
+        renderer->SetData(instances.size(), instances.data());
+    return instances.size() - count;
+}
+
+
 Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
 Pos_Scale_Col_Quad::~Pos_Scale_Col_Quad() { }
 
@@ -69,25 +85,11 @@ const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()     const { retu
 const unsigned int Pos_Scale_Col_Quad_Manager::CountofIndicies()    const { return sizeof(m_Indicies); }
 const void* Pos_Scale_Col_Quad_Manager::GetInstances()              const { return &m_Instances; }
 const void* Pos_Scale_Col_Quad_Manager::GetRenderer()               const { return m_Renderer; }
-
-
-template <class Object>
-Object* InstantiateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
-                                  std::vector<Object>& instances, InstanceRenderer*& renderer) {
-    instances.insert(instances.end(), count, Object());
-    if (!renderer) {
-        Renderers.emplace_back(VManager);
-        renderer = &Renderers.back();
-        renderer->SetData(instances.size(), instances.data());
-        renderer->Init();
-        ConfigureShader(*renderer);
-    } else
-        renderer->SetData(instances.size(), instances.data());
-    return instances.end().base()-count;
+const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const {
+    return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
 }
-
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    return InstantiateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
+    return &m_Instances[AllocateObject(count, ConfigureShader)];
 }
 
 
