@@ -46,6 +46,7 @@ public:
     const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const override;
     
     Pos_Scale_Col_Quad* Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&));
+    Pos_Scale_Col_Quad* At(unsigned int index);
 private:
     static constexpr float m_Mesh[16] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -57,7 +58,6 @@ private:
         0, 1, 2, 
         0, 2, 3
     };
-public:
     inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
     inline static InstanceRenderer* m_Renderer = nullptr;
 };

@@ -47,6 +47,10 @@ const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
     return &m_Instances[AllocateObject(count, ConfigureShader)];
 }
+Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::At(unsigned int index) {
+    return &m_Instances[index];
+}
+
 
 
 namespace Render {
