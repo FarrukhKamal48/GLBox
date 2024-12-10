@@ -24,10 +24,8 @@ void InstanceRenderer::Init() {
     m_VertexArray =  std::make_unique<VertexArray>();
     m_MeshBuffer = std::make_unique<VertexBuffer>(m_VManager->MeshData(), m_VManager->SizeOfMeshData());
     m_IndexBuffer =  std::make_unique<IndexBuffer>(m_VManager->Indicies(), m_VManager->CountofIndicies());
-    m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
     
     m_VertexArray->AddBuffer(*m_MeshBuffer, m_VManager->MeshLayout());
-    m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
 
     m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -41,6 +39,10 @@ void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::s
     InstanceShader->SetUniformMat4("u_MVP", m_Proj * m_View);
 }
 void InstanceRenderer::Draw() {
+    if (m_InstanceBuffer == nullptr) {
+        m_InstanceBuffer = std::make_unique<VertexBuffer>(nullptr, m_DataSize, GL_DYNAMIC_DRAW);
+        m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
+    }
     m_InstanceBuffer->SetData(m_Data, m_DataSize);
     Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
 }
