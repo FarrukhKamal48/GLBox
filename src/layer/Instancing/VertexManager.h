@@ -62,3 +62,8 @@ public:
     inline static InstanceRenderer* m_Renderer = nullptr;
 };
 
+
+namespace Render {
+    void DrawAllInstanced(); 
+}
+

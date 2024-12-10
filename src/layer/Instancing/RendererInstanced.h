@@ -36,7 +36,3 @@ public:
     void Draw();
 };
 
-
-namespace Render {
-    void DrawAllInstanced(); 
-}
