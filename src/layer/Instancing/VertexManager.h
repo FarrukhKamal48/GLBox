@@ -59,7 +59,7 @@ private:
         0, 2, 3
     };
 public:
-    inline static std::vector<Pos_Scale_Col_Quad> m_Instances;
+    inline static std::vector<Pos_Scale_Col_Quad> m_Instances = {};
     inline static InstanceRenderer* m_Renderer = nullptr;
 };
 

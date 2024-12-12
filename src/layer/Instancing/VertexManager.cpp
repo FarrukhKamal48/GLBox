@@ -45,12 +45,12 @@ const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count
     return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    return &m_Instances[AllocateObject(count, ConfigureShader)];
+    int index = AllocateObject(count, ConfigureShader);
+    return &m_Instances[index];
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::At(unsigned int index) {
     return &m_Instances[index];
 }
-
 
 
 namespace Render {
