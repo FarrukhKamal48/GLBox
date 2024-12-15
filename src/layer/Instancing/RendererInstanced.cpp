@@ -42,8 +42,9 @@ void InstanceRenderer::Draw() {
     if (m_InstanceBuffer == nullptr) {
         m_InstanceBuffer = std::make_unique<VertexBuffer>(m_Data, m_DataSize, GL_DYNAMIC_DRAW);
         m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
-    } else
+    } else {
         m_InstanceBuffer->SetData(m_Data, m_DataSize);
-    Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+    }
 }
 

@@ -147,15 +147,19 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
+    Pos_Scale_Col_Quad* m_Test;
     Pos_Scale_Col_Quad* m_Objs;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
 public:
     VerletInstanced() 
-        : m_Objs(Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount+1, &ConfigureShader))
-        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
-    { }
+        : m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+    {
+        Pos_Scale_Col_Quad_Manager().Instantiate(1, &ConfigureShader);
+        m_Test = &Pos_Scale_Col_Quad_Manager::m_Instances[0];
+        m_Objs = Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount+1, &ConfigureShader);
+    }
     ~VerletInstanced() { }
 
     void Start() override {
@@ -185,9 +189,9 @@ public:
             m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // // set graphic for contraint
-        // m_BoundGFX->position = glm::vec2(WIDTH/2, HEIGHT/2);
-        // m_BoundGFX->scale = glm::vec2(HEIGHT/2);
-        // m_BoundGFX->color = glm::vec4(0,0,0,1);
+        // m_Test->position = glm::vec2(WIDTH/2, HEIGHT/2);
+        // m_Test->scale = glm::vec2(HEIGHT/2);
+        // m_Test->color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
         m_Objs[0].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);

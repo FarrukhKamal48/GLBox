@@ -1,20 +1,23 @@
 #include "RendererInstanced.h"
+#include <iostream>
 
 static std::vector<InstanceRenderer> Renderers;
 
 template <class Object>
 static unsigned int AllocateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
                                   std::vector<Object>& instances, InstanceRenderer*& renderer) {
-    instances.insert(instances.end(), count, Object());
+    unsigned int lastSize = instances.size();
+    // instances.insert(instances.end(), count, Object());
+    for (unsigned int i=0; i<count; i++)
+        instances.push_back(Object());
     if (!renderer) {
-        Renderers.emplace_back(VManager);
+        Renderers.emplace_back(instances.size(), instances.data(), VManager);
         renderer = &Renderers.back();
-        renderer->SetData(instances.size(), instances.data());
         renderer->Init();
         ConfigureShader(*renderer);
     } else
         renderer->SetData(instances.size(), instances.data());
-    return instances.size() - count;
+    return lastSize;
 }
 
 
@@ -46,6 +49,7 @@ const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
     int index = AllocateObject(count, ConfigureShader);
+    std::cout << index << ", " << m_Instances.size() << '\n';
     return &m_Instances[index];
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::At(unsigned int index) {
