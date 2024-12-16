@@ -25,7 +25,7 @@ int main (int argc, char *argv[])
         return -1;
     }
 
-    // Input::Init(window);
+    Input::Init(window);
     
     /* Make the window's context current */
     glfwMakeContextCurrent(window);

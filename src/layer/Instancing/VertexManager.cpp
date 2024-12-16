@@ -7,9 +7,7 @@ template <class Object>
 static unsigned int AllocateObj(unsigned int count, void (*ConfigureShader)(InstanceRenderer&), VertexManager* VManager, 
                                   std::vector<Object>& instances, InstanceRenderer*& renderer) {
     unsigned int lastSize = instances.size();
-    // instances.insert(instances.end(), count, Object());
-    for (unsigned int i=0; i<count; i++)
-        instances.push_back(Object());
+    instances.insert(instances.end(), count, Object());
     if (!renderer) {
         Renderers.emplace_back(instances.size(), instances.data(), VManager);
         renderer = &Renderers.back();

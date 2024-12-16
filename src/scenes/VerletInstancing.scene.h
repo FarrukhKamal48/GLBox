@@ -147,6 +147,7 @@ namespace Scene {
 class VerletInstanced : public Scene {
 private:
     constexpr static int m_ObjCount = 2000;
+    Pos_Scale_Col_Quad_Manager m_Manager;
     Pos_Scale_Col_Quad* m_Test;
     Pos_Scale_Col_Quad* m_Objs;
     RigidBody m_Bodies[m_ObjCount+1];
@@ -156,8 +157,10 @@ public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     {
-        m_Test = Pos_Scale_Col_Quad_Manager().Instantiate(1, &ConfigureShader);
-        m_Objs = Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount+1, &ConfigureShader);
+        m_Manager.AllocateObject(1, &ConfigureShader);
+        m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader);
+        m_Test = m_Manager.At(0);
+        m_Objs = m_Manager.At(1);
     }
     ~VerletInstanced() { }
 
