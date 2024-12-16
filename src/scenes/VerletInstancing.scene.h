@@ -156,8 +156,7 @@ public:
     VerletInstanced() 
         : m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     {
-        Pos_Scale_Col_Quad_Manager().Instantiate(1, &ConfigureShader);
-        m_Test = &Pos_Scale_Col_Quad_Manager::m_Instances[0];
+        m_Test = Pos_Scale_Col_Quad_Manager().Instantiate(1, &ConfigureShader);
         m_Objs = Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount+1, &ConfigureShader);
     }
     ~VerletInstanced() { }
@@ -188,17 +187,17 @@ public:
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
             m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
-        // // set graphic for contraint
-        // m_Test->position = glm::vec2(WIDTH/2, HEIGHT/2);
-        // m_Test->scale = glm::vec2(HEIGHT/2);
-        // m_Test->color = glm::vec4(0,0,0,1);
+        // set graphic for contraint
+        m_Test->position = glm::vec2(WIDTH/2, HEIGHT/2);
+        m_Test->scale = glm::vec2(HEIGHT/2);
+        m_Test->color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
         m_Objs[0].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
         m_Objs[0].scale = glm::vec2(15.0f);
         m_Objs[0].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].pos = &m_Objs[0].position;
-        m_Bodies[0].pos_old = *m_Bodies[0].pos;
+        m_Bodies[0].pos_old = m_Objs[0].position;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
         m_Bodies[0].iskinematic = true;
