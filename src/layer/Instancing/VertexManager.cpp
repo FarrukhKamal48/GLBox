@@ -1,5 +1,4 @@
 #include "RendererInstanced.h"
-#include <iostream>
 
 static std::vector<InstanceRenderer> Renderers;
 
@@ -46,9 +45,7 @@ const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count
     return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    int index = AllocateObject(count, ConfigureShader);
-    std::cout << index << ", " << m_Instances.size() << '\n';
-    return &m_Instances[index];
+    return &m_Instances[AllocateObject(count, ConfigureShader)];
 }
 Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::At(unsigned int index) {
     return &m_Instances[index];
