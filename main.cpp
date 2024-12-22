@@ -3,6 +3,7 @@
 
 #include "src/layer/Input.h"
 #include "src/scenes/VerletInstancing.scene.h"
+#include "src/scenes/FixedGridSpacePartition.scene.h"
 
 int main (int argc, char *argv[])
 {
@@ -31,7 +32,7 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::VerletInstanced activeScene;
+    Scene::FixedGridSpacePartitionTest activeScene;
     activeScene.Start();
 
     double lastTime = glfwGetTime();
