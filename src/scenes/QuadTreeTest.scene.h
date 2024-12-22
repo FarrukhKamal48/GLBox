@@ -108,28 +108,28 @@ namespace Scene {
 class QuadTreeTest : public Scene {
 private:
     constexpr static int m_ObjCount = 1000;
-    Pos_Scale_Col* m_ObjData = new Pos_Scale_Col[m_ObjCount];
-    RendererInstanced<QuadData, Pos_Scale_Col, m_ObjCount> m_Renderer;
+    Pos_Scale_Col_Quad* m_ObjData;
     QuadTree<4> m_QTree;
     Boundry m_CheckRange;
 public:
     QuadTreeTest() 
-        : m_Renderer(m_ObjData), m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}), m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
+        : m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}), m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
     {
-        m_Renderer.ShaderInit("assets/shaders/instancing/BasicColorScale.vert", 
+        m_ObjData = Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount, &ConfigureShader); 
+    }
+    ~QuadTreeTest() { }
+    static void ConfigureShader(InstanceRenderer& m_Renderer) {
+        m_Renderer.CreateShader("assets/shaders/instancing/BasicColorScale.vert", 
                               "assets/shaders/instancing/CircleInRectColor.frag");
         m_Renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
-    ~QuadTreeTest() {
-        delete [] m_ObjData;
-    }
 
     void Start() override {
-        float ip = 0;
+        // float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
-            ip = i + 1.0f;
+            // ip = i + 1.0f;
             m_ObjData[i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
             m_ObjData[i].scale = glm::vec2(8.0f);
@@ -165,7 +165,7 @@ public:
 
     void Render() override {
         Render::Clear(0.9, 0.9, 0.9, 1);
-        m_Renderer.Draw();
+        Render::DrawAllInstanced();
     }
 
 };

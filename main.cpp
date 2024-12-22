@@ -3,7 +3,6 @@
 
 #include "src/layer/Input.h"
 #include "src/scenes/VerletInstancing.scene.h"
-// #include "src/scenes/QuadTreeTest.scene.h"
 
 int main (int argc, char *argv[])
 {
