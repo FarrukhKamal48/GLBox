@@ -1,9 +1,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "src/layer/Input.h"
-#include "src/scenes/VerletInstancing.scene.h"
-#include "src/scenes/FixedGridSpacePartition.scene.h"
+#include "Input.h"
+#include "Renderer.h"
+#include "../scenes/Scene.h"
+
+extern Scene::Scene* CreateScene();
 
 int main (int argc, char *argv[])
 {
@@ -32,8 +34,8 @@ int main (int argc, char *argv[])
 
     glewInit();
 
-    Scene::FixedGridSpacePartitionTest activeScene;
-    activeScene.Start();
+    Scene::Scene* activeScene = CreateScene();
+    activeScene->Start();
 
     double lastTime = glfwGetTime();
     double deltaTime = 0.0;
@@ -41,11 +43,12 @@ int main (int argc, char *argv[])
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        /* calculate deltaTime */
         lastTime = glfwGetTime();
         if (lastTime < 0) continue;
         
-        activeScene.Update(deltaTime);
-        activeScene.Render();
+        activeScene->Update(deltaTime);
+        activeScene->Render();
 
         deltaTime = glfwGetTime() - lastTime;
 
@@ -56,8 +59,6 @@ int main (int argc, char *argv[])
         glfwPollEvents();
     }
 
-    // delete activeScene;
-
+    delete activeScene;
     glfwTerminate();
-    return 0;
 }
