@@ -1,5 +1,4 @@
-#include "Input.h"
-#include <GLFW/glfw3.h>
+#include "layer/Input.h"
 
 static GLFWwindow* window;
 static double MousePosX;

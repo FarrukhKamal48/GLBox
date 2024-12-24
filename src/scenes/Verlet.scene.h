@@ -1,8 +1,7 @@
 #pragma once
-#include "../layer/Batching/BatchRenderer.h"
-#include "../layer/Batching/Quad.h"
-#include "Scene.h"
-#include <cmath>
+#include "layer/Batching/BatchRenderer.h"
+#include "layer/Batching/Quad.h"
+#include "scenes/Scene.h"
 #define PI (3.141592653589793)
 
 class VerletObject {

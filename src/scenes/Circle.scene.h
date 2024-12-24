@@ -1,13 +1,12 @@
 #pragma once
-#include <cstring>
 #include <memory>
-#include "GL/glew.h"
+#include <GL/glew.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
-#include "Scene.h"
-#include "../layer/Renderer.h"
-#include "../layer/Texture.h"
-#include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
+#include "scenes/Scene.h"
+#include "layer/Renderer.h"
+#include "layer/Texture.h"
 
 
 namespace Scene {

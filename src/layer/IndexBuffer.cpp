@@ -1,12 +1,12 @@
-#include "GLlog.h"
-#include "IndexBuffer.h"
+#include "layer/GLlog.h"
+#include "layer/IndexBuffer.h"
 
-IndexBuffer::IndexBuffer(const uint* data, uint count) 
+IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count) 
     : m_Count(count)
 {
     GLCall(glGenBuffers(1, &m_RendereID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendereID));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint), data, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer() {

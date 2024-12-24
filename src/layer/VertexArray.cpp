@@ -1,6 +1,6 @@
 #include <GL/glew.h>
-#include "GLlog.h"
-#include "VertexArray.h"
+#include "layer/GLlog.h"
+#include "layer/VertexArray.h"
 
 VertexArray::VertexArray() : m_AttribCount(0) {
     GLCall(glGenVertexArrays(1, &m_RendererID));

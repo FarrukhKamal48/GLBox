@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <iostream>
 
-#include "GLlog.h"
+#include "layer/GLlog.h"
 
 void GLClearError() {
     while (glGetError() != GL_NO_ERROR);

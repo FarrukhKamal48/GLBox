@@ -1,7 +1,7 @@
 #pragma once
-#include "Scene.h"
-#include "../layer/GLlog.h"
-#include "GL/glew.h"
+#include <GL/glew.h>
+#include "scenes/Scene.h"
+#include "layer/GLlog.h"
 
 namespace Scene {
 

@@ -1,9 +1,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Input.h"
-#include "Renderer.h"
-#include "../scenes/Scene.h"
+#include "layer/Input.h"
+#include "layer/Renderer.h"
+#include "scenes/Scene.h"
 
 extern Scene::Scene* CreateScene();
 

@@ -1,10 +1,11 @@
-#include <GL/glew.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include "Shader.h"
-#include "GLlog.h"
+#include <GL/glew.h>
+
+#include "layer/GLlog.h"
+#include "layer/Shader.h"
 
 Shader::Shader() {
 }

@@ -1,8 +1,7 @@
 #pragma once
-#include "Batch.h"
-#include "Quad.h"
-#include "../../vendor/glm/ext/matrix_transform.hpp"
-#include "../../vendor/glm/ext/matrix_clip_space.hpp"
+#include "layer/Batching/Batch.h"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
 namespace Batching {
 

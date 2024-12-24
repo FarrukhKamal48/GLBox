@@ -1,7 +1,6 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 #define GLCall(X) GLClearError(); X; GLLogCall(#X, __FILE__, __LINE__)
 

@@ -1,7 +1,7 @@
 #pragma once
-#include "src/scenes/Scene.h"
-#include "src/layer/Instancing/RendererInstanced.h"
-#include "src/layer/Input.h"
+#include <scenes/Scene.h>
+#include <layer/Instancing/RendererInstanced.h>
+#include <layer/Input.h>
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
 #define MAXSPEED (float)5

@@ -1,5 +1,5 @@
-#include "Renderer.h"
-#include "GLlog.h"
+#include "layer/GLlog.h"
+#include "layer/Renderer.h"
 
 void Render::Clear() {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));

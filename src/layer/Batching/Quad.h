@@ -1,7 +1,5 @@
 #pragma once
-#include "Vertex.h"
-#include "Mesh.h"
-#include "../Renderer.h"
+#include "layer/Batching/Vertex.h"
 
 namespace Batching {
 

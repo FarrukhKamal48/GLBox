@@ -1,10 +1,6 @@
-#include "Scene.h"
-#include "../layer/Instancing/RendererInstanced.h"
-#include "../layer/Input.h"
-#include <cassert>
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#include "layer/Input.h"
+#include "scenes/Scene.h"
+#include "layer/Instancing/RendererInstanced.h"
 
 struct Boundry
 {

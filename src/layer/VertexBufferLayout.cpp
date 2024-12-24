@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include "VertexBufferLayout.h"
+#include "layer/VertexBufferLayout.h"
 
 template<typename T>
 void Push(unsigned int count) {

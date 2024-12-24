@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../vendor/stb/stb_image.h"
+#include <stb/stb_image.h>
 
 class Texture {
 private:

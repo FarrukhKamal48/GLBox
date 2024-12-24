@@ -1,7 +1,7 @@
 #pragma once
-#include "VertexArray.h"
-#include "IndexBuffer.h"
-#include "Shader.h"
+#include "layer/VertexArray.h"
+#include "layer/IndexBuffer.h"
+#include "layer/Shader.h"
 
 #define WIDTH (float)1920
 #define HEIGHT (float)1080

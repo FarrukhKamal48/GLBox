@@ -1,11 +1,7 @@
 #pragma once
 #include <memory>
-#include <vector>
-
-#include "../../vendor/glm/ext/matrix_transform.hpp"
-#include "../../vendor/glm/ext/matrix_clip_space.hpp"
-#include "../Renderer.h"
-#include "VertexManager.h"
+#include "layer/Renderer.h"
+#include "layer/Instancing/VertexManager.h"
 
 
 class InstanceRenderer {

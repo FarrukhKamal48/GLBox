@@ -1,8 +1,7 @@
 #pragma once
 #include <memory>
-#include "../Renderer.h"
-#include "Mesh.h"
-#include "Quad.h"
+#include "layer/Renderer.h"
+#include "layer/Batching/Quad.h"
 
 namespace Batching {
 

@@ -1,10 +1,10 @@
 #pragma once
-#include "Scene.h"
-#include "../layer/Batching/BatchRenderer.h"
-#include "../layer/Batching/Quad.h"
+#include "scenes/Scene.h"
+#include "layer/Batching/BatchRenderer.h"
+#include "layer/Batching/Quad.h"
 
-#include "../vendor/glm/ext/matrix_transform.hpp"
-#include "../vendor/glm/ext/matrix_clip_space.hpp"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
 namespace Scene {
 

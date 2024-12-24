@@ -1,8 +1,6 @@
-#include "Scene.h"
-#include "../layer/Instancing/RendererInstanced.h"
-#include "../layer/Input.h"
-#include <cstdlib>
-#include <vector>
+#include "layer/Input.h"
+#include "scenes/Scene.h"
+#include "layer/Instancing/RendererInstanced.h"
 
 struct Bound
 {
