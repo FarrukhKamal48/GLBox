@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
-struct Boundry
+struct Bound
 {
     glm::vec2 centre;
     glm::vec2 scale;
@@ -18,7 +18,7 @@ struct Boundry
         );
     }
 
-    bool intersects(const Boundry& box) {
+    bool intersects(const Bound& box) {
         return (box.centre.x - centre.x <= box.scale.x+scale.x || box.centre.x - centre.x >= -box.scale.x-scale.x) && 
                 (box.centre.y - centre.y <= box.scale.y+scale.y || (box.centre.y - centre.y) >= -box.scale.y-scale.y);
     }
@@ -57,7 +57,7 @@ public:
         return false;
     }
 
-    void Query(Boundry& range, std::vector<int>& result) {
+    void Query(Bound& range, std::vector<int>& result) {
         if (!m_Boundry.intersects(range))
             return;
         for (unsigned int i = 0; i < m_Count; i++) {
@@ -89,7 +89,7 @@ private:
     };
 
 private:
-    Boundry m_Boundry;
+    Bound m_Boundry;
     QuadTree<Capacity>* m_Cells[4];
     unsigned int m_Count;
     Point m_Points[Capacity];
@@ -110,7 +110,7 @@ private:
     constexpr static int m_ObjCount = 1000;
     Pos_Scale_Col_Quad* m_ObjData;
     QuadTree<4> m_QTree;
-    Boundry m_CheckRange;
+    Bound m_CheckRange;
 public:
     QuadTreeTest() 
         : m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}), m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
