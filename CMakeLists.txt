@@ -11,6 +11,6 @@ set (vendor_dir "${PROJECT_SOURCE_DIR}/src/vendor/")
 file(GLOB_RECURSE src_files ${src_dir}*.cpp ${src_dir}*.h)
 
 add_compile_definitions(GLEW_STATIC)
-add_executable(${PROJECT_NAME} Sandbox.cpp ${src_files})
-target_include_directories(${PROJECT_NAME} PRIVATE ${src_dir} ${vendor_dir})
+add_library(${PROJECT_NAME} ${src_files})
+target_include_directories(${PROJECT_NAME} PUBLIC ${src_dir} ${vendor_dir})
 target_link_libraries(${PROJECT_NAME} GL GLEW glfw)
