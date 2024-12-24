@@ -1,6 +1,6 @@
 #pragma once
 
-// core
+// layer
 #include "layer/EntryPoint.h"
 #include "layer/GLlog.h"
 #include "layer/IndexBuffer.h"
