@@ -4,8 +4,8 @@
 
 #include <GL/glew.h>
 
-#include "layer/GLlog.h"
-#include "layer/Shader.h"
+#include "Core/GLlog.h"
+#include "Core/Shader.h"
 
 Shader::Shader() {
 }

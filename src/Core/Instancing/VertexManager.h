@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-#include "layer/VertexBufferLayout.h"
+#include "Core/VertexBufferLayout.h"
 
 class InstanceRenderer;
 

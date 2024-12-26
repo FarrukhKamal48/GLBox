@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "layer/Renderer.h"
-#include "layer/Instancing/VertexManager.h"
+#include "Core/Renderer.h"
+#include "Core/Instancing/VertexManager.h"
 
 
 class InstanceRenderer {

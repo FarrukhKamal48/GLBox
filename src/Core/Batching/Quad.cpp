@@ -1,5 +1,5 @@
-#include "layer/Batching/Quad.h"
-#include "layer/Renderer.h"
+#include "Core/Batching/Quad.h"
+#include "Core/Renderer.h"
 
 namespace Batching {
 

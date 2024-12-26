@@ -1,5 +1,5 @@
-#include "layer/GLlog.h"
-#include "layer/VertexBuffer.h"
+#include "Core/GLlog.h"
+#include "Core/VertexBuffer.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size) 
 {

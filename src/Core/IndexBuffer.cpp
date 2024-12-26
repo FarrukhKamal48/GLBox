@@ -1,5 +1,5 @@
-#include "layer/GLlog.h"
-#include "layer/IndexBuffer.h"
+#include "Core/GLlog.h"
+#include "Core/IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count) 
     : m_Count(count)
