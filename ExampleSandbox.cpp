@@ -1,4 +1,5 @@
-#include "Sandbox.h"
+#include <Core/EntryPoint.h>
+#include "ExampleSandbox.h"
 
 class MyApp : public Application {
 public:
@@ -11,5 +12,3 @@ public:
 Application* CreateApplication() {
     return new MyApp();
 }
-#include <Core/EntryPoint.h>
-
