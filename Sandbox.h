@@ -1,7 +1,9 @@
 #pragma once
-#include <scenes/Scene.h>
-#include <Core/Instancing/RendererInstanced.h>
-#include <Core/Input.h>
+#include "Core/Layer.h"
+#include "Core/Renderer.h"
+#include "glm/fwd.hpp"
+#include <GLBox.h>
+
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
 #define MAXSPEED (float)5
@@ -141,8 +143,7 @@ struct SimData
 };
 
 
-namespace Scene {
-class VerletInstanced : public Scene {
+class VerletInstanced : public Layer {
 private:
     constexpr static int m_ObjCount = 2000;
     Pos_Scale_Col_Quad_Manager m_Manager;
@@ -153,7 +154,7 @@ private:
     Constraint m_Constraint;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+        : Layer("Verlet Test"), m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     {
         m_Manager.AllocateObject(1, &ConfigureShader);
         m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader);
@@ -162,7 +163,7 @@ public:
     }
     ~VerletInstanced() { }
 
-    void Start() override {
+    void OnAttach() override {
         m_SimData.SpawnFreq = 200;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/600.0f * TwoPI;
@@ -204,6 +205,10 @@ public:
         m_Bodies[0].iskinematic = true;
         m_Bodies[0].isBound = false;
         m_Bodies[0].velocity(glm::vec2(0.0f));
+    }
+
+    void OnDetach() override {
+        
     }
 
     void Collide(RigidBody& rbA, float radiusA, RigidBody& rbB, float radiusB) {
@@ -270,15 +275,16 @@ public:
             m_Objs[0].scale = Lerp(m_Objs[0].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
-
     void Render() override {
-        Render::Clear(0.9, 0.9, 0.9, 1);
-        Render::DrawAllInstanced();
+    }
+
+    void ImGuiRender() override {
+        
     }
 private:
     static void ConfigureShader(InstanceRenderer& renderer) {
-        renderer.CreateShader("assets/shaders/instancing/BasicColorScale.vert", 
-                            "assets/shaders/instancing/CircleInRectColor.frag");
+        renderer.CreateShader("vendor/GLBox/assets/shaders/instancing/BasicColorScale.vert", 
+                            "vendor/GLBox/assets/shaders/instancing/CircleInRectColor.frag");
         renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
@@ -287,5 +293,4 @@ private:
         return a + p * (b-a);
     }
 };
-}
 

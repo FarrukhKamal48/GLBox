@@ -1,3 +1,4 @@
+#include "Core/Renderer.h"
 #include "Core/Instancing/RendererInstanced.h"
 
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 

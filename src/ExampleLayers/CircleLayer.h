@@ -4,14 +4,12 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
-#include "scenes/Scene.h"
-#include "layer/Renderer.h"
-#include "layer/Texture.h"
+#include "Core/Layer.h"
+#include "Core/Renderer.h"
+#include "Core/Texture.h"
 
 
-namespace Scene {
-
-class Circle : public Scene {
+class Circle : public Layer {
 private:
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
@@ -22,7 +20,7 @@ private:
     float m_CircleRadius = 100;
     
 public:
-    Circle() {
+    Circle() : Layer("Circle") {
         float positions[] = {
             -m_CircleRadius, -m_CircleRadius, 0.0f, 0.0f,
              m_CircleRadius, -m_CircleRadius, 1.0f, 0.0f,
@@ -34,8 +32,6 @@ public:
             0, 2, 3
         };
         
-        Render::BasicBlend();
-
         m_VertexArray =  std::make_unique<VertexArray>();
         m_VertexBuffer = std::make_unique< VertexBuffer>(positions, 4 * 4 * sizeof(float));
         m_IndexBuffer =  std::make_unique<IndexBuffer>(indices, 6);
@@ -65,10 +61,7 @@ public:
     ~Circle() { }
     
     void Render() override {
-        Render::Clear(1, 1, 1, 1);
         Render::Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
     }
     
-};
-
 };

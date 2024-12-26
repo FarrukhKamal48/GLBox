@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
-#include "Core/Renderer.h"
+#include "Core/VertexArray.h"
+#include "Core/IndexBuffer.h"
+#include "Core/Shader.h"
 #include "Core/Instancing/VertexManager.h"
 
 

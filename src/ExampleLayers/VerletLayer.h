@@ -1,7 +1,7 @@
 #pragma once
-#include "layer/Batching/BatchRenderer.h"
-#include "layer/Batching/Quad.h"
-#include "scenes/Scene.h"
+#include "Core/Batching/BatchRenderer.h"
+#include "Core/Batching/Quad.h"
+#include "Core/Layer.h"
 #define PI (3.141592653589793)
 
 class VerletObject {
@@ -45,8 +45,7 @@ struct SimulationData {
     float SpawnTimer = 0;
 };
 
-namespace Scene {
-class Verlet : public Scene {
+class Verlet : public Layer {
 private:
     const unsigned int m_ObjCount = 1024/2;
     VerletObject* m_Objs = new VerletObject[m_ObjCount];
@@ -59,8 +58,9 @@ private:
     SimulationData m_SimData;
     
 public:
-    Verlet() : 
-        m_BatchRenderer(m_Shapes, m_ObjCount, glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f), 
+    Verlet() 
+        : Layer("Verlet")
+        , m_BatchRenderer(m_Shapes, m_ObjCount, glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f), 
                         glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     {
         m_BatchRenderer.ShaderInit("assets/shaders/Batching.vert", 
@@ -73,7 +73,7 @@ public:
         delete [] m_Shapes;
     }
 
-    void Start() override {
+    void OnAttach() override {
         glm::vec2 velocityDir(0);
         float iPercent = 0;
         for (unsigned int i=0; i<m_ObjCount; i++) {
@@ -139,12 +139,8 @@ public:
     }
     
     void Render() override {
-        Render::BasicBlend();
-        Render::Clear(0, 0, 0, 1);
-
         m_BatchRenderer.DrawBatches(m_SimData.EnabledObjCount);
         // m_BatchRenderer.DrawBatches();
     }
     
-};}
-
+};

@@ -1,7 +1,15 @@
-#include <Core/EntryPoint.h>
 #include "Sandbox.h"
 
+class MyApp : public Application {
+public:
+    MyApp() {
+        PushLayer(new VerletInstanced());
+    }
+    ~MyApp() { }
+};
 
-Scene::Scene* CreateScene() {
-    return new Scene::VerletInstanced();
+Application* CreateApplication() {
+    return new MyApp();
 }
+#include <Core/EntryPoint.h>
+

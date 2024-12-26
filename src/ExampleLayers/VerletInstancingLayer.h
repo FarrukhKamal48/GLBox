@@ -1,7 +1,8 @@
 #pragma once
-#include "layer/Input.h"
-#include "scenes/Scene.h"
-#include "layer/Instancing/RendererInstanced.h"
+#include "Core/Input.h"
+#include "Core/Layer.h"
+#include "Core/Renderer.h"
+#include "Core/Instancing/RendererInstanced.h"
 
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -142,8 +143,7 @@ struct SimData
 };
 
 
-namespace Scene {
-class VerletInstanced : public Scene {
+class VerletInstanced : public Layer {
 private:
     constexpr static int m_ObjCount = 2000;
     Pos_Scale_Col_Quad_Manager m_Manager;
@@ -154,7 +154,8 @@ private:
     Constraint m_Constraint;
 public:
     VerletInstanced() 
-        : m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+        : Layer("VerletInstanced")
+        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     {
         m_Manager.AllocateObject(1, &ConfigureShader);
         m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader);
@@ -163,7 +164,7 @@ public:
     }
     ~VerletInstanced() { }
 
-    void Start() override {
+    void OnAttach() override {
         m_SimData.SpawnFreq = 200;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/600.0f * TwoPI;
@@ -288,5 +289,3 @@ private:
         return a + p * (b-a);
     }
 };
-}
-

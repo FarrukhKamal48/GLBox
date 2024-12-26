@@ -1,6 +1,7 @@
-#include "layer/Input.h"
-#include "scenes/Scene.h"
-#include "layer/Instancing/RendererInstanced.h"
+#include "Core/Layer.h"
+#include "Core/Input.h"
+#include "Core/Renderer.h"
+#include "Core/Instancing/RendererInstanced.h"
 
 struct Boundry
 {
@@ -87,9 +88,7 @@ private:
     Cell<CellCapacity> m_Cells[Cols][Rows];
 };
 
-namespace Scene {
-
-class FixedGridSpacePartitionTest : public Scene {
+class FixedGridSpacePartitionTest : public Layer {
 private:
     constexpr static int m_ObjCount = 5000;
     constexpr static int m_Cols = 20;
@@ -99,12 +98,13 @@ private:
     Boundry m_CheckRange;
 public:
     FixedGridSpacePartitionTest() 
-        : m_ObjData(Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount, &ConfigureShader))
+        : Layer("FixedGridSpacePartitionTest")
+        , m_ObjData(Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount, &ConfigureShader))
         , m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
     { }
     ~FixedGridSpacePartitionTest() { }
 
-    void Start() override {
+    void OnAttach() override {
         float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
@@ -214,4 +214,3 @@ private:
     }
 
 };
-}
