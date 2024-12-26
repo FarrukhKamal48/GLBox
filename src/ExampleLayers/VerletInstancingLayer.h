@@ -1,8 +1,9 @@
 #pragma once
 #include "Core/Input.h"
 #include "Core/Layer.h"
-#include "Core/Renderer.h"
+#include "Core/Application.h"
 #include "Core/Instancing/RendererInstanced.h"
+
 
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -152,9 +153,10 @@ private:
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
+    glm::vec2 m_WindowSize;
 public:
     VerletInstanced() 
-        : Layer("Verlet Test"), m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+        : Layer("Verlet Test"), m_Constraint({0, Application::Get().GetWindow().GetHeight()}, {Application::Get().GetWindow().GetWidth(), 0}) 
     {
         m_Manager.AllocateObject(1, &ConfigureShader);
         m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader);
@@ -170,12 +172,14 @@ public:
         m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
 
+        m_WindowSize = {Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight()};
+
         // float p = 0;
         float ip = 0;
         for (int i = 1; i < m_ObjCount+1; i++) {
             // p = (i.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_Objs[i].position = glm::vec2(WIDTH/2, HEIGHT/2);
+            m_Objs[i].position = m_WindowSize/2.0f;
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
             m_Objs[i].scale = glm::vec2(8.0f);
             m_Objs[i].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
@@ -190,12 +194,12 @@ public:
             m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
-        m_Test->position = glm::vec2(WIDTH/2, HEIGHT/2);
-        m_Test->scale = glm::vec2(HEIGHT/2);
+        m_Test->position = m_WindowSize/2.0f;
+        m_Test->scale = glm::vec2(m_WindowSize.y/2);
         m_Test->color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
         m_Objs[0].scale = glm::vec2(15.0f);
         m_Objs[0].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].pos = &m_Objs[0].position;
@@ -267,7 +271,7 @@ public:
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
 
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
             m_Objs[0].scale = Lerp(m_Objs[0].scale, glm::vec2(8.0f), dt * 10.0f);

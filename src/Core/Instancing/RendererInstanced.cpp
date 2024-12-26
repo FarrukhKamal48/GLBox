@@ -1,5 +1,6 @@
 #include "Core/Renderer.h"
 #include "Core/Instancing/RendererInstanced.h"
+#include "Core/Application.h"
 
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : m_VManager(cp.m_VManager) 
@@ -27,6 +28,9 @@ void InstanceRenderer::Init() {
     m_IndexBuffer =  std::make_unique<IndexBuffer>(m_VManager->Indicies(), m_VManager->CountofIndicies());
     
     m_VertexArray->AddBuffer(*m_MeshBuffer, m_VManager->MeshLayout());
+
+    float WIDTH = Application::Get().GetWindow().GetWidth();
+    float HEIGHT = Application::Get().GetWindow().GetHeight();
 
     m_Proj = glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f);
     m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

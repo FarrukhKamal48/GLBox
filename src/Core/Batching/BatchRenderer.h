@@ -1,7 +1,11 @@
 #pragma once
-#include "Core/Batching/Batch.h"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
+#include "Core/Batching/Batch.h"
+#include "Core/Application.h"
+
+static float WIDTH = Application::Get().GetWindow().GetWidth();
+static float HEIGHT = Application::Get().GetWindow().GetHeight();
 
 namespace Batching {
 

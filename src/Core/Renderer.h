@@ -3,8 +3,6 @@
 #include "Core/IndexBuffer.h"
 #include "Core/Shader.h"
 
-#define WIDTH (float)1920
-#define HEIGHT (float)1080
 
 namespace Render {
     void Clear();

@@ -1,9 +1,11 @@
 #include <Core/EntryPoint.h>
-#include "ExampleSandbox.h"
+#include <Core/Application.h>
+#include <ExampleLayers/VerletInstancingLayer.h>
 
 class MyApp : public Application {
 public:
-    MyApp() {
+    MyApp() : Application({ "GLBox", 1920, 1080 })
+    {
         PushLayer(new VerletInstanced());
     }
     ~MyApp() { }

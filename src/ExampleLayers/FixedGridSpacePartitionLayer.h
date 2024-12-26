@@ -2,6 +2,10 @@
 #include "Core/Input.h"
 #include "Core/Renderer.h"
 #include "Core/Instancing/RendererInstanced.h"
+#include "Core/Application.h"
+
+static float WIDTH = Application::Get().GetWindow().GetWidth();
+static float HEIGHT = Application::Get().GetWindow().GetHeight();
 
 struct Boundry
 {
