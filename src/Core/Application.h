@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "Core/ImGui/ImGuiLayer.h"
 #include "Core/LayerStack.h"
 #include "Core/Window.h"
 
@@ -20,6 +21,7 @@ private:
     virtual void Run();
 private:
     Window m_Window;
+    ImGuiLayer* m_ImGuiLayer;
     LayerStack m_LayerStack;
     double m_LastFramTime = 0.0;
 private:

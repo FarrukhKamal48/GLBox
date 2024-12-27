@@ -3,10 +3,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Core/Application.h"
 #include "Core/Input.h"
 #include "Core/Instancing/VertexManager.h"
 #include "Core/Renderer.h"
+#include "Core/Application.h"
+#include "Core/ImGui/ImGuiLayer.h"
 
 
 Application::Application(const WindowProps& windowProps) {
@@ -19,6 +20,9 @@ Application::Application(const WindowProps& windowProps) {
     
     glfwMakeContextCurrent(m_Window.GetWindow());
     glewInit();
+    
+    m_ImGuiLayer = new ImGuiLayer();
+    m_LayerStack.PushOverlay(m_ImGuiLayer);
 }
 Application::~Application() { 
 }
@@ -45,6 +49,12 @@ void Application::Run() {
             layer->Update(deltaTime);
             layer->Render();
         }
+
+        // m_ImGuiLayer->Begin();
+        // for (Layer* layer : m_LayerStack) {
+        //     layer->ImGuiRender();
+        // }
+        // m_ImGuiLayer->End();
         
         Render::Clear(0.9, 0.9, 0.9, 1);
         Render::DrawAllInstanced();

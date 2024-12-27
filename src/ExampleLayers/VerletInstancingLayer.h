@@ -3,6 +3,7 @@
 #include "Core/Layer.h"
 #include "Core/Application.h"
 #include "Core/Instancing/RendererInstanced.h"
+#include "imgui.h"
 
 
 #define PI glm::pi<float>()
@@ -283,7 +284,7 @@ public:
     }
 
     void ImGuiRender() override {
-        
+        ImGui::ShowDemoWindow();
     }
 private:
     static void ConfigureShader(InstanceRenderer& renderer) {
