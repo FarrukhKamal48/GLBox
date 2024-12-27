@@ -22,7 +22,7 @@ Application::Application(const WindowProps& windowProps) {
     glewInit();
     
     m_ImGuiLayer = new ImGuiLayer();
-    m_LayerStack.PushOverlay(m_ImGuiLayer);
+    PushOverlay(m_ImGuiLayer);
 }
 Application::~Application() { 
 }
@@ -45,20 +45,24 @@ void Application::Run() {
         double deltaTime = Time - m_LastFramTime;
         m_LastFramTime = Time;
 
+        // update each layer
         for (Layer* layer : m_LayerStack) {
             layer->Update(deltaTime);
             layer->Render();
         }
-
-        // m_ImGuiLayer->Begin();
-        // for (Layer* layer : m_LayerStack) {
-        //     layer->ImGuiRender();
-        // }
-        // m_ImGuiLayer->End();
-        
+        // clear the screen
         Render::Clear(0.9, 0.9, 0.9, 1);
+        // render anything from instanc render
         Render::DrawAllInstanced();
 
+        // draw imgui
+        m_ImGuiLayer->Begin(); {
+            for (Layer* layer : m_LayerStack)
+                layer->ImGuiRender();
+        }
+        m_ImGuiLayer->End();
+
+        // update windows
         m_Window.OnUpdate();
     }
 }

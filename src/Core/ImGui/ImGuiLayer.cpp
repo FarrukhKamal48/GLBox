@@ -1,14 +1,21 @@
-#include "Core/Layer.h"
-#include "Core/ImGui/ImGuiLayer.h"
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "Core/Application.h"
+#include "Core/ImGui/ImGuiLayer.h"
+
 
 ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {
 }
 ImGuiLayer::~ImGuiLayer() {
 }
 
-void ImGuiLayer::OnAttach()
-{
+void ImGuiLayer::OnAttach() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -20,9 +27,9 @@ void ImGuiLayer::OnAttach()
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-    float fontSize = 18.0f;// *2.0f;
-    io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);
-    io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", fontSize);
+    // float fontSize = 18.0f;// *2.0f;
+    // io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);
+    // io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", fontSize);
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -43,25 +50,22 @@ void ImGuiLayer::OnAttach()
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 410");
+    ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
-void ImGuiLayer::OnDetach()
-{
-    // ImGui_ImplOpenGL3_Shutdown();
-    // ImGui_ImplGlfw_Shutdown();
-    // ImGui::DestroyContext();
+void ImGuiLayer::OnDetach() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
-void ImGuiLayer::Begin()
-{
+void ImGuiLayer::Begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void ImGuiLayer::End()
-{
+void ImGuiLayer::End() {
     ImGuiIO& io = ImGui::GetIO();
     Application& app = Application::Get();
     io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -79,8 +83,7 @@ void ImGuiLayer::End()
     }
 }
 
-void ImGuiLayer::SetDarkThemeColors()
-{
+void ImGuiLayer::SetDarkThemeColors() {
     auto& colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 
