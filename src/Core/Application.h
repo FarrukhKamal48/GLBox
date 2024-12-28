@@ -6,6 +6,8 @@
 #include "Core/LayerStack.h"
 #include "Core/Window.h"
 
+#define WIDTH Application::Get().GetWindow().GetWidth()
+#define HEIGHT Application::Get().GetWindow().GetHeight()
 
 class Application {
 public:

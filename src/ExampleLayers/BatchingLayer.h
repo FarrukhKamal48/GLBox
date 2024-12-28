@@ -15,7 +15,7 @@ private:
 public:
     Batcher() 
         : Layer("Batcher")
-        , m_BatchRenderer(m_Shapes, m_ObjCount, glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f), 
+        , m_BatchRenderer(m_Shapes, m_ObjCount, glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f), 
                         glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     {
         m_BatchRenderer.ShaderInit("assets/shaders/Batching.vert", 

@@ -1,8 +1,6 @@
 #include "Core/Batching/Quad.h"
 #include "Core/Application.h"
 
-static float WIDTH = Application::Get().GetWindow().GetWidth();
-static float HEIGHT = Application::Get().GetWindow().GetHeight();
 
 namespace Batching {
 

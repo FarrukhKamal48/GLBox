@@ -4,8 +4,6 @@
 #include "Core/Batching/Batch.h"
 #include "Core/Application.h"
 
-static float WIDTH = Application::Get().GetWindow().GetWidth();
-static float HEIGHT = Application::Get().GetWindow().GetHeight();
 
 namespace Batching {
 
@@ -23,7 +21,7 @@ private:
 
 public:
     BatchRenderer() : 
-        m_BatchProj(glm::ortho(0.0f, WIDTH, 0.0f, HEIGHT, -1.0f, 1.0f)), 
+        m_BatchProj(glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f)), 
         m_BatchView(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)))
     { }
     BatchRenderer(MeshType* srcObjs, int objCount, const glm::mat4& proj, const glm::mat4& view) : 

@@ -147,7 +147,7 @@ struct SimData
 
 class VerletInstanced : public Layer {
 private:
-    constexpr static int m_ObjCount = 2000;
+    constexpr static int m_ObjCount = 500;
     Pos_Scale_Col_Quad_Manager m_Manager;
     unsigned int m_Test;
     unsigned int m_Objs;
@@ -158,7 +158,7 @@ private:
 public:
     VerletInstanced() 
         : Layer("Verlet Test")
-        , m_Constraint({0, Application::Get().GetWindow().GetHeight()}, {Application::Get().GetWindow().GetWidth(), 0}) 
+        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
     { }
     ~VerletInstanced() { }
 
@@ -172,7 +172,7 @@ public:
         m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
 
-        m_WindowSize = {Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight()};
+        m_WindowSize = {WIDTH, HEIGHT};
 
         // float p = 0;
         float ip = 0;
