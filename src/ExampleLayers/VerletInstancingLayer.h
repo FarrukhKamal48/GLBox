@@ -13,30 +13,30 @@
 class RigidBody {
 public:
     glm::vec2 pos_old;
-    glm::vec2* pos;
+    unsigned int posI;
     glm::vec2 acceleration;
     float bouncines;
     float boundBouncines;
     bool iskinematic;
     bool isBound;
-
+public:
     void updatePosition(float dt) {
         if (iskinematic) 
             return;
-        const glm::vec2 deltaPos = *pos - pos_old;
+        const glm::vec2 deltaPos = *pos() - pos_old;
 
         if (deltaPos.x > MAXSPEED)
-            pos_old.x = pos->x;
+            pos_old.x = pos()->x;
         else if (deltaPos.x < -MAXSPEED)
-            pos_old.x = pos->x;
+            pos_old.x = pos()->x;
 
         if (deltaPos.y > MAXSPEED)
-            pos_old.y = pos->y;
+            pos_old.y = pos()->y;
         else if (deltaPos.y < -MAXSPEED)
-            pos_old.y = pos->y;
+            pos_old.y = pos()->y;
         
-        pos_old = *pos;
-        *pos = *pos + deltaPos + acceleration*dt*dt;
+        pos_old = *pos();
+        *pos() = *pos() + deltaPos + acceleration*dt*dt;
         acceleration = {};
     }
 
@@ -49,7 +49,11 @@ public:
     void velocity(glm::vec2 vel) {
         if (iskinematic) 
             return;
-        pos_old = *pos - vel;
+        pos_old = *pos() - vel;
+    }
+    
+    glm::vec2* pos() {
+        return &Pos_Scale_Col_Quad_Manager()[posI].position;
     }
 };
 
@@ -66,7 +70,7 @@ public:
     void ApplyCircle(RigidBody& rb, glm::vec2 scale) {
         if (!rb.isBound)
             return;
-        glm::vec2 displace = -centre + *rb.pos;
+        glm::vec2 displace = -centre + *rb.pos();
         float theta = atan(displace.y/displace.x);
         float sqrtDist = (displace.x * displace.x) + (displace.y * displace.y);
         float radius = (topLeft.y - bottomRight.y)/2.0f - scale.x;
@@ -74,29 +78,29 @@ public:
         glm::vec2 vel = rb.pos_old;
 
         if (sqrtDist > radius*radius) {
-            *rb.pos = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
-            vel = *rb.pos - vel;
+            *rb.pos() = centre + radius * glm::vec2(glm::cos(theta), glm::sin(theta));
+            vel = *rb.pos() - vel;
             displace = glm::normalize(displace);
             vel -= (rb.boundBouncines + 1) * displace * glm::dot(vel, displace);
             rb.velocity(vel);
             
-            vel = *rb.pos - rb.pos_old;
+            vel = *rb.pos() - rb.pos_old;
             
             if (vel.x > MAXSPEED)
-                rb.pos_old.x = rb.pos->x;
+                rb.pos_old.x = rb.pos()->x;
             else if (vel.x < -MAXSPEED)
-                rb.pos_old.x = rb.pos->x;
+                rb.pos_old.x = rb.pos()->x;
 
             if (vel.y > MAXSPEED)
-                rb.pos_old.y = rb.pos->y;
+                rb.pos_old.y = rb.pos()->y;
             else if (vel.y < -MAXSPEED)
-                rb.pos_old.y = rb.pos->y;
+                rb.pos_old.y = rb.pos()->y;
         }
     }
     void ApplyRect(RigidBody& rb, glm::vec2 scale) {
         if (!rb.isBound)
             return;
-        glm::vec2& pos = *rb.pos;
+        glm::vec2& pos = *rb.pos();
         glm::vec2 vel = pos - rb.pos_old;
         
         if (pos.x > bottomRight.x - scale.x) { // right
@@ -184,8 +188,8 @@ public:
             m_Manager[m_Objs+i].scale = glm::vec2(8.0f);
             m_Manager[m_Objs+i].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
-            m_Bodies[i].pos = &m_Manager[m_Objs+i].position;
-            m_Bodies[i].pos_old = *m_Bodies[i].pos;
+            m_Bodies[i].posI = m_Objs+i;
+            m_Bodies[i].pos_old = m_Manager[m_Objs+i].position;
             m_Bodies[i].bouncines = 0.0f;
             m_Bodies[i].boundBouncines = 0.0f;
             m_Bodies[i].iskinematic = false;
@@ -202,7 +206,7 @@ public:
         m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
         m_Manager[m_Objs].scale = glm::vec2(15.0f);
         m_Manager[m_Objs].color = glm::vec4(0.1, 1.0, 0.0, 1); 
-        m_Bodies[0].pos = &m_Manager[m_Objs].position;
+        m_Bodies[0].posI = m_Objs;
         m_Bodies[0].pos_old = m_Manager[m_Objs].position;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
@@ -216,7 +220,7 @@ public:
     }
 
     void Collide(RigidBody& rbA, float radiusA, RigidBody& rbB, float radiusB) {
-        glm::vec2 axis = -*rbA.pos + *rbB.pos;
+        glm::vec2 axis = -*rbA.pos() + *rbB.pos();
         float sqrDist = axis.x*axis.x + axis.y*axis.y;
 
         if (sqrDist <= (radiusA + radiusB)*(radiusA + radiusB)) {
@@ -225,15 +229,15 @@ public:
             axis /= dist;
             
             if (!rbA.iskinematic) {
-                *rbA.pos -= axis * overlap/2.0f;
-                glm::vec2 velA = *rbA.pos - rbA.pos_old;
+                *rbA.pos() -= axis * overlap/2.0f;
+                glm::vec2 velA = *rbA.pos() - rbA.pos_old;
                 velA += (rbA.bouncines) * velA;
                 rbA.velocity(velA);
             }
             
             if (!rbB.iskinematic) {
-                *rbB.pos += axis * overlap/2.0f;
-                glm::vec2 velB = *rbB.pos - rbB.pos_old;
+                *rbB.pos() += axis * overlap/2.0f;
+                glm::vec2 velB = *rbB.pos() - rbB.pos_old;
                 velB += (rbB.bouncines) * velB;
                 rbB.velocity(velB);
             }
@@ -241,9 +245,9 @@ public:
     }
 
     void ApplyMaxSpeed (RigidBody& rb) {
-        float speedSqared = glm::length(*rb.pos - rb.pos_old);
+        float speedSqared = glm::length(*rb.pos() - rb.pos_old);
         if (speedSqared > m_SimData.maxSpeed) {
-            rb.velocity(glm::vec2((*rb.pos - rb.pos_old))/speedSqared * m_SimData.maxSpeed);
+            rb.velocity(glm::vec2((*rb.pos() - rb.pos_old))/speedSqared * m_SimData.maxSpeed);
         }
     }
 
