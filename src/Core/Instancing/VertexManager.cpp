@@ -39,16 +39,8 @@ const float* Pos_Scale_Col_Quad_Manager::MeshData()                 const { retu
 const unsigned int* Pos_Scale_Col_Quad_Manager::Indicies()          const { return m_Indicies; }
 const unsigned int Pos_Scale_Col_Quad_Manager::SizeOfMeshData()     const { return sizeof(m_Mesh); }
 const unsigned int Pos_Scale_Col_Quad_Manager::CountofIndicies()    const { return sizeof(m_Indicies); }
-const void* Pos_Scale_Col_Quad_Manager::GetInstances()              const { return &m_Instances; }
-const void* Pos_Scale_Col_Quad_Manager::GetRenderer()               const { return m_Renderer; }
 const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const {
     return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_Renderer);
-}
-Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::Instantiate(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) {
-    return &m_Instances[AllocateObject(count, ConfigureShader)];
-}
-Pos_Scale_Col_Quad* Pos_Scale_Col_Quad_Manager::At(unsigned int index) {
-    return &m_Instances[index];
 }
 
 

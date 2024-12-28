@@ -149,24 +149,23 @@ class VerletInstanced : public Layer {
 private:
     constexpr static int m_ObjCount = 2000;
     Pos_Scale_Col_Quad_Manager m_Manager;
-    Pos_Scale_Col_Quad* m_Test;
-    Pos_Scale_Col_Quad* m_Objs;
+    unsigned int m_Test;
+    unsigned int m_Objs;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
     glm::vec2 m_WindowSize;
 public:
     VerletInstanced() 
-        : Layer("Verlet Test"), m_Constraint({0, Application::Get().GetWindow().GetHeight()}, {Application::Get().GetWindow().GetWidth(), 0}) 
-    {
-        m_Manager.AllocateObject(1, &ConfigureShader);
-        m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader);
-        m_Test = m_Manager.At(0);
-        m_Objs = m_Manager.At(1);
-    }
+        : Layer("Verlet Test")
+        , m_Constraint({0, Application::Get().GetWindow().GetHeight()}, {Application::Get().GetWindow().GetWidth(), 0}) 
+    { }
     ~VerletInstanced() { }
 
     void OnAttach() override {
+        m_Test = m_Manager.AllocateObject(1, &ConfigureShader);            
+        m_Objs = m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader); 
+
         m_SimData.SpawnFreq = 200;
         m_SimData.SpawnAngleDisplacement = -PI/4;
         m_SimData.SpawnAngleFreq = 1/600.0f * TwoPI;
@@ -180,12 +179,12 @@ public:
         for (int i = 1; i < m_ObjCount+1; i++) {
             // p = (i.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_Objs[i].position = m_WindowSize/2.0f;
+            m_Manager[m_Objs+i].position = m_WindowSize/2.0f;
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_Objs[i].scale = glm::vec2(8.0f);
-            m_Objs[i].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
+            m_Manager[m_Objs+i].scale = glm::vec2(8.0f);
+            m_Manager[m_Objs+i].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
-            m_Bodies[i].pos = &m_Objs[i].position;
+            m_Bodies[i].pos = &m_Manager[m_Objs+i].position;
             m_Bodies[i].pos_old = *m_Bodies[i].pos;
             m_Bodies[i].bouncines = 0.0f;
             m_Bodies[i].boundBouncines = 0.0f;
@@ -195,16 +194,16 @@ public:
             m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
-        m_Test->position = m_WindowSize/2.0f;
-        m_Test->scale = glm::vec2(m_WindowSize.y/2);
-        m_Test->color = glm::vec4(0,0,0,1);
+        m_Manager[m_Test].position = m_WindowSize/2.0f;
+        m_Manager[m_Test].scale = glm::vec2(m_WindowSize.y/2);
+        m_Manager[m_Test].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
-        m_Objs[0].scale = glm::vec2(15.0f);
-        m_Objs[0].color = glm::vec4(0.1, 1.0, 0.0, 1); 
-        m_Bodies[0].pos = &m_Objs[0].position;
-        m_Bodies[0].pos_old = m_Objs[0].position;
+        m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        m_Manager[m_Objs].scale = glm::vec2(15.0f);
+        m_Manager[m_Objs].color = glm::vec4(0.1, 1.0, 0.0, 1); 
+        m_Bodies[0].pos = &m_Manager[m_Objs].position;
+        m_Bodies[0].pos_old = m_Manager[m_Objs].position;
         m_Bodies[0].bouncines = 0.0f;
         m_Bodies[0].boundBouncines = 0.0f;
         m_Bodies[0].iskinematic = true;
@@ -263,21 +262,21 @@ public:
                 body.updatePosition(m_SimData.subDt);
                 for (int j = 0; j < m_SimData.EnabledCount+1; j++) { 
                     if (i == j) continue;
-                    if (std::abs(-m_Objs[i].position.x + m_Objs[j].position.x) > m_Objs[i].scale.x + m_Objs[j].scale.x || 
-                        std::abs(-m_Objs[i].position.y + m_Objs[j].position.y) > m_Objs[i].scale.y + m_Objs[j].scale.y) continue;
-                    Collide(m_Bodies[i], m_Objs[i].scale.x, m_Bodies[j], m_Objs[j].scale.x);
+                    if (std::abs(-m_Manager[m_Objs+i].position.x + m_Manager[m_Objs+j].position.x) > m_Manager[m_Objs+i].scale.x + m_Manager[m_Objs+j].scale.x || 
+                        std::abs(-m_Manager[m_Objs+i].position.y + m_Manager[m_Objs+j].position.y) > m_Manager[m_Objs+i].scale.y + m_Manager[m_Objs+j].scale.y) continue;
+                    Collide(m_Bodies[i], m_Manager[m_Objs+i].scale.x, m_Bodies[j], m_Manager[m_Objs+j].scale.x);
                 }
-                m_Constraint.ApplyCircle(body, m_Objs[i].scale);
+                m_Constraint.ApplyCircle(body, m_Manager[m_Objs+i].scale);
             }
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_Objs[0].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
 
         if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-            m_Objs[0].scale = Lerp(m_Objs[0].scale, glm::vec2(8.0f), dt * 10.0f);
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
         else
-            m_Objs[0].scale = Lerp(m_Objs[0].scale, glm::vec2(50.0f), dt * 10.0f);
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
     void Render() override {
