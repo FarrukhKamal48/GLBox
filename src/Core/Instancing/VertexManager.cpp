@@ -12,8 +12,10 @@ static unsigned int AllocateObj(unsigned int count, void (*ConfigureShader)(Inst
         renderer = &Renderers.back();
         renderer->Init();
         ConfigureShader(*renderer);
-    } else
+    } else {
         renderer->SetData(instances.size(), instances.data());
+        delete VManager;
+    }
     return lastSize;
 }
 
