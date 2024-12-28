@@ -18,8 +18,10 @@ private:
     glm::mat4 m_View;
     
     unsigned int m_InstanceCount;
+    unsigned int m_TargetCount;
     void* m_Data;
-    unsigned int m_DataSize;
+    unsigned int m_OccupiedDataSize;
+    unsigned int m_AllocatedDataSize;
     VertexManager* m_VManager;
     
 public:

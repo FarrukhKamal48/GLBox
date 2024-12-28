@@ -2,6 +2,8 @@
 #include "Core/Instancing/RendererInstanced.h"
 #include "Core/Application.h"
 
+#define ResizeMultiplier (float)1.5f
+
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : m_VManager(cp.m_VManager) 
 { }
@@ -9,16 +11,18 @@ InstanceRenderer::InstanceRenderer(VertexManager* VManager)
     : m_VManager(VManager)
 { }
 InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
-: m_InstanceCount(InstanceCount), m_Data(data), m_DataSize(InstanceCount * VManager->SizeOfObject()), m_VManager(VManager) {
+    : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier)
+    , m_Data(data), m_AllocatedDataSize(InstanceCount * VManager->SizeOfObject()), m_VManager(VManager) {
     Init();
 }
 InstanceRenderer::~InstanceRenderer() {
     delete m_VManager;
 }
 void InstanceRenderer::SetData(unsigned int InstanceCount, void* data) {
-    m_InstanceCount = InstanceCount;
     m_Data = data;
-    m_DataSize = InstanceCount * m_VManager->SizeOfObject();
+    m_InstanceCount = InstanceCount;
+    m_OccupiedDataSize = m_InstanceCount * m_VManager->SizeOfObject();
+    m_AllocatedDataSize = m_TargetCount * m_VManager->SizeOfObject();
 }
 void InstanceRenderer::Init() {
     Render::BasicBlend();
@@ -42,10 +46,20 @@ void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::s
 }
 void InstanceRenderer::Draw() {
     if (m_InstanceBuffer == nullptr) {
-        m_InstanceBuffer = std::make_unique<VertexBuffer>(m_Data, m_DataSize, GL_DYNAMIC_DRAW);
+        m_InstanceBuffer = std::make_unique<VertexBuffer>(m_Data, m_AllocatedDataSize, GL_DYNAMIC_DRAW);
         m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
     } 
-    m_InstanceBuffer->SetData(m_Data, m_DataSize);
+    if (m_InstanceCount >= m_TargetCount) {
+        m_TargetCount = m_InstanceCount * ResizeMultiplier;
+        m_AllocatedDataSize = m_TargetCount * m_VManager->SizeOfObject();
+        
+        m_VertexArray.reset(new VertexArray());
+        m_InstanceBuffer.reset(new VertexBuffer(m_Data, m_AllocatedDataSize, GL_DYNAMIC_DRAW));
+        
+        m_VertexArray->AddBuffer(*m_MeshBuffer, m_VManager->MeshLayout());
+        m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VManager->VertLayout(1));
+    }
+    m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
     Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
 }
 
