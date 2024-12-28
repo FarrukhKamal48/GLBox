@@ -30,7 +30,7 @@ void InstanceRenderer::Init() {
     m_VertexArray->AddBuffer(*m_MeshBuffer, m_VManager->MeshLayout());
 
     m_Proj = glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f);
-    m_View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    m_View = glm::translate(glm::mat4(1.0f), -glm::vec3(0.0f, 0.0f, 0.0f));
 }
 void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath) {
     InstanceShader = std::make_unique<Shader>();
