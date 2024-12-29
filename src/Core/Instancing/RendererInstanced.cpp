@@ -1,8 +1,9 @@
 #include "Core/Renderer.h"
 #include "Core/Instancing/RendererInstanced.h"
 #include "Core/Application.h"
+#include <iostream>
 
-#define ResizeMultiplier (float)1.5f
+#define ResizeMultiplier (float)2.0f
 
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : m_VManager(cp.m_VManager) 
@@ -55,6 +56,11 @@ void InstanceRenderer::Draw() {
         m_TargetCount = m_InstanceCount * ResizeMultiplier;
         m_AllocatedDataSize = m_TargetCount * m_VManager->SizeOfObject();
         
+        static int check = 0;
+        check++;
+        std::cout << check << " InstanceCount : " << m_InstanceCount << 
+            " TargetCount : " << m_TargetCount << '\n';
+
         m_VertexArray.reset(new VertexArray());
         m_InstanceBuffer.reset(new VertexBuffer(m_Data, m_AllocatedDataSize, GL_DYNAMIC_DRAW));
         
