@@ -1,8 +1,6 @@
 #pragma once
-#include "Core/VertexArray.h"
-#include "Core/IndexBuffer.h"
+#include "Core/Buffer.h"
 #include "Core/Shader.h"
-
 
 namespace Render {
     void Clear();
