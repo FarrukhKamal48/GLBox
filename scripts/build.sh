@@ -2,7 +2,7 @@
 
 build_dir=build
 
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -B $build_dir
+cmake -G "Unix Makefiles" -B $build_dir
 
 echo "  "
 
