@@ -11,8 +11,10 @@ InstanceRenderer::InstanceRenderer(VertexManager* VManager)
     : m_VManager(VManager)
 { }
 InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
-    : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier)
-    , m_Data(data), m_AllocatedDataSize(InstanceCount * VManager->SizeOfObject()), m_VManager(VManager) {
+    : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier) , m_Data(data)
+    , m_OccupiedDataSize(InstanceCount * VManager->SizeOfObject())
+    , m_AllocatedDataSize(InstanceCount * ResizeMultiplier * VManager->SizeOfObject())
+    , m_VManager(VManager) {
     Init();
 }
 InstanceRenderer::~InstanceRenderer() {

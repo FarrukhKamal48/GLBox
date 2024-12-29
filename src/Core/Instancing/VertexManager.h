@@ -54,7 +54,46 @@ private:
         0, 2, 3
     };
     inline static std::vector<Pos_Scale_Col_Quad> m_Instances = {};
-    inline static InstanceRenderer* m_Renderer = nullptr;
+    inline static int m_RendererI = -1;
+};
+
+class QuadTransform {
+public:
+    QuadTransform();
+    ~QuadTransform();
+    glm::vec2 position;
+    glm::vec2 scale;
+    float rotation;
+    glm::vec4 color;
+};
+
+class QuadTransform_Manager : public VertexManager {
+public:
+    QuadTransform_Manager() {}
+    ~QuadTransform_Manager() {}
+    VertexBufferLayout VertLayout(unsigned int divisor) const override;
+    const VertexBufferLayout MeshLayout()               const override;
+    unsigned int SizeOfObject()                         const override;
+    const float* MeshData()                             const override;
+    const unsigned int* Indicies()                      const override;
+    const unsigned int SizeOfMeshData()                 const override;
+    const unsigned int CountofIndicies()                const override;
+    const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const override;
+    
+    QuadTransform& operator[](unsigned int i) { return m_Instances[i]; }
+private:
+    static constexpr float m_Mesh[16] = {
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f,
+        1.0f,  1.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f,
+    };
+    static constexpr unsigned int m_Indicies[6] = {
+        0, 1, 2, 
+        0, 2, 3
+    };
+    inline static std::vector<QuadTransform> m_Instances = {};
+    inline static int m_RendererI = -1;
 };
 
 

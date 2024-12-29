@@ -290,8 +290,8 @@ public:
     }
 private:
     static void ConfigureShader(InstanceRenderer& renderer) {
-        renderer.CreateShader("vendor/GLBox/assets/shaders/instancing/BasicColorScale.vert", 
-                            "vendor/GLBox/assets/shaders/instancing/CircleInRectColor.frag");
+        renderer.CreateShader("GLBox/assets/shaders/instancing/BasicColorScale.vert", 
+                              "GLBox/assets/shaders/instancing/CircleInRectColor.frag");
         renderer.InstanceShader->SetUniform<float>("u_CullRadius", 0.5f);
         renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
