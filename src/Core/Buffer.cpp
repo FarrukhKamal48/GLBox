@@ -1,4 +1,5 @@
 #include "Core/GLlog.h"
+#include <iostream>
 #include "Core/Buffer.h"
 
 //##############################
@@ -90,5 +91,5 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
         offset += element.count * VertexBufferLayoutElement::SizeOf(element.type);
         GLCall(glVertexAttribDivisor(i + m_AttribCount, element.divisor));
     }
-    m_AttribCount += elements.size()+1;
+    m_AttribCount += elements.size();
 }

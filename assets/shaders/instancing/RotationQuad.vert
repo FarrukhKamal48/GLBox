@@ -2,10 +2,10 @@
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 texCoord;
-layout(location = 3) in vec2 translation;
-layout(location = 4) in vec2 scale;
-layout(location = 5) in float angle;
-layout(location = 6) in vec4 color;
+layout(location = 2) in vec2 translation;
+layout(location = 3) in vec2 scale;
+layout(location = 4) in float angle;
+layout(location = 5) in vec4 color;
 out vec2 v_TexCoord;
 out vec4 v_Color;
 
