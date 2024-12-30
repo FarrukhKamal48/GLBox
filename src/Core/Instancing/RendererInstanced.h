@@ -3,7 +3,24 @@
 #include "Core/Buffer.h"
 #include "Core/Shader.h"
 #include "Core/Instancing/VertexManager.h"
+#include "Core/VertexBufferLayout.h"
 
+struct VertexData {
+    unsigned int SizeOfObject;
+    const std::vector<float>& MeshData;
+    unsigned int SizeOfMeshData;
+    const std::vector<unsigned int>& Indicies;
+    unsigned int CountofIndicies;
+    
+    VertexData(const VertexManager* VManager)
+        : MeshData(VManager->MeshData())
+        , Indicies(VManager->Indicies()) {
+        SizeOfObject = VManager->SizeOfObject();
+        SizeOfMeshData = MeshData.size() * sizeof(MeshData[0]);
+        CountofIndicies = Indicies.size() * sizeof(Indicies[0]);
+    }
+    ~VertexData() = default;
+};
 
 class InstanceRenderer {
 public:
@@ -21,7 +38,9 @@ private:
     void* m_Data;
     unsigned int m_OccupiedDataSize;
     unsigned int m_AllocatedDataSize;
-    VertexManager* m_VManager;
+    VertexData m_VData;
+    VertexBufferLayout m_MeshLayout;
+    VertexBufferLayout m_VertLayout;
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
