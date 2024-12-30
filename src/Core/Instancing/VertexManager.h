@@ -1,7 +1,8 @@
 #pragma once
+#include <vector>
+#include <functional>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-#include <vector>
 #include "Core/VertexBufferLayout.h"
 
 class InstanceRenderer;
@@ -14,7 +15,8 @@ public:
     virtual VertexBufferLayout VertLayout(unsigned int divisor) const = 0;
     virtual const std::vector<float>& MeshData() const = 0;
     virtual const std::vector<unsigned int>& Indicies() const = 0; 
-    virtual const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const = 0;
+    virtual const unsigned int AllocateObject
+        (unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const = 0;
 };
 
 
@@ -36,7 +38,7 @@ public:
     VertexBufferLayout VertLayout(unsigned int divisor)     const override;
     const std::vector<float>& MeshData()                    const override;
     const std::vector<unsigned int>& Indicies()             const override;
-    const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const override;
+    const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
     Pos_Scale_Col_Quad& operator[](unsigned int i) { return m_Instances[i]; }
 private:
@@ -73,7 +75,7 @@ public:
     VertexBufferLayout VertLayout(unsigned int divisor)     const override;
     const std::vector<float>& MeshData()                    const override;
     const std::vector<unsigned int>& Indicies()             const override;
-    const unsigned int AllocateObject(unsigned int count, void (*ConfigureShader)(InstanceRenderer&)) const override;
+    const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
     QuadTransform& operator[](unsigned int i) { return m_Instances[i]; }
 private:

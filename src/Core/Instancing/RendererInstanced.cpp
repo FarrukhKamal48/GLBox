@@ -5,11 +5,14 @@
 #define ResizeMultiplier (float)2.0f
 
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
-    : m_VData(cp.m_VData), m_MeshLayout(cp.m_MeshLayout), m_VertLayout(cp.m_VertLayout)
-{ }
-InstanceRenderer::InstanceRenderer(VertexManager* VManager)
-    : m_VData(VManager), m_MeshLayout(VManager->MeshLayout()), m_VertLayout(VManager->VertLayout(1))
-{ delete VManager; }
+    : m_InstanceCount(cp.m_InstanceCount), m_TargetCount(cp.m_TargetCount), m_Data(cp.m_Data)
+    , m_OccupiedDataSize(cp.m_OccupiedDataSize), m_AllocatedDataSize(cp.m_AllocatedDataSize)
+    , m_VData(cp.m_VData), m_MeshLayout(cp.m_MeshLayout), m_VertLayout(cp.m_VertLayout) { 
+    Init(); 
+}
+// InstanceRenderer::InstanceRenderer(VertexManager* VManager)
+//     : m_VData(VManager), m_MeshLayout(VManager->MeshLayout()), m_VertLayout(VManager->VertLayout(1))
+// { delete VManager; }
 InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
     : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier) , m_Data(data)
     , m_OccupiedDataSize(InstanceCount * VManager->SizeOfObject())
@@ -38,7 +41,7 @@ void InstanceRenderer::Init() {
     m_View = glm::translate(glm::mat4(1.0f), -glm::vec3(0.0f, 0.0f, 0.0f));
 }
 void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath) {
-    InstanceShader = std::make_unique<Shader>();
+    InstanceShader = std::make_shared<Shader>();
     InstanceShader->Push(GL_VERTEX_SHADER, vertSrcPath);
     InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
     InstanceShader->Compile();
@@ -61,6 +64,7 @@ void InstanceRenderer::Draw() {
         m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VertLayout);
     } 
     m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
-    Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+    if (InstanceShader)
+        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
 }
 

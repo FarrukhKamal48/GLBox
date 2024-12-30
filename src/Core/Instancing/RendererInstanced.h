@@ -24,7 +24,7 @@ struct VertexData {
 
 class InstanceRenderer {
 public:
-    std::unique_ptr<Shader> InstanceShader;
+    std::shared_ptr<Shader> InstanceShader;
 private:
     std::unique_ptr<VertexArray> m_VertexArray;
     std::unique_ptr<IndexBuffer> m_IndexBuffer;
@@ -35,16 +35,18 @@ private:
     
     unsigned int m_InstanceCount;
     unsigned int m_TargetCount;
+    
     void* m_Data;
     unsigned int m_OccupiedDataSize;
     unsigned int m_AllocatedDataSize;
+    
     VertexData m_VData;
     VertexBufferLayout m_MeshLayout;
     VertexBufferLayout m_VertLayout;
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
-    InstanceRenderer(VertexManager* VManager);
+    // InstanceRenderer(VertexManager* VManager);
     InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager);
     ~InstanceRenderer();
 
