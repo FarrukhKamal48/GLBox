@@ -8,8 +8,8 @@ static unsigned int AllocateObj(unsigned int count, void (*ConfigureShader)(Inst
     unsigned int lastSize = instances.size();
     instances.insert(instances.end(), count, Object());
     if (rendererI == -1) {
+        rendererI = Renderers.size();
         Renderers.emplace_back(instances.size(), instances.data(), VManager);
-        rendererI = Renderers.size()-1;
         Renderers[rendererI].Init();
         ConfigureShader(Renderers[rendererI]);
     } else {
