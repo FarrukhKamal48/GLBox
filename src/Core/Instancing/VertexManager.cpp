@@ -14,6 +14,7 @@ static unsigned int AllocateObj(unsigned int count, std::function<void(InstanceR
         ConfigureShader(Renderers[rendererI]);
     } else
         Renderers[rendererI].SetData(instances.size(), instances.data());
+    delete VManager;
     return lastSize;
 }
 

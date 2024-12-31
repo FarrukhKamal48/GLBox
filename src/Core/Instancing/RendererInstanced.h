@@ -13,12 +13,12 @@ struct VertexData {
     unsigned int CountofIndicies;
     
     VertexData(const VertexManager* VManager)
-        : MeshData(VManager->MeshData())
-        , Indicies(VManager->Indicies()) {
-        SizeOfObject = VManager->SizeOfObject();
-        SizeOfMeshData = MeshData.size() * sizeof(MeshData[0]);
-        CountofIndicies = Indicies.size() * sizeof(Indicies[0]);
-    }
+        : SizeOfObject(VManager->SizeOfObject())
+        , MeshData(VManager->MeshData())
+        , SizeOfMeshData(MeshData.size() * sizeof(MeshData[0]))
+        , Indicies(VManager->Indicies()) 
+        , CountofIndicies(Indicies.size() * sizeof(Indicies[0]))
+    { }
     ~VertexData() = default;
 };
 
@@ -26,10 +26,10 @@ class InstanceRenderer {
 public:
     std::shared_ptr<Shader> InstanceShader;
 private:
-    std::unique_ptr<VertexArray> m_VertexArray;
-    std::unique_ptr<IndexBuffer> m_IndexBuffer;
-    std::unique_ptr<VertexBuffer> m_MeshBuffer;
-    std::unique_ptr<VertexBuffer> m_InstanceBuffer;
+    std::shared_ptr<VertexArray> m_VertexArray;
+    std::shared_ptr<IndexBuffer> m_IndexBuffer;
+    std::shared_ptr<VertexBuffer> m_MeshBuffer;
+    std::shared_ptr<VertexBuffer> m_InstanceBuffer;
     glm::mat4 m_Proj;
     glm::mat4 m_View;
     

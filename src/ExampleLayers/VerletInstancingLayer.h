@@ -153,7 +153,7 @@ class VerletInstanced : public Layer {
 private:
     constexpr static int m_ObjCount = 500;
     Pos_Scale_Col_Quad_Manager m_Manager;
-    unsigned int m_Test;
+    unsigned int m_Bound;
     unsigned int m_Objs;
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
@@ -167,7 +167,7 @@ public:
     ~VerletInstanced() { }
 
     void OnAttach() override {
-        m_Test = m_Manager.AllocateObject(1, &ConfigureShader);            
+        m_Bound = m_Manager.AllocateObject(1, &ConfigureShader);            
         m_Objs = m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader); 
 
         m_SimData.SpawnFreq = 200;
@@ -198,9 +198,9 @@ public:
             m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
-        m_Manager[m_Test].position = m_WindowSize/2.0f;
-        m_Manager[m_Test].scale = glm::vec2(m_WindowSize.y/2);
-        m_Manager[m_Test].color = glm::vec4(0,0,0,1);
+        m_Manager[m_Bound].position = m_WindowSize/2.0f;
+        m_Manager[m_Bound].scale = glm::vec2(m_WindowSize.y/2);
+        m_Manager[m_Bound].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
         m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
