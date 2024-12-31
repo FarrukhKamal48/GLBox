@@ -2,9 +2,8 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
-#include "Core/Layer.h"
-#include "Core/Batching/BatchRenderer.h"
-#include "Core/Batching/Quad.h"
+#include "GLBox/Core/Layer.h"
+#include "GLBox/Renderer/Batching/BatchRenderer.h"
 
 class Batcher : public Layer {
 private:

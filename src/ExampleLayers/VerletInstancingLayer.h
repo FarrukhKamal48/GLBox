@@ -1,9 +1,8 @@
 #pragma once
-#include "Core/Input.h"
-#include "Core/Layer.h"
-#include "Core/Application.h"
-#include "Core/Instancing/RendererInstanced.h"
-#include "glm/fwd.hpp"
+#include <glm/fwd.hpp>
+#include "GLBox/Core/Input.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/RendererInstanced.h"
 
 
 #define PI glm::pi<float>()

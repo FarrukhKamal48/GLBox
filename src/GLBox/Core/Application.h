@@ -2,9 +2,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Core/ImGui/ImGuiLayer.h"
-#include "Core/LayerStack.h"
-#include "Core/Window.h"
+#include "GLBox/ImGui/ImGuiLayer.h"
+#include "GLBox/Core/LayerStack.h"
+#include "GLBox/Core/Window.h"
 
 #define WIDTH Application::Get().GetWindow().GetWidth()
 #define HEIGHT Application::Get().GetWindow().GetHeight()

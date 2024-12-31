@@ -6,8 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Core/Application.h"
-#include "Core/ImGui/ImGuiLayer.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/ImGui/ImGuiLayer.h"
 
 
 ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {

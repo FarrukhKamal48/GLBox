@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Buffer.h"
-#include "Core/Shader.h"
+#include "GLBox/Core/Buffer.h"
+#include "GLBox/Core/Shader.h"
 
 namespace Render {
     void Clear();

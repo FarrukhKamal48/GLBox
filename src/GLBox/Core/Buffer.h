@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/glew.h>
-#include "Core/VertexBufferLayout.h"
+#include "GLBox/Core/VertexBufferLayout.h"
 
 class VertexBuffer {
 private:

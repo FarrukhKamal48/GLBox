@@ -1,5 +1,5 @@
 #include <cassert>
-#include "Core/Window.h"
+#include "GLBox/Core/Window.h"
 
 Window::Window(const WindowProps& props) {
     Init(props);

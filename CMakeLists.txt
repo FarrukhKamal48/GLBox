@@ -13,8 +13,11 @@ set (vendor_dir "${PROJECT_SOURCE_DIR}/src/vendor/")
 
 # file (GLOB src_files "${src_dir}/*.cpp" "${src_dir}/*/*.cpp" "${src_dir}/*/*/*.cpp" "${vendor_dir}/*/*.cpp")
 file(GLOB_RECURSE src_files 
-    ${src_dir}/Core/*.cpp ${src_dir}/Core/*.h
-    ${src_dir}/ExampleLayers/*.cpp ${src_dir}/ExampleLayers/*.h
+    ${src_dir}/GLBox/Core/*.cpp     ${src_dir}/GLBox/Core/*.h
+    ${src_dir}/GLBox/ImGui/*.cpp    ${src_dir}/GLBox/ImGui/*.h
+    ${src_dir}/GLBox/Renderer/*.cpp ${src_dir}/GLBox/Renderer/*.h
+    ${src_dir}/GLBox/Events/*.cpp   ${src_dir}/GLBox/Events/*.h
+    ${src_dir}/ExampleLayers/*.cpp  ${src_dir}/ExampleLayers/*.h
 )
 file(GLOB vendor_files 
     ${vendor_dir}/glm/*.cpp ${vendor_dir}/glm/*.h ${vendor_dir}/glm/*.hpp

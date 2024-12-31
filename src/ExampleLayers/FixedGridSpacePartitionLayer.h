@@ -1,9 +1,8 @@
-#include "Core/Layer.h"
-#include "Core/Input.h"
-#include "Core/Renderer.h"
-#include "Core/Instancing/RendererInstanced.h"
-#include "Core/Application.h"
 #include <cassert>
+#include "GLBox/Core/Input.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/RendererInstanced.h"
 
 
 struct Boundry

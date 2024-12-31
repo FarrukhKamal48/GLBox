@@ -3,11 +3,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Core/Input.h"
-#include "Core/Instancing/VertexManager.h"
-#include "Core/Renderer.h"
-#include "Core/Application.h"
-#include "Core/ImGui/ImGuiLayer.h"
+#include "GLBox/Core/Input.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/VertexManager.h"
+#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/ImGui/ImGuiLayer.h"
 
 
 Application::Application(const WindowProps& windowProps) {

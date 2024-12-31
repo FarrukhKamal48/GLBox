@@ -1,6 +1,6 @@
-#include "Core/Renderer.h"
-#include "Core/Instancing/RendererInstanced.h"
-#include "Core/Application.h"
+#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/RendererInstanced.h"
+#include "GLBox/Core/Application.h"
 
 #define ResizeMultiplier (float)2.0f
 

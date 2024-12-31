@@ -1,5 +1,5 @@
-#include "Core/GLlog.h"
-#include "Core/Buffer.h"
+#include "GLBox/Core/GLlog.h"
+#include "GLBox/Core/Buffer.h"
 
 //##############################
 //#####   VertexBuffer   #######

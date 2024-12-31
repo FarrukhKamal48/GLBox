@@ -1,24 +1,22 @@
 #pragma once
 
-// Core
-// #include "Core/EntryPoint.h"
-#include "Core/Application.h"
-#include "Core/Layer.h"
-#include "Core/LayerStack.h"
-#include "Core/GLlog.h"
-#include "Core/IndexBuffer.h"
-#include "Core/Input.h"
-#include "Core/Renderer.h"
-#include "Core/Shader.h"
-#include "Core/Texture.h"
-#include "Core/VertexArray.h"
-#include "Core/VertexBuffer.h"
-#include "Core/VertexBufferLayout.h"
-#include "Core/Layer.h"
+// GLBox/Core
+// #include "GLBox/Core/EntryPoint.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Core/Layer.h"
+#include "GLBox/Core/LayerStack.h"
+#include "GLBox/Core/GLlog.h"
+#include "GLBox/Core/Input.h"
+#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Core/Buffer.h"
+#include "GLBox/Core/Shader.h"
+#include "GLBox/Core/Texture.h"
+#include "GLBox/Core/VertexBufferLayout.h"
+#include "GLBox/Core/Layer.h"
 
 // renderer
-#include "Core/Instancing/RendererInstanced.h"
-#include "Core/Instancing/VertexManager.h"
+#include "GLBox/Renderer/Instancing/RendererInstanced.h"
+#include "GLBox/Renderer/Instancing/VertexManager.h"
 
 // example Layers
 // #include "ExampleLayers/BatchingLayer.h"

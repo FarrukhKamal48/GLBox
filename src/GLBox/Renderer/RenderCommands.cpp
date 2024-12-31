@@ -1,6 +1,6 @@
-#include "Core/Application.h"
-#include "Core/GLlog.h"
-#include "Core/Renderer.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Core/GLlog.h"
+#include "GLBox/Renderer/RenderCommands.h"
 
 void Render::Clear() {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));

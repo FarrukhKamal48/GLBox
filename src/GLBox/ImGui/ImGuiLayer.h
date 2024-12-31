@@ -3,7 +3,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
-#include "Core/Layer.h"
+#include "GLBox/Core/Layer.h"
 
 class ImGuiLayer : public Layer {
 public:

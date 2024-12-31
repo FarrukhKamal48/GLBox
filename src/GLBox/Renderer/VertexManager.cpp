@@ -1,5 +1,5 @@
-#include "Core/Instancing/RendererInstanced.h"
 #include <functional>
+#include "GLBox/Renderer/RendererInstanced.h"
 
 static std::vector<InstanceRenderer> Renderers;
 

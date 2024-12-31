@@ -1,4 +1,4 @@
-#include "Core/Input.h"
+#include "GLBox/Core/Input.h"
 
 static GLFWwindow* window;
 static double MousePosX;

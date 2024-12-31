@@ -1,9 +1,8 @@
 #pragma once
 #include <memory>
-#include "Core/Buffer.h"
-#include "Core/Shader.h"
-#include "Core/Instancing/VertexManager.h"
-#include "Core/VertexBufferLayout.h"
+#include "GLBox/Core/Buffer.h"
+#include "GLBox/Core/Shader.h"
+#include "GLBox/Renderer/VertexManager.h"
 
 struct VertexData {
     unsigned int SizeOfObject;

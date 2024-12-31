@@ -1,6 +1,6 @@
 #include <GL/glew.h>
-#include "Core/GLlog.h"
-#include "Core/Texture.h"
+#include "GLBox/Core/GLlog.h"
+#include "GLBox/Core/Texture.h"
 
 Texture::Texture(const std::string filePath) 
     : m_RendererID(0), m_FilePath(filePath), m_LocalBuffer(nullptr), 

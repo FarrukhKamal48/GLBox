@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "Core/Renderer.h"
-#include "Core/Batching/Quad.h"
+#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/Batching/Quad.h"
 
 namespace Batching {
 

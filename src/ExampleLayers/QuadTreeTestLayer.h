@@ -1,7 +1,6 @@
-#include "Core/Input.h"
-#include "Core/Layer.h"
-#include "Core/Instancing/RendererInstanced.h"
-#include "Core/Application.h"
+#include "GLBox/Core/Input.h"
+#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/RendererInstanced.h"
 
 
 struct Bound
@@ -107,7 +106,8 @@ private:
 class QuadTreeTest : public Layer {
 private:
     constexpr static int m_ObjCount = 1000;
-    Pos_Scale_Col_Quad* m_ObjData;
+    Pos_Scale_Col_Quad_Manager m_Manager;
+    unsigned int m_ObjData;
     QuadTree<4> m_QTree;
     Bound m_CheckRange;
 public:
@@ -115,7 +115,7 @@ public:
         : Layer("QuadTreeTest")
         , m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}), m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
     {
-        m_ObjData = Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount, &ConfigureShader); 
+        m_ObjData = m_Manager.AllocateObject(m_ObjCount, &ConfigureShader); 
     }
     ~QuadTreeTest() { }
     static void ConfigureShader(InstanceRenderer& m_Renderer) {
@@ -130,13 +130,13 @@ public:
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
             // ip = i + 1.0f;
-            m_ObjData[i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
-            // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_ObjData[i].scale = glm::vec2(8.0f);
-            // m_ObjData[i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
-            // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
+            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
+            // m_Manager[m_ObjData+i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            m_Manager[m_ObjData+i].scale = glm::vec2(8.0f);
+            // m_Manager[m_ObjData+i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
+            // m_Manager[m_ObjData+i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             // float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_QTree.Insert(m_ObjData[i].position, i);
+            m_QTree.Insert(m_Manager[m_ObjData+i].position, i);
         }
     }
 
@@ -147,17 +147,17 @@ public:
         
         m_QTree.Delete();
         for (int i = 0; i < m_ObjCount; i++) {
-            m_QTree.Insert(m_ObjData[i].position, i);
+            m_QTree.Insert(m_Manager[m_ObjData+i].position, i);
         }
         
         std::vector<int> points;
         m_QTree.Query(m_CheckRange, points);
         
         for (int i = 0; i < m_ObjCount; i++) {
-            m_ObjData[i].color = {0, 0, 0, 0};
+            m_Manager[m_ObjData+i].color = {0, 0, 0, 0};
         }
         for (int p = 0; p < (int)points.size(); p++) {
-            m_ObjData[points[p]].color = {0, 1, 0, 0};
+            m_Manager[m_ObjData+points[p]].color = {0, 1, 0, 0};
         }
 
 
