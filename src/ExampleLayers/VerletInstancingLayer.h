@@ -1,8 +1,12 @@
 #pragma once
+
 #include <glm/fwd.hpp>
+
 #include "GLBox/Core/Application.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
+#include "GLBox/Events/KeyEvent.h"
+#include "GLBox/Events/MouseEvent.h"
 
 #define PI glm::pi<float>()
 #define TwoPI 2 * glm::pi<float>()
@@ -157,6 +161,8 @@ private:
     SimData m_SimData;
     Constraint m_Constraint;
     glm::vec2 m_WindowSize;
+    glm::vec2 m_MousePos;
+    bool m_MouseDown = false;
 public:
     VerletInstanced() 
         : Layer("Verlet Test")
@@ -164,6 +170,24 @@ public:
     { }
     ~VerletInstanced() { }
 
+    void OnEvent(Event& event) override {
+        EventDispacher dispacher(event);       
+        dispacher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){
+            m_MousePos = { event.GetX(), event.GetY() };
+            return true;
+        });
+        dispacher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event){
+            if (event.GetKeyCode() == GLFW_KEY_F)
+                m_MouseDown = true;
+            return true;
+        });
+        dispacher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& event){
+            if (event.GetKeyCode() == GLFW_KEY_F)
+                m_MouseDown = false;
+            return true;
+        });
+    }
+    
     void OnAttach() override {
         m_Bound = m_Manager.AllocateObject(1, &ConfigureShader);            
         m_Objs = m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader); 
@@ -201,7 +225,7 @@ public:
         m_Manager[m_Bound].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        // m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        m_Manager[m_Objs].position = m_WindowSize/2.0f;
         m_Manager[m_Objs].scale = glm::vec2(15.0f);
         m_Manager[m_Objs].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].posI = m_Objs;
@@ -273,12 +297,12 @@ public:
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        // m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        m_Manager[m_Objs].position = glm::vec2(m_MousePos.x, HEIGHT - m_MousePos.y);
 
-        // if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-        //     m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
-        // else
-        //     m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
+        if (m_MouseDown)
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
+        else
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
     void Render() override {
