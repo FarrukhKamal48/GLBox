@@ -1,10 +1,14 @@
 #pragma once
-#include <string>
+
+#include <glbpch.h>
+#include "GLBox/Events/Event.h"
 
 class Layer {
 public:
     Layer(const std::string& name) : m_DebugName(name) {};
     virtual ~Layer() {};
+
+    virtual void OnEvent(Event& event) {};
     
     virtual void OnAttach() {};
     virtual void OnDetach() {};

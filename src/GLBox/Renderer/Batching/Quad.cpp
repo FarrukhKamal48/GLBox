@@ -1,5 +1,5 @@
-#include "GLBox/Renderer/Batching/Quad.h"
 #include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/Batching/Quad.h"
 
 
 namespace Batching {

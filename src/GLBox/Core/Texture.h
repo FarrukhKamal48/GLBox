@@ -1,5 +1,6 @@
 #pragma once
-#include <string>
+
+#include <glbpch.h>
 #include <stb/stb_image.h>
 
 class Texture {

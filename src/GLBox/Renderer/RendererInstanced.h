@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+
 #include "GLBox/Core/Buffer.h"
 #include "GLBox/Core/Shader.h"
 #include "GLBox/Renderer/VertexManager.h"

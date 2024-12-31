@@ -1,5 +1,7 @@
 #pragma once
-#include <memory>
+
+#include <glbpch.h>
+
 #include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/Batching/Quad.h"
 

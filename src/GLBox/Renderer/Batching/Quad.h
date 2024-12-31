@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GLBox/Renderer/Batching/Vertex.h"
 
 namespace Batching {

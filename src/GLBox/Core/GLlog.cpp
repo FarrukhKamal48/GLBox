@@ -1,5 +1,5 @@
+#include <glbpch.h>
 #include <GL/glew.h>
-#include <iostream>
 
 #include "GLBox/Core/GLlog.h"
 

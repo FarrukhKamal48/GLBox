@@ -1,5 +1,4 @@
 #include "GLBox/Core/LayerStack.h"
-#include <algorithm>
 
 LayerStack::LayerStack() { }
 

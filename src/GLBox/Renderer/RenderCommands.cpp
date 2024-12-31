@@ -1,5 +1,6 @@
-#include "GLBox/Core/Application.h"
 #include "GLBox/Core/GLlog.h"
+#include "GLBox/Core/Application.h"
+
 #include "GLBox/Renderer/RenderCommands.h"
 
 void Render::Clear() {

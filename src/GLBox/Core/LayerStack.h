@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+
 #include "GLBox/Core/Layer.h"
 
 class LayerStack {

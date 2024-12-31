@@ -1,30 +1,33 @@
-#include <cassert>
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "GLBox/Core/Input.h"
+#include <glbpch.h>
 #include "GLBox/Core/Application.h"
+
 #include "GLBox/Renderer/VertexManager.h"
 #include "GLBox/Renderer/RenderCommands.h"
-#include "GLBox/ImGui/ImGuiLayer.h"
 
 
 Application::Application(const WindowProps& windowProps) {
-    assert(s_Instance == nullptr && "An Application is already running");
+    assert(s_Instance == nullptr && "Application already exists.");
     s_Instance = this;
     
     m_Window.Init(windowProps);
-
-    Input::Init(m_Window.GetWindow());
-    
-    glfwMakeContextCurrent(m_Window.GetWindow());
-    glewInit();
+    m_Window.SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);
 }
 Application::~Application() { 
+}
+
+void Application::OnEvent(Event& event) {
+    EventDispacher dispacher(event);
+    dispacher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
+    dispacher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+
+    for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++) {
+        if (event.Handled)
+            break;
+        (*it)->OnEvent(event);
+    }
 }
 
 void Application::PushLayer(Layer* layer) {
@@ -40,7 +43,7 @@ void Application::PushOverlay(Layer* layer) {
 void Application::Run() {
     Render::BasicBlend();
     
-    while (!m_Window.IsClosed()) {
+    while (m_Running) {
         double Time = glfwGetTime();
         double deltaTime = Time - m_LastFramTime;
         m_LastFramTime = Time;
@@ -60,5 +63,14 @@ void Application::Run() {
 
         m_Window.OnUpdate();
     }
+}
+
+bool Application::OnWindowResize(WindowResizeEvent& event) {
+    return true;
+}
+
+bool Application::OnWindowClose(WindowCloseEvent& event) {
+    m_Running = false;
+    return true;
 }
 

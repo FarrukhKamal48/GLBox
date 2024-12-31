@@ -1,5 +1,5 @@
 #pragma once
-#include <GL/glew.h>
+
 #include "GLBox/Core/VertexBufferLayout.h"
 
 class VertexBuffer {

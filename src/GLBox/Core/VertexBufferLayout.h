@@ -1,6 +1,7 @@
 #pragma once
+
+#include <glbpch.h>
 #include <GL/glew.h>
-#include <vector>
 
 struct VertexBufferLayoutElement {
     unsigned int count;

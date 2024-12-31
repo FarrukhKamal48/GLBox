@@ -1,6 +1,5 @@
 #pragma once
 #include <glm/fwd.hpp>
-#include "GLBox/Core/Input.h"
 #include "GLBox/Core/Application.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
@@ -202,7 +201,7 @@ public:
         m_Manager[m_Bound].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        // m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
         m_Manager[m_Objs].scale = glm::vec2(15.0f);
         m_Manager[m_Objs].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].posI = m_Objs;
@@ -274,12 +273,12 @@ public:
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
+        // m_Manager[m_Objs].position = glm::vec2(Input::GetMousePos().x, m_WindowSize.y - Input::GetMousePos().y);
 
-        if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
-            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
-        else
-            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
+        // if (Input::Button(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS))
+        //     m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
+        // else
+        //     m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
     }
 
     void Render() override {

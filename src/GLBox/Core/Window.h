@@ -1,6 +1,11 @@
 #pragma once
+
+#include <glbpch.h>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <string>
+
+#include "GLBox/Events/Event.h"
 
 struct WindowProps
 {
@@ -16,22 +21,31 @@ struct WindowProps
 
 class Window {
 public:
+    using EventCallbackFn = std::function<void(Event&)>;
+    
     Window() = default;
     Window(const WindowProps& props);
     ~Window();
 
+    void Init(const WindowProps& props);
     void OnUpdate();
+    void ShutDown();
+
+    void SetEventCallback(EventCallbackFn callback) { m_Data.EventCallback = callback; }
 
     GLFWwindow* GetWindow()     const { return m_Window; }
-    bool IsClosed()             const { return glfwWindowShouldClose(m_Window); }
-    unsigned int GetWidth()     const { return m_Props.Width; }
-    unsigned int GetHeight()    const { return m_Props.Height; }
+    unsigned int GetWidth()     const { return m_Data.Width; }
+    unsigned int GetHeight()    const { return m_Data.Height; }
     
-    void Init(const WindowProps& props);
-    void ShutDown();
 private:
     GLFWwindow* m_Window;
-    WindowProps m_Props;
+    struct WindowData {
+        std::string Title;
+        unsigned int Width;
+        unsigned int Height;
+        EventCallbackFn EventCallback;
+    };
+    WindowData m_Data;
 private:
     inline static unsigned int m_GLFWWindowCount = 0;
 };

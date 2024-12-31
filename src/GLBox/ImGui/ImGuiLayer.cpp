@@ -1,10 +1,5 @@
-#include <imgui.h>
-#include <imgui_internal.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include "GLBox/Core/Application.h"
 #include "GLBox/ImGui/ImGuiLayer.h"

@@ -1,7 +1,4 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
+#include <glbpch.h>
 #include <GL/glew.h>
 
 #include "GLBox/Core/GLlog.h"

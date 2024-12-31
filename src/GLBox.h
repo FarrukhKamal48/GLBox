@@ -1,28 +1,33 @@
 #pragma once
 
-// GLBox/Core
-// #include "GLBox/Core/EntryPoint.h"
-#include "GLBox/Core/Application.h"
-#include "GLBox/Core/Layer.h"
-#include "GLBox/Core/LayerStack.h"
-#include "GLBox/Core/GLlog.h"
-#include "GLBox/Core/Input.h"
-#include "GLBox/Renderer/RenderCommands.h"
-#include "GLBox/Core/Buffer.h"
-#include "GLBox/Core/Shader.h"
-#include "GLBox/Core/Texture.h"
-#include "GLBox/Core/VertexBufferLayout.h"
-#include "GLBox/Core/Layer.h"
+// Core
+#include <GLBox/Core/GLlog.h>
+#include <GLBox/Core/Buffer.h>
+#include <GLBox/Core/VertexBufferLayout.h>
+#include <GLBox/Core/Shader.h>
+#include <GLBox/Core/Texture.h>
+#include <GLBox/Core/Layer.h>
+#include <GLBox/Core/LayerStack.h>
+#include <GLBox/Core/Window.h>
+#include <GLBox/Core/Application.h>
 
-// renderer
-#include "GLBox/Renderer/Instancing/RendererInstanced.h"
-#include "GLBox/Renderer/Instancing/VertexManager.h"
+// Renderer
+#include <GLBox/Renderer/RenderCommands.h>
+#include <GLBox/Renderer/RendererInstanced.h>
+#include <GLBox/Renderer/VertexManager.h>
 
-// example Layers
-// #include "ExampleLayers/BatchingLayer.h"
-// #include "ExampleLayers/CircleLayer.h"
-// #include "ExampleLayers/ClearColorLayer.h"
-// #include "ExampleLayers/FixedGridSpacePartitionLayer.h"
-// #include "ExampleLayers/QuadTreeTestLayer.h"
-// #include "ExampleLayers/VerletInstancingLayer.h"
-// #include "ExampleLayers/VerletLayer.h"
+// Events
+#include <GLBox/Events/Event.h>
+#include <GLBox/Events/KeyEvent.h>
+#include <GLBox/Events/MouseEvent.h>
+#include <GLBox/Events/WindowEvent.h>
+
+// ImGui
+#include <GLBox/ImGui/ImGuiLayer.h>
+
+// Example Layers
+#include <ExampleLayers/BatchingLayer.h>
+#include <ExampleLayers/FixedGridSpacePartitionLayer.h>
+#include <ExampleLayers/QuadTreeTestLayer.h>
+#include <ExampleLayers/VerletInstancingLayer.h>
+

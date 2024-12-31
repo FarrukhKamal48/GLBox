@@ -1,9 +1,10 @@
 #pragma once
+
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-#include "GLBox/Renderer/Batching/Batch.h"
-#include "GLBox/Core/Application.h"
 
+#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/Batching/Batch.h"
 
 namespace Batching {
 
