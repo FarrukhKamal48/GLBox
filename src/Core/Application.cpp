@@ -11,7 +11,7 @@
 
 
 Application::Application(const WindowProps& windowProps) {
-    assert(s_Instance == nullptr);
+    assert(s_Instance == nullptr && "An Application is already running");
     s_Instance = this;
     
     m_Window.Init(windowProps);

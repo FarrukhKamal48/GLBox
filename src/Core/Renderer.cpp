@@ -1,3 +1,4 @@
+#include "Core/Application.h"
 #include "Core/GLlog.h"
 #include "Core/Renderer.h"
 
@@ -26,3 +27,6 @@ void Render::BasicBlend() {
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GLCall(glEnable(GL_BLEND));
 }
+
+unsigned int ViewportWidth()    { return Application::Get().GetWindow().GetWidth(); }
+unsigned int ViewportHeight()   { return Application::Get().GetWindow().GetHeight(); }

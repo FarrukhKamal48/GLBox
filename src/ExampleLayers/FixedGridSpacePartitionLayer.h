@@ -3,6 +3,7 @@
 #include "Core/Renderer.h"
 #include "Core/Instancing/RendererInstanced.h"
 #include "Core/Application.h"
+#include <cassert>
 
 
 struct Boundry
@@ -47,7 +48,7 @@ public:
             return false;
         auto& cell = m_Cells[col][row];
         
-        assert(cell.count < CellCapacity);
+        assert(cell.count < CellCapacity && "Cell Capacity reached");
         
         cell.points[cell.count] = { pointIndex, pointPos };
         cell.count++;
@@ -82,6 +83,7 @@ public:
     }
 
     Cell<CellCapacity>* operator[](int i) {
+        assert(i > 0 && i < Cols && "Index out of bounds of array.");
         return m_Cells[i];
     }
 
@@ -95,13 +97,14 @@ private:
     constexpr static int m_ObjCount = 5000;
     constexpr static int m_Cols = 20;
     constexpr static int m_Rows = 10;
-    Pos_Scale_Col_Quad* m_ObjData;
+    Pos_Scale_Col_Quad_Manager m_Manager;
+    unsigned int m_ObjData;
     Grid<m_Cols, m_Rows, 100> m_Grid;
     Boundry m_CheckRange;
 public:
     FixedGridSpacePartitionTest() 
         : Layer("FixedGridSpacePartitionTest")
-        , m_ObjData(Pos_Scale_Col_Quad_Manager().Instantiate(m_ObjCount, &ConfigureShader))
+        , m_ObjData(m_Manager.AllocateObject(m_ObjCount, &ConfigureShader))
         , m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
     { }
     ~FixedGridSpacePartitionTest() { }
@@ -111,14 +114,14 @@ public:
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_ObjData[i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, 
+            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, 
                                               (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
-            // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_ObjData[i].scale = glm::vec2(8.0f);
-            m_ObjData[i].color = glm::vec4(glm::sin(ip * 0.01f), 0.3, 1-glm::sin(ip * 0.01f), 1);
-            // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
+            // m_Manager[m_ObjData+i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
+            m_Manager[m_ObjData+i].scale = glm::vec2(8.0f);
+            m_Manager[m_ObjData+i].color = glm::vec4(glm::sin(ip * 0.01f), 0.3, 1-glm::sin(ip * 0.01f), 1);
+            // m_Manager[m_ObjData+i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             // float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Grid.Insert(i, m_ObjData[i].position);
+            m_Grid.Insert(i, m_Manager[m_ObjData+i].position);
         }
     }
 
@@ -130,23 +133,23 @@ public:
         
         // add all the points to grid
         for (int i = 0; i < m_ObjCount; i++) {
-            m_ObjData[i].position += glm::vec2((float)rand()/RAND_MAX * 8 - 4, 
+            m_Manager[m_ObjData+i].position += glm::vec2((float)rand()/RAND_MAX * 8 - 4, 
                                                (float)rand()/RAND_MAX * 8 - 4);
-            if (m_ObjData[i].position.x > WIDTH-8)
-                m_ObjData[i].position.x = WIDTH-8;
-            else if (m_ObjData[i].position.x < 8)
-                m_ObjData[i].position.x = 8;
-            if (m_ObjData[i].position.y > HEIGHT-8)
-                m_ObjData[i].position.y = HEIGHT-8;
-            else if (m_ObjData[i].position.y < 8)
-                m_ObjData[i].position.y = 8;
+            if (m_Manager[m_ObjData+i].position.x > WIDTH-8)
+                m_Manager[m_ObjData+i].position.x = WIDTH-8;
+            else if (m_Manager[m_ObjData+i].position.x < 8)
+                m_Manager[m_ObjData+i].position.x = 8;
+            if (m_Manager[m_ObjData+i].position.y > HEIGHT-8)
+                m_Manager[m_ObjData+i].position.y = HEIGHT-8;
+            else if (m_Manager[m_ObjData+i].position.y < 8)
+                m_Manager[m_ObjData+i].position.y = 8;
                 
-            m_Grid.Insert(i, m_ObjData[i].position);
+            m_Grid.Insert(i, m_Manager[m_ObjData+i].position);
         }
 
         // reset color of all points to black
         for (int i = 0; i < m_ObjCount; i++) {
-            m_ObjData[i].color = {0, 0, 0, 0};
+            m_Manager[m_ObjData+i].color = {0, 0, 0, 0};
         }
         
         // loop over each cell
@@ -172,13 +175,13 @@ public:
                         if (i == j) continue;
 
                         // skip over collision pairs that don't have overlap in both axes
-                        if (std::abs(-m_ObjData[i].position.x + m_ObjData[j].position.x) > m_ObjData[i].scale.x + m_ObjData[j].scale.x || 
-                            std::abs(-m_ObjData[i].position.y + m_ObjData[j].position.y) > m_ObjData[i].scale.y + m_ObjData[j].scale.y) continue;
+                        if (std::abs(-m_Manager[m_ObjData+i].position.x + m_Manager[m_ObjData+j].position.x) > m_Manager[m_ObjData+i].scale.x + m_Manager[m_ObjData+j].scale.x || 
+                            std::abs(-m_Manager[m_ObjData+i].position.y + m_Manager[m_ObjData+j].position.y) > m_Manager[m_ObjData+i].scale.y + m_Manager[m_ObjData+j].scale.y) continue;
 
                         // color collided points
-                        if (Collide(m_ObjData[i].position, m_ObjData[i].scale.x, m_ObjData[j].position, m_ObjData[j].scale.x)) {
-                            m_ObjData[i].color = {0, 1, 0, 0};
-                            m_ObjData[j].color = {0, 1, 0, 0};
+                        if (Collide(m_Manager[m_ObjData+i].position, m_Manager[m_ObjData+i].scale.x, m_Manager[m_ObjData+j].position, m_Manager[m_ObjData+j].scale.x)) {
+                            m_Manager[m_ObjData+i].color = {0, 1, 0, 0};
+                            m_Manager[m_ObjData+j].color = {0, 1, 0, 0};
                         }
                     }
                 }

@@ -9,4 +9,6 @@ namespace Render {
     void DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count);
 
     void BasicBlend();
+    unsigned int ViewportWidth();
+    unsigned int ViewportHeight();
 }

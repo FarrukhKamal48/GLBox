@@ -41,6 +41,11 @@ const std::vector<unsigned int>& Pos_Scale_Col_Quad_Manager::Indicies()     cons
 const unsigned int Pos_Scale_Col_Quad_Manager::AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const {
     return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_RendererI);
 }
+Pos_Scale_Col_Quad& Pos_Scale_Col_Quad_Manager::operator[](unsigned int i) {
+    assert(i >= 0 && i < m_Instances.size() 
+           && "Invalid index into QuadTransform_Manager::m_Instances");
+    return m_Instances[i]; 
+}
 
 
 
@@ -66,6 +71,11 @@ const std::vector<float>& QuadTransform_Manager::MeshData()             const { 
 const std::vector<unsigned int>& QuadTransform_Manager::Indicies()      const { return m_Indicies; }
 const unsigned int QuadTransform_Manager::AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const {
     return AllocateObj(count, ConfigureShader, new QuadTransform_Manager(), m_Instances, m_RendererI);
+}
+QuadTransform& QuadTransform_Manager::operator[](unsigned int i) {
+    assert(i >= 0 && i < m_Instances.size() 
+           && "Invalid index into QuadTransform_Manager::m_Instances");
+    return m_Instances[i]; 
 }
 
 

@@ -40,7 +40,7 @@ public:
     const std::vector<unsigned int>& Indicies()             const override;
     const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
-    Pos_Scale_Col_Quad& operator[](unsigned int i) { return m_Instances[i]; }
+    Pos_Scale_Col_Quad& operator[](unsigned int i);
 private:
     inline static const std::vector<float> m_Mesh = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -77,7 +77,7 @@ public:
     const std::vector<unsigned int>& Indicies()             const override;
     const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
-    QuadTransform& operator[](unsigned int i) { return m_Instances[i]; }
+    QuadTransform& operator[](unsigned int i);
 private:
     inline static const std::vector<float> m_Mesh = {
         -1.0f, -1.0f, 0.0f, 0.0f,

@@ -18,7 +18,7 @@ void Window::Init(const WindowProps& props) {
     
     if (m_GLFWWindowCount == 0) {
         bool succes = glfwInit();
-        assert(succes);
+        assert(succes && "glfwInit failed.");
     }
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -30,7 +30,7 @@ void Window::Init(const WindowProps& props) {
     if (!m_Window) {
         glfwTerminate();
     }
-    assert(m_Window != nullptr);
+    assert(m_Window != nullptr && "Failed to create window.");
     
     m_GLFWWindowCount++;
     glfwSetWindowUserPointer(m_Window, &m_Props);
