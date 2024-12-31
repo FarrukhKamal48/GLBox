@@ -54,6 +54,12 @@ void Window::Init(const WindowProps& props) {
         data.EventCallback(event);
     });
     
+    glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconfified){
+        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+        WindowMinimizeEvent event(iconfified);
+        data.EventCallback(event);
+    });
+    
     glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
         WindowCloseEvent event;

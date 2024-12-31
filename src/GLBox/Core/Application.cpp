@@ -21,6 +21,7 @@ Application::~Application() {
 void Application::OnEvent(Event& event) {
     EventDispacher dispacher(event);
     dispacher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
+    dispacher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(Application::OnWindowMinimize));
     dispacher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 
     for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++) {
@@ -48,24 +49,32 @@ void Application::Run() {
         double deltaTime = Time - m_LastFramTime;
         m_LastFramTime = Time;
 
-        for (Layer* layer : m_LayerStack) {
-            layer->Update(deltaTime);
-            layer->Render();
-        }
-        Render::Clear(0.9, 0.9, 0.9, 1);
-        Render::DrawAllInstanced();
+        if (!m_Minimized) {
+            for (Layer* layer : m_LayerStack) {
+                layer->Update(deltaTime);
+                layer->Render();
+            }
+            Render::Clear(0.9, 0.9, 0.9, 1);
+            Render::DrawAllInstanced();
 
-        m_ImGuiLayer->Begin(); {
-            for (Layer* layer : m_LayerStack)
+            m_ImGuiLayer->Begin(); {
+                for (Layer* layer : m_LayerStack)
                 layer->ImGuiRender();
+            }
+            m_ImGuiLayer->End();
         }
-        m_ImGuiLayer->End();
-
         m_Window.OnUpdate();
     }
 }
 
 bool Application::OnWindowResize(WindowResizeEvent& event) {
+    m_Minimized = false;
+    // call renderer resize function
+    return true;
+}
+
+bool Application::OnWindowMinimize(WindowMinimizeEvent& event) {
+    m_Minimized = event.IsMinimized();
     return true;
 }
 

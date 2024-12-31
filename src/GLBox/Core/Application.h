@@ -25,6 +25,7 @@ public:
 private:
     virtual void Run();
     virtual bool OnWindowResize(WindowResizeEvent& event);
+    virtual bool OnWindowMinimize(WindowMinimizeEvent& event);
     virtual bool OnWindowClose(WindowCloseEvent& event);
 private:
     Window m_Window;
@@ -32,6 +33,7 @@ private:
     LayerStack m_LayerStack;
     double m_LastFramTime = 0.0;
     bool m_Running = true;
+    bool m_Minimized = false;
 private:
     inline static Application* s_Instance = nullptr;
     friend int main(int argc, char** argv);
