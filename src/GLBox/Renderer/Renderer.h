@@ -9,10 +9,10 @@
 #include "GLBox/Renderer/Camera.h"
 
 
-class RenderCommand {
+class Renderer {
 public:
-    RenderCommand() = delete;
-    ~RenderCommand() = delete;
+    Renderer() = delete;
+    ~Renderer() = delete;
     
     static void Clear();
     static void Clear(float r, float g, float b, float a);
@@ -23,19 +23,14 @@ public:
     
     static void SetViewport(int x, int y, int width, int height);
     static void SetCamera(OrthoCamera& camera) { s_RenderData.Camera = &camera; };
+    static OrthoCamera& GetCamera() { return *s_RenderData.Camera; };
 
     static void OnWindowResize(WindowResizeEvent& event);
     
     struct RenderData {
-        unsigned int WindowWidth  = 1920;
-        unsigned int WindowHeight = 1080;
         OrthoCamera* Camera;
     };
     
-    static const RenderData& GetData() { return s_RenderData; }
-private:
-    static RenderData& GetRenderData() { return s_RenderData; }
-    friend class InstanceRenderer;
 private:
     static RenderData s_RenderData;
 };

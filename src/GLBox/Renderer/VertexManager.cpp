@@ -1,6 +1,5 @@
-#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/Renderer.h"
 #include "GLBox/Renderer/RendererInstanced.h"
-#include "glm/ext/matrix_clip_space.hpp"
 
 static std::vector<InstanceRenderer> Renderers;
 
@@ -80,17 +79,14 @@ QuadTransform& QuadTransform_Manager::operator[](unsigned int i) {
 }
 
 
-void RenderCommand::OnWindowResize(WindowResizeEvent& event) {
-    auto& renderData = RenderCommand::GetRenderData();
-    renderData.WindowWidth = event.GetWidth();
-    renderData.WindowHeight = event.GetHeight();
-    RenderCommand::SetViewport(0, 0, renderData.WindowWidth, renderData.WindowHeight);
+void Renderer::OnWindowResize(WindowResizeEvent& event) {
+    Renderer::SetViewport(0, 0, event.GetWidth(), event.GetHeight());
 
     for (int i=0; i < (int)Renderers.size(); i++) {
         Renderers[i].FetchMatricies();
     }
 }
-void RenderCommand::DrawAllInstanced() {
+void Renderer::DrawAllInstanced() {
     for (int i=0; i < (int)Renderers.size(); i++) {
         Renderers[i].Draw();
     }

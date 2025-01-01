@@ -4,7 +4,8 @@
 
 #include "GLBox/Core/Layer.h"
 #include "GLBox/Events/WindowEvent.h"
-#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/CameraController.h"
+#include "GLBox/Renderer/Renderer.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
 #include "GLBox/Events/KeyEvent.h"
@@ -159,23 +160,30 @@ private:
     Pos_Scale_Col_Quad_Manager m_Manager;
     unsigned int m_Bound;
     unsigned int m_Objs;
+    
     RigidBody m_Bodies[m_ObjCount+1];
     SimData m_SimData;
     Constraint m_Constraint;
+    
+    OrthoCameraController m_CameraController;
     glm::vec2 m_WindowSize;
     glm::vec2 m_MousePos;
     bool m_MouseDown = false;
 public:
     VerletInstanced() 
         : Layer("Verlet Test")
-        , m_Constraint({0, RenderCommand::GetData().WindowHeight}, {RenderCommand::GetData().WindowWidth, 0}) 
+        , m_Constraint({-16.0f/9.0f, 1}, {16.0f/9.0f, -1}) 
+        , m_CameraController(16.0f/9.0f, 1.0f)
     { }
     ~VerletInstanced() { }
 
     void OnEvent(Event& event) override {
         EventDispacher dispacher(event);       
         dispacher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){
-            m_MousePos = { event.GetX(), event.GetY() };
+            m_MousePos = { 
+                (event.GetX()/m_WindowSize.x * 2.0f - 1.0f) * m_CameraController.GetAspectRatio(), 
+                ((1.0f - event.GetY()/m_WindowSize.y) * 2.0f - 1.0f) * m_CameraController.GetZoomLevel()
+            };
             return true;
         });
         dispacher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event){
@@ -190,11 +198,14 @@ public:
         });
         dispacher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) {
             m_WindowSize = { event.GetWidth(), event.GetHeight() };
-            return true;
+            return false;
         });
+        m_CameraController.OnEvent(event);
     }
     
     void OnAttach() override {
+        Renderer::SetCamera(m_CameraController.GetCamera());
+        
         m_Bound = m_Manager.AllocateObject(1, &ConfigureShader);            
         m_Objs = m_Manager.AllocateObject(m_ObjCount+1, &ConfigureShader); 
 
@@ -204,16 +215,14 @@ public:
         m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
 
-        m_WindowSize = { RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight };
-
         // float p = 0;
         float ip = 0;
         for (int i = 1; i < m_ObjCount+1; i++) {
             // p = (i.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_Manager[m_Objs+i].position = m_WindowSize/2.0f;
+            m_Manager[m_Objs+i].position = glm::vec2(0);
             // m_ObjData[i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
-            m_Manager[m_Objs+i].scale = glm::vec2(8.0f);
+            m_Manager[m_Objs+i].scale = glm::vec2(0.01f);
             m_Manager[m_Objs+i].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
             // m_ObjData[i+2].color = glm::vec4(p, 0.3, 1-p, 1);
             m_Bodies[i].posI = m_Objs+i;
@@ -223,16 +232,16 @@ public:
             m_Bodies[i].iskinematic = false;
             m_Bodies[i].isBound = true;
             float theta = m_SimData.SpawnAngleDisplacement + m_SimData.SpawnAngle/2 * (sin(ip * m_SimData.SpawnAngleFreq) - 1);
-            m_Bodies[i].velocity(8.0f * glm::vec2(cos(theta), sin(theta)));
+            m_Bodies[i].velocity(0.1f * glm::vec2(cos(theta), sin(theta)));
         }
         // set graphic for contraint
-        m_Manager[m_Bound].position = m_WindowSize/2.0f;
-        m_Manager[m_Bound].scale = glm::vec2(m_WindowSize.y/2);
+        m_Manager[m_Bound].position = glm::vec2(0);
+        m_Manager[m_Bound].scale = glm::vec2(m_CameraController.GetZoomLevel());
         m_Manager[m_Bound].color = glm::vec4(0,0,0,1);
 
         // set graphic for god hand
-        m_Manager[m_Objs].position = m_WindowSize/2.0f;
-        m_Manager[m_Objs].scale = glm::vec2(15.0f);
+        m_Manager[m_Objs].position = glm::vec2(0);
+        m_Manager[m_Objs].scale = glm::vec2(0.1f);
         m_Manager[m_Objs].color = glm::vec4(0.1, 1.0, 0.0, 1); 
         m_Bodies[0].posI = m_Objs;
         m_Bodies[0].pos_old = m_Manager[m_Objs].position;
@@ -281,7 +290,6 @@ public:
 
     void Update(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
-        // m_WindowSize = { RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight };
         
         for (int s = 0; s < m_SimData.subSteps; s++) {
             m_SimData.SpawnTimer += m_SimData.subDt;
@@ -304,12 +312,12 @@ public:
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_Manager[m_Objs].position = glm::vec2(m_MousePos.x, m_WindowSize.y - m_MousePos.y);
+        m_Manager[m_Objs].position = m_MousePos;
 
         if (m_MouseDown)
-            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(0.05f), dt * 10.0f);
         else
-            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(50.0f), dt * 10.0f);
+            m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(0.1f), dt * 10.0f);
     }
 
     void Render() override {

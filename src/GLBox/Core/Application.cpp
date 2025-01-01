@@ -1,7 +1,7 @@
 #include <glbpch.h>
 
 #include "GLBox/Core/Application.h"
-#include "GLBox/Renderer/RenderCommands.h"
+#include "GLBox/Renderer/Renderer.h"
 
 
 Application::Application(const WindowProps& windowProps) {
@@ -42,7 +42,7 @@ void Application::PushOverlay(Layer* layer) {
 }
 
 void Application::Run() {
-    RenderCommand::BasicBlend();
+    Renderer::BasicBlend();
     
     while (m_Running) {
         double Time = glfwGetTime();
@@ -54,8 +54,8 @@ void Application::Run() {
                 layer->Update(deltaTime);
                 layer->Render();
             }
-            RenderCommand::Clear(0.9, 0.9, 0.9, 1);
-            RenderCommand::DrawAllInstanced();
+            Renderer::Clear(0.9, 0.9, 0.9, 1);
+            Renderer::DrawAllInstanced();
 
             m_ImGuiLayer->Begin(); {
                 for (Layer* layer : m_LayerStack)
@@ -69,7 +69,7 @@ void Application::Run() {
 
 bool Application::OnWindowResize(WindowResizeEvent& event) {
     m_Minimized = false;
-    RenderCommand::OnWindowResize(event);
+    Renderer::OnWindowResize(event);
     return false;
 }
 
