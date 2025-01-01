@@ -7,9 +7,6 @@
 
 #include "GLBox/ImGui/ImGuiLayer.h"
 
-#define WIDTH Application::Get().GetWindow().GetWidth()
-#define HEIGHT Application::Get().GetWindow().GetHeight()
-
 class Application {
 public:
     Application(const WindowProps& windoProps);

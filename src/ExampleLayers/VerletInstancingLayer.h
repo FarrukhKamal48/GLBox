@@ -2,7 +2,9 @@
 
 #include <glm/fwd.hpp>
 
-#include "GLBox/Core/Application.h"
+#include "GLBox/Core/Layer.h"
+#include "GLBox/Events/WindowEvent.h"
+#include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
 #include "GLBox/Events/KeyEvent.h"
@@ -166,7 +168,7 @@ private:
 public:
     VerletInstanced() 
         : Layer("Verlet Test")
-        , m_Constraint({0, HEIGHT}, {WIDTH, 0}) 
+        , m_Constraint({0, RenderCommand::GetData().WindowHeight}, {RenderCommand::GetData().WindowWidth, 0}) 
     { }
     ~VerletInstanced() { }
 
@@ -186,6 +188,10 @@ public:
                 m_MouseDown = false;
             return true;
         });
+        dispacher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event) {
+            m_WindowSize = { event.GetWidth(), event.GetHeight() };
+            return true;
+        });
     }
     
     void OnAttach() override {
@@ -198,7 +204,7 @@ public:
         m_SimData.SpawnRadiusFreq = 1/200.0f * TwoPI;
         m_SimData.SpawnColorFreq = 1/50.0f;
 
-        m_WindowSize = {WIDTH, HEIGHT};
+        m_WindowSize = { RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight };
 
         // float p = 0;
         float ip = 0;
@@ -275,7 +281,8 @@ public:
 
     void Update(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
-
+        // m_WindowSize = { RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight };
+        
         for (int s = 0; s < m_SimData.subSteps; s++) {
             m_SimData.SpawnTimer += m_SimData.subDt;
             if (m_SimData.SpawnTimer >= 1.0/m_SimData.SpawnFreq && m_SimData.EnabledCount < m_ObjCount) {
@@ -297,7 +304,7 @@ public:
         }
         // m_ObjData[0].position = Lerp(m_ObjData[1].position, 
         //                              glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y), 10 * dt);
-        m_Manager[m_Objs].position = glm::vec2(m_MousePos.x, HEIGHT - m_MousePos.y);
+        m_Manager[m_Objs].position = glm::vec2(m_MousePos.x, m_WindowSize.y - m_MousePos.y);
 
         if (m_MouseDown)
             m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(8.0f), dt * 10.0f);

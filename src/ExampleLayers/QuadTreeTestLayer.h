@@ -1,6 +1,8 @@
-#include "GLBox/Core/Input.h"
-#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/RendererInstanced.h"
+
+#include "GLBox/Core/Layer.h"
+#include "GLBox/Events/MouseEvent.h"
 
 
 struct Bound
@@ -107,13 +109,16 @@ class QuadTreeTest : public Layer {
 private:
     constexpr static int m_ObjCount = 1000;
     Pos_Scale_Col_Quad_Manager m_Manager;
+    glm::vec2 m_WindowSize;
     unsigned int m_ObjData;
     QuadTree<4> m_QTree;
     Bound m_CheckRange;
+    glm::vec2 m_MousePos;
 public:
     QuadTreeTest() 
         : Layer("QuadTreeTest")
-        , m_QTree({WIDTH/2, HEIGHT/2}, {WIDTH, HEIGHT}), m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
+        , m_WindowSize({RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight})
+        , m_QTree(m_WindowSize/2.0f, m_WindowSize), m_CheckRange({m_WindowSize/2.0f, glm::vec2(50)})
     {
         m_ObjData = m_Manager.AllocateObject(m_ObjCount, &ConfigureShader); 
     }
@@ -125,12 +130,20 @@ public:
         m_Renderer.InstanceShader->SetUniform<float>("u_EdgeSmooth", 1.2f);
     }
 
+    void OnEvent(Event& event) override {
+        EventDispacher dispacher(event);       
+        dispacher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){
+            m_MousePos = { event.GetX(), event.GetY() };
+            return false;
+        });
+    }
+
     void OnAttach() override {
         // float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
             // ip = i + 1.0f;
-            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
+            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (m_WindowSize.x) + 10, (float)rand()/RAND_MAX * (m_WindowSize.y-20) + 10);
             // m_Manager[m_ObjData+i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
             m_Manager[m_ObjData+i].scale = glm::vec2(8.0f);
             // m_Manager[m_ObjData+i+2].color = glm::vec4(glm::sin(ip * m_SimData.SpawnColorFreq), 0.3, 1-glm::sin(ip * m_SimData.SpawnColorFreq), 1);
@@ -142,7 +155,7 @@ public:
 
 
     void Update(float dt) override {
-        m_CheckRange.centre = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_CheckRange.centre = glm::vec2(m_MousePos.x, m_WindowSize.y - m_MousePos.y);
         m_CheckRange.scale = glm::vec2(1000);
         
         m_QTree.Delete();
@@ -164,7 +177,6 @@ public:
     }
 
     void Render() override {
-        Render::DrawAllInstanced();
     }
 
 };

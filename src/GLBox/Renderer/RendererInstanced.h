@@ -29,8 +29,6 @@ private:
     std::shared_ptr<IndexBuffer> m_IndexBuffer;
     std::shared_ptr<VertexBuffer> m_MeshBuffer;
     std::shared_ptr<VertexBuffer> m_InstanceBuffer;
-    glm::mat4 m_Proj;
-    glm::mat4 m_View;
     
     unsigned int m_InstanceCount;
     unsigned int m_TargetCount;
@@ -53,5 +51,7 @@ public:
     void Init();
     void CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath);
     void Draw();
+
+    void FetchMatricies();
 };
 

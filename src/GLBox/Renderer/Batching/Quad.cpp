@@ -1,11 +1,11 @@
-#include "GLBox/Core/Application.h"
+#include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/Batching/Quad.h"
 
 
 namespace Batching {
 
 Quad::Quad() :
-    m_Centre(glm::vec2(WIDTH/2, HEIGHT/2)),
+    m_Centre(glm::vec2(RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight)/2.0f),
     m_Scale(glm::vec2(50, 50))
 { 
     m_Verticies[0].Position = glm::vec2(-1, -1) * m_Scale + m_Centre;

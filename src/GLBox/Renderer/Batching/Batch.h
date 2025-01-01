@@ -48,7 +48,7 @@ public:
     }
 
     void Draw(Shader& shader) {
-        Render::Draw(*m_VertexArray, *m_IndexBuffer, shader);
+        RenderCommand::Draw(*m_VertexArray, *m_IndexBuffer, shader);
     }
 };
 };

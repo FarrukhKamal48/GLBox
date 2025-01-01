@@ -1,6 +1,8 @@
-#include <cassert>
-#include "GLBox/Core/Input.h"
-#include "GLBox/Core/Application.h"
+#include <glbpch.h>
+
+#include "GLBox/Core/Layer.h"
+
+#include "GLBox/Events/MouseEvent.h"
 #include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
@@ -37,7 +39,10 @@ struct Cell {
 template <int Cols, int Rows, int CellCapacity>
 class Grid {
 public:
-    Grid() : m_CellBoundry({glm::vec2(0), glm::vec2(WIDTH/Cols, HEIGHT/Rows)}) {}
+    Grid() 
+        : m_CellBoundry({glm::vec2(0)
+        , glm::vec2(RenderCommand::GetData().WindowWidth/Cols, RenderCommand::GetData().WindowHeight/Rows)})
+    { }
     ~Grid() {}
     
     bool Insert(int pointIndex, glm::vec2 pointPos) {
@@ -57,7 +62,10 @@ public:
     void QueryRange(Boundry& range, std::vector<int>& result) {
         for (int i = 0; i < Cols; i++) {
             for (int j = 0; j < Rows; j++) {
-                m_CellBoundry.centre = {i*WIDTH/Cols, j*HEIGHT/Rows};
+                m_CellBoundry.centre = {
+                    i*RenderCommand::GetData().WindowWidth/Cols, 
+                    j*RenderCommand::GetData().WindowHeight/Rows
+                };
                 auto& cell = m_Cells[i][j];
                 for (int p = 0; p < cell.count; p++) {
                     if (range.contains(cell.points[p].pos)) {
@@ -96,25 +104,37 @@ private:
     constexpr static int m_ObjCount = 5000;
     constexpr static int m_Cols = 20;
     constexpr static int m_Rows = 10;
-    Pos_Scale_Col_Quad_Manager m_Manager;
+    Pos_Scale_Col_Quad_Manager m_Manager = Pos_Scale_Col_Quad_Manager();
     unsigned int m_ObjData;
     Grid<m_Cols, m_Rows, 100> m_Grid;
     Boundry m_CheckRange;
+    glm::vec2 m_WidowSize;
+    glm::vec2 m_MousePos;
 public:
     FixedGridSpacePartitionTest() 
         : Layer("FixedGridSpacePartitionTest")
         , m_ObjData(m_Manager.AllocateObject(m_ObjCount, &ConfigureShader))
-        , m_CheckRange({glm::vec2(WIDTH/2, HEIGHT/2), glm::vec2(50)})
+        , m_CheckRange({glm::vec2(RenderCommand::GetData().WindowWidth/2.0f, 
+                                  RenderCommand::GetData().WindowHeight/2.0f), glm::vec2(50)})
     { }
     ~FixedGridSpacePartitionTest() { }
 
+    void OnEvent(Event& event) override {
+        EventDispacher dispacher(event);       
+        dispacher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){
+            m_MousePos = { event.GetX(), event.GetY() };
+            return false;
+        });
+    }
+
     void OnAttach() override {
+        m_WidowSize = { RenderCommand::GetData().WindowWidth, RenderCommand::GetData().WindowHeight };
         float ip = 0;
         for (int i = 0; i < m_ObjCount; i++) {
             // p = (i+1.0f)/(m_ObjCount);
             ip = i + 1.0f;
-            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (WIDTH-20) + 10, 
-                                              (float)rand()/RAND_MAX * (HEIGHT-20) + 10);
+            m_Manager[m_ObjData+i].position = glm::vec2((float)rand()/RAND_MAX * (m_WidowSize.x) + 10, 
+                                              (float)rand()/RAND_MAX * (m_WidowSize.y) + 10);
             // m_Manager[m_ObjData+i+2].scale = 2.0f * glm::vec2(4 + glm::sin(ip * m_SimData.SpawnRadiusFreq));
             m_Manager[m_ObjData+i].scale = glm::vec2(8.0f);
             m_Manager[m_ObjData+i].color = glm::vec4(glm::sin(ip * 0.01f), 0.3, 1-glm::sin(ip * 0.01f), 1);
@@ -126,7 +146,7 @@ public:
 
 
     void Update(float dt) override {
-        m_CheckRange.centre = glm::vec2(Input::GetMousePos().x, HEIGHT - Input::GetMousePos().y);
+        m_CheckRange.centre = glm::vec2(m_MousePos.x, m_WidowSize.y - m_MousePos.y);
         m_CheckRange.scale = glm::vec2(192, 216);
         m_Grid.Clear();
         
@@ -134,12 +154,12 @@ public:
         for (int i = 0; i < m_ObjCount; i++) {
             m_Manager[m_ObjData+i].position += glm::vec2((float)rand()/RAND_MAX * 8 - 4, 
                                                (float)rand()/RAND_MAX * 8 - 4);
-            if (m_Manager[m_ObjData+i].position.x > WIDTH-8)
-                m_Manager[m_ObjData+i].position.x = WIDTH-8;
+            if (m_Manager[m_ObjData+i].position.x > m_WidowSize.x-8)
+                m_Manager[m_ObjData+i].position.x = m_WidowSize.x-8;
             else if (m_Manager[m_ObjData+i].position.x < 8)
                 m_Manager[m_ObjData+i].position.x = 8;
-            if (m_Manager[m_ObjData+i].position.y > HEIGHT-8)
-                m_Manager[m_ObjData+i].position.y = HEIGHT-8;
+            if (m_Manager[m_ObjData+i].position.y > m_WidowSize.y-8)
+                m_Manager[m_ObjData+i].position.y = m_WidowSize.y-8;
             else if (m_Manager[m_ObjData+i].position.y < 8)
                 m_Manager[m_ObjData+i].position.y = 8;
                 
@@ -206,8 +226,6 @@ public:
     }
 
     void Render() override {
-        Render::Clear(0.9, 0.9, 0.9, 1);
-        Render::DrawAllInstanced();
     }
 private:
     static void ConfigureShader(InstanceRenderer& m_Renderer) {

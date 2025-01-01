@@ -1,15 +1,39 @@
 #pragma once
 
+#include <glm/ext/matrix_transform.hpp>
+
 #include "GLBox/Core/Buffer.h"
 #include "GLBox/Core/Shader.h"
 
-namespace Render {
-    void Clear();
-    void Clear(float r, float g, float b, float a);
-    void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
-    void DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count);
+#include "GLBox/Events/WindowEvent.h"
 
-    void BasicBlend();
-    unsigned int ViewportWidth();
-    unsigned int ViewportHeight();
-}
+
+class RenderCommand {
+public:
+    RenderCommand() = delete;
+    ~RenderCommand() = delete;
+    
+    static void Clear();
+    static void Clear(float r, float g, float b, float a);
+    static void BasicBlend();
+    static void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
+    static void DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count);
+    static void DrawAllInstanced(); 
+    static void SetViewport(int x, int y, int width, int height);
+
+    static void OnWindowResize(WindowResizeEvent& event);
+    
+    struct RenderData {
+        unsigned int WindowWidth  = 1920;
+        unsigned int WindowHeight = 1080;
+        glm::mat4 ProjectionMatix = glm::identity<glm::mat4>();
+        glm::mat4 ViewMatrix      = glm::translate(glm::mat4(1.0f), -glm::vec3(0.0f, 0.0f, 0.0f));
+    };
+    
+    static const RenderData& GetData() { return s_RenderData; }
+private:
+    static RenderData& GetRenderData() { return s_RenderData; }
+    friend class InstanceRenderer;
+private:
+    static RenderData s_RenderData;
+};

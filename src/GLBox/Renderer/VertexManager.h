@@ -92,7 +92,3 @@ private:
 };
 
 
-namespace Render {
-    void DrawAllInstanced(); 
-}
-

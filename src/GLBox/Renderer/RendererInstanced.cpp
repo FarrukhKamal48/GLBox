@@ -1,7 +1,5 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
-#include "GLBox/Core/Application.h"
-
 #include "GLBox/Renderer/RenderCommands.h"
 #include "GLBox/Renderer/RendererInstanced.h"
 
@@ -10,7 +8,6 @@
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : InstanceShader(cp.InstanceShader), m_VertexArray(cp.m_VertexArray), m_IndexBuffer(cp.m_IndexBuffer)
     , m_MeshBuffer(cp.m_MeshBuffer) , m_InstanceBuffer(cp.m_InstanceBuffer) 
-    , m_Proj(cp.m_Proj), m_View(cp.m_View)
     , m_InstanceCount(cp.m_InstanceCount), m_TargetCount(cp.m_TargetCount), m_Data(cp.m_Data)
     , m_OccupiedDataSize(cp.m_OccupiedDataSize), m_AllocatedDataSize(cp.m_AllocatedDataSize)
     , m_VData(cp.m_VData), m_MeshLayout(cp.m_MeshLayout), m_VertLayout(cp.m_VertLayout)
@@ -34,16 +31,13 @@ void InstanceRenderer::SetData(unsigned int InstanceCount, void* data) {
     m_AllocatedDataSize = m_TargetCount * m_VData.SizeOfObject;
 }
 void InstanceRenderer::Init() {
-    Render::BasicBlend();
+    RenderCommand::BasicBlend();
 
     m_VertexArray = std::make_shared<VertexArray>();
     m_MeshBuffer = std::make_shared<VertexBuffer>(m_VData.MeshData.data(), m_VData.SizeOfMeshData);
     m_IndexBuffer = std::make_shared<IndexBuffer>(m_VData.Indicies.data(), m_VData.CountofIndicies);
     
     m_VertexArray->AddBuffer(*m_MeshBuffer, m_MeshLayout);
-
-    m_Proj = glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f);
-    m_View = glm::translate(glm::mat4(1.0f), -glm::vec3(0.0f, 0.0f, 0.0f));
 }
 void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath) {
     InstanceShader = std::make_shared<Shader>();
@@ -51,7 +45,8 @@ void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::s
     InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
     InstanceShader->Compile();
     InstanceShader->Bind();
-    InstanceShader->SetUniformMat4("u_MVP", m_Proj * m_View);
+    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().ProjectionMatix * 
+                                   RenderCommand::GetRenderData().ViewMatrix);
 }
 void InstanceRenderer::Draw() {
     if (m_InstanceCount >= m_TargetCount) {
@@ -70,6 +65,12 @@ void InstanceRenderer::Draw() {
     } 
     m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
     // if (InstanceShader)
-        Render::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+        RenderCommand::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+}
+
+void InstanceRenderer::FetchMatricies() {
+    InstanceShader->Bind();
+    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().ProjectionMatix * 
+                                   RenderCommand::GetRenderData().ViewMatrix);
 }
 
