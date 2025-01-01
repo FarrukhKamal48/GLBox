@@ -45,8 +45,7 @@ void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::s
     InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
     InstanceShader->Compile();
     InstanceShader->Bind();
-    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().ProjectionMatix * 
-                                   RenderCommand::GetRenderData().ViewMatrix);
+    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().Camera->GetProjView());
 }
 void InstanceRenderer::Draw() {
     if (m_InstanceCount >= m_TargetCount) {
@@ -64,13 +63,11 @@ void InstanceRenderer::Draw() {
         m_VertexArray->AddBuffer(*m_InstanceBuffer, m_VertLayout);
     } 
     m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
-    // if (InstanceShader)
-        RenderCommand::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
+    RenderCommand::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
 }
 
 void InstanceRenderer::FetchMatricies() {
     InstanceShader->Bind();
-    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().ProjectionMatix * 
-                                   RenderCommand::GetRenderData().ViewMatrix);
+    InstanceShader->SetUniformMat4("u_MVP", RenderCommand::GetRenderData().Camera->GetProjView());
 }
 

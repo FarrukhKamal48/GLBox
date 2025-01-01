@@ -19,15 +19,16 @@ Application::~Application() {
 
 void Application::OnEvent(Event& event) {
     EventDispacher dispacher(event);
-    dispacher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
     dispacher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(Application::OnWindowMinimize));
     dispacher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
-
+    
     for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++) {
         if (event.Handled)
             break;
         (*it)->OnEvent(event);
     }
+    
+    dispacher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 }
 
 void Application::PushLayer(Layer* layer) {

@@ -6,6 +6,7 @@
 #include "GLBox/Core/Shader.h"
 
 #include "GLBox/Events/WindowEvent.h"
+#include "GLBox/Renderer/Camera.h"
 
 
 class RenderCommand {
@@ -19,15 +20,16 @@ public:
     static void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
     static void DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count);
     static void DrawAllInstanced(); 
+    
     static void SetViewport(int x, int y, int width, int height);
+    static void SetCamera(OrthoCamera& camera) { s_RenderData.Camera = &camera; };
 
     static void OnWindowResize(WindowResizeEvent& event);
     
     struct RenderData {
         unsigned int WindowWidth  = 1920;
         unsigned int WindowHeight = 1080;
-        glm::mat4 ProjectionMatix = glm::identity<glm::mat4>();
-        glm::mat4 ViewMatrix      = glm::translate(glm::mat4(1.0f), -glm::vec3(0.0f, 0.0f, 0.0f));
+        OrthoCamera* Camera;
     };
     
     static const RenderData& GetData() { return s_RenderData; }

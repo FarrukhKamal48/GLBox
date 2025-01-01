@@ -8,6 +8,10 @@ public:
     OrthoCamera(float left, float right, float bottom, float top)
         : m_Projection(glm::ortho(left, right, bottom, top, -1.0f, 1.0f))
     { }
+    void SetProjection(float left, float right, float bottom, float top) {
+        m_Projection = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+        m_ProjectionView = m_Projection * m_View;
+    }
 
     const glm::vec3& GetPosition() { return m_Position; }
     void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateMaticies(); }

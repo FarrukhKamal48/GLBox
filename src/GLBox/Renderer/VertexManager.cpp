@@ -84,9 +84,6 @@ void RenderCommand::OnWindowResize(WindowResizeEvent& event) {
     auto& renderData = RenderCommand::GetRenderData();
     renderData.WindowWidth = event.GetWidth();
     renderData.WindowHeight = event.GetHeight();
-    renderData.ProjectionMatix = glm::ortho(0.0f, (float)renderData.WindowWidth, 
-                                            0.0f, (float)renderData.WindowHeight, -1.0f, 1.0f);
-    
     RenderCommand::SetViewport(0, 0, renderData.WindowWidth, renderData.WindowHeight);
 
     for (int i=0; i < (int)Renderers.size(); i++) {
