@@ -1,3 +1,4 @@
+#include <glbpch.h>
 #include "GLBox/Renderer/CameraController.h"
 
 void OrthoCameraController::OnEvent(Event& event) {
@@ -12,7 +13,8 @@ bool OrthoCameraController::OnWindowResize(WindowResizeEvent& event) {
     return false;
 }
 bool OrthoCameraController::OnMouseScroll(MouseScrolledEvent& event) {
-    m_ZoomLevel -= event.GetYOffset();
+    m_ZoomLevel -= event.GetYOffset() * 0.05f;
+    m_ZoomLevel = std::max(0.1f, m_ZoomLevel);
     m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
     return false;
 }

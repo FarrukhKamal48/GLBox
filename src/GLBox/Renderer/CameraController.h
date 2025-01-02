@@ -17,6 +17,7 @@ public:
     OrthoCamera& GetCamera()    { return m_Camera; } 
     float GetAspectRatio()      { return m_AspectRatio; }
     float GetZoomLevel()        { return m_ZoomLevel; }
+    const glm::vec2& GetBounds() { return m_Camera.GetBounds(); }
 private:
     bool OnWindowResize(WindowResizeEvent& event);
     bool OnMouseScroll(MouseScrolledEvent& event);

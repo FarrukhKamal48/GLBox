@@ -1,56 +1,37 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "GLBox/Core/Input.h"
+#include "GLBox/Core/Application.h"
 
-static GLFWwindow* window;
-static double MousePosX;
-static double MousePosY;
-
-struct Button {
-    int key;
-    int scancode;
-    int action;
-    int mods;
-};
-static Button Mouse;
-static Button Keyboard;
-
-static void mouse_callback(GLFWwindow* window, int key, int action, int mods)
-{
-    Mouse.key = key;
-    Mouse.scancode = 0;
-    Mouse.action = action;
-    Mouse.mods = mods;
+bool Input::KeyPressed(KeyCode key) {
+    GLFWwindow* window = Application::Get().GetWindow().GetWindow();
+    return glfwGetKey(window, key) == GLFW_PRESS;
 }
-static void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    Keyboard.key = key;
-    Keyboard.scancode = scancode;
-    Keyboard.action = action;
-    Keyboard.mods = mods;
+bool Input::KeyReleased(KeyCode key) { 
+    GLFWwindow* window = Application::Get().GetWindow().GetWindow();
+    return glfwGetKey(window, key) == GLFW_RELEASE;
 }
 
-namespace Input {
-
-
-void Init(GLFWwindow* _window) {
-    window = _window;
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
-    glfwSetMouseButtonCallback(window, mouse_callback);
-    glfwSetKeyCallback(window, keyboard_callback);
+bool Input::MousePressed(MouseCode button) { 
+    GLFWwindow* window = Application::Get().GetWindow().GetWindow();
+    return glfwGetMouseButton(window, button) == GLFW_PRESS;
+}
+bool Input::MouseReleased(MouseCode button) { 
+    GLFWwindow* window = Application::Get().GetWindow().GetWindow();
+    return glfwGetMouseButton(window, button) == GLFW_RELEASE;
 }
 
-bool Button(int button, int action) {
-    if (button >= GLFW_MOUSE_BUTTON_1 && button <= GLFW_MOUSE_BUTTON_8)
-        return Mouse.key == button && Mouse.action == action;
-    return Keyboard.key == button && Keyboard.action == action;
+glm::vec2 Input::MousePos() { 
+    double xpos;
+    double ypos;
+    GLFWwindow* window = Application::Get().GetWindow().GetWindow();
+    glfwGetCursorPos(window, &xpos, &ypos);
+    return { xpos, ypos };
 }
-
-bool ButtonHold(int button) {
-    return Button(button, GLFW_PRESS) && !Button(button, GLFW_RELEASE);
+float Input::MouseX() { 
+    return MousePos().x;
 }
-
-glm::vec2 GetMousePos() {
-    glfwGetCursorPos(window, &MousePosX, &MousePosY);
-    return glm::vec2(MousePosX, MousePosY);
-}
-
+float Input::MouseY() { 
+    return MousePos().y;
 }

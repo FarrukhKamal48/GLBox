@@ -7,7 +7,6 @@
 
 #include "GLBox/Events/WindowEvent.h"
 #include "GLBox/Renderer/Camera.h"
-#include "GLBox/Renderer/UnifromBuffer.h"
 
 
 class Renderer {
@@ -30,7 +29,6 @@ public:
     
     struct RenderData {
         OrthoCamera* Camera;
-        std::unique_ptr<UniformBuffer> CameraBuffer;
     };
     
 private:

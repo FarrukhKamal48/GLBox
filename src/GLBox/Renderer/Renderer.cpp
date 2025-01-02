@@ -39,17 +39,8 @@ void Renderer::SetViewport(int x, int y, int width, int height) {
 
 void Renderer::SetCamera(OrthoCamera& camera) { 
     s_RenderData.Camera = &camera; 
-    s_RenderData.CameraBuffer = std::make_unique<UniformBuffer>(
-        &camera.GetProjView(),
-        sizeof(camera.GetProjView()),
-        0
-    );
 }
 
 void Renderer::OnWindowResize(WindowResizeEvent& event) {
     Renderer::SetViewport(0, 0, event.GetWidth(), event.GetHeight());
-    s_RenderData.CameraBuffer->SetData(
-        &s_RenderData.Camera->GetProjView(),
-        sizeof(s_RenderData.Camera->GetProjView())
-    );
 }
