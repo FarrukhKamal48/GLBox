@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 layout(location = 0) out vec4 color;
 in vec4 v_Color;

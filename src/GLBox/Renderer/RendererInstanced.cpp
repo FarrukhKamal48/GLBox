@@ -12,9 +12,6 @@ InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp)
     , m_OccupiedDataSize(cp.m_OccupiedDataSize), m_AllocatedDataSize(cp.m_AllocatedDataSize)
     , m_VData(cp.m_VData), m_MeshLayout(cp.m_MeshLayout), m_VertLayout(cp.m_VertLayout)
 { }
-// InstanceRenderer::InstanceRenderer(VertexManager* VManager)
-//     : m_VData(VManager), m_MeshLayout(VManager->MeshLayout()), m_VertLayout(VManager->VertLayout(1))
-// { delete VManager; }
 InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
     : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier) , m_Data(data)
     , m_OccupiedDataSize(InstanceCount * VManager->SizeOfObject())
@@ -45,7 +42,6 @@ void InstanceRenderer::CreateShader(const std::string& vertSrcPath, const std::s
     InstanceShader->Push(GL_FRAGMENT_SHADER, fragSrcPath);
     InstanceShader->Compile();
     InstanceShader->Bind();
-    InstanceShader->SetUniformMat4("u_MVP", Renderer::GetCamera().GetProjView());
 }
 void InstanceRenderer::Draw() {
     if (m_InstanceCount >= m_TargetCount) {
@@ -64,10 +60,5 @@ void InstanceRenderer::Draw() {
     } 
     m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
     Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
-}
-
-void InstanceRenderer::FetchMatricies() {
-    InstanceShader->Bind();
-    InstanceShader->SetUniformMat4("u_MVP", Renderer::GetCamera().GetProjView());
 }
 

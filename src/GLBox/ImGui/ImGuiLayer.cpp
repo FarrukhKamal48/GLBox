@@ -45,7 +45,7 @@ void ImGuiLayer::OnAttach() {
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330 core");
+    ImGui_ImplOpenGL3_Init("#version 440 core");
 }
 
 void ImGuiLayer::OnDetach() {

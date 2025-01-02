@@ -43,7 +43,6 @@ private:
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
-    // InstanceRenderer(VertexManager* VManager);
     InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager);
     ~InstanceRenderer();
 
@@ -51,7 +50,5 @@ public:
     void Init();
     void CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath);
     void Draw();
-
-    void FetchMatricies();
 };
 

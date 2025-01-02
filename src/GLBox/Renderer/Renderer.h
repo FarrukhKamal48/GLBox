@@ -7,6 +7,7 @@
 
 #include "GLBox/Events/WindowEvent.h"
 #include "GLBox/Renderer/Camera.h"
+#include "GLBox/Renderer/UnifromBuffer.h"
 
 
 class Renderer {
@@ -22,13 +23,14 @@ public:
     static void DrawAllInstanced(); 
     
     static void SetViewport(int x, int y, int width, int height);
-    static void SetCamera(OrthoCamera& camera) { s_RenderData.Camera = &camera; };
+    static void SetCamera(OrthoCamera& camera);
     static OrthoCamera& GetCamera() { return *s_RenderData.Camera; };
 
     static void OnWindowResize(WindowResizeEvent& event);
     
     struct RenderData {
         OrthoCamera* Camera;
+        std::unique_ptr<UniformBuffer> CameraBuffer;
     };
     
 private:

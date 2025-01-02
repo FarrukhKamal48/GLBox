@@ -79,13 +79,6 @@ QuadTransform& QuadTransform_Manager::operator[](unsigned int i) {
 }
 
 
-void Renderer::OnWindowResize(WindowResizeEvent& event) {
-    Renderer::SetViewport(0, 0, event.GetWidth(), event.GetHeight());
-
-    for (int i=0; i < (int)Renderers.size(); i++) {
-        Renderers[i].FetchMatricies();
-    }
-}
 void Renderer::DrawAllInstanced() {
     for (int i=0; i < (int)Renderers.size(); i++) {
         Renderers[i].Draw();
