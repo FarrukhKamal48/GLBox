@@ -12,9 +12,12 @@
 #include <GLBox/Core/Application.h>
 
 // Renderer
-#include <GLBox/Renderer/RenderCommands.h>
+#include <GLBox/Renderer/Renderer.h>
 #include <GLBox/Renderer/RendererInstanced.h>
 #include <GLBox/Renderer/VertexManager.h>
+#include <GLBox/Renderer/UnifromBuffer.h>
+#include <GLBox/Renderer/Camera.h>
+#include <GLBox/Renderer/CameraController.h>
 
 // Events
 #include <GLBox/Events/Event.h>
@@ -26,8 +29,7 @@
 #include <GLBox/ImGui/ImGuiLayer.h>
 
 // Example Layers
-#include <ExampleLayers/BatchingLayer.h>
-#include <ExampleLayers/FixedGridSpacePartitionLayer.h>
-#include <ExampleLayers/QuadTreeTestLayer.h>
-#include <ExampleLayers/VerletInstancingLayer.h>
+// #include <ExampleLayers/FixedGridSpacePartitionLayer.h>
+// #include <ExampleLayers/QuadTreeTestLayer.h>
+// #include <ExampleLayers/VerletInstancingLayer.h>
 
