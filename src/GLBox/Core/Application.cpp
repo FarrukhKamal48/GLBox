@@ -51,15 +51,16 @@ void Application::Run() {
 
         if (!m_Minimized) {
             for (Layer* layer : m_LayerStack) {
-                layer->Update(deltaTime);
-                layer->Render();
+                layer->OnUpdate(deltaTime);
+                layer->OnRender();
             }
             Renderer::Clear(0.9, 0.9, 0.9, 1);
             Renderer::DrawAllInstanced();
 
             m_ImGuiLayer->Begin(); {
-                for (Layer* layer : m_LayerStack)
-                layer->ImGuiRender();
+                for (Layer* layer : m_LayerStack) {
+                    layer->OnImGuiRender();
+                }
             }
             m_ImGuiLayer->End();
         }

@@ -288,7 +288,7 @@ public:
         }
     }
 
-    void Update(float dt) override {
+    void OnUpdate(float dt) override {
         m_SimData.subDt = dt / (float)m_SimData.subSteps;
         
         for (int s = 0; s < m_SimData.subSteps; s++) {
@@ -320,10 +320,10 @@ public:
             m_Manager[m_Objs].scale = Lerp(m_Manager[m_Objs].scale, glm::vec2(0.1f), dt * 10.0f);
     }
 
-    void Render() override {
+    void OnRender() override {
     }
 
-    void ImGuiRender() override {
+    void OnImGuiRender() override {
     }
 private:
     static void ConfigureShader(InstanceRenderer& renderer) {

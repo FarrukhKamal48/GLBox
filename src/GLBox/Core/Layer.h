@@ -12,9 +12,9 @@ public:
     
     virtual void OnAttach() {};
     virtual void OnDetach() {};
-    virtual void Update(float dt) {};
-    virtual void Render() {};
-    virtual void ImGuiRender() {};
+    virtual void OnUpdate(float dt) {};
+    virtual void OnRender() {};
+    virtual void OnImGuiRender() {};
 
     const std::string& GetName() { return m_DebugName; }
 private:
