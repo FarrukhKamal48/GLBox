@@ -15,6 +15,8 @@ public:
 
     void OnEvent(Event& event);
     void OnResize(uint32_t width, uint32_t height);
+    
+    void Translate(const glm::vec3& translation) { m_Camera.SetPosition(m_Camera.GetPosition() + translation); }
 
     OrthoCamera& GetCamera()        { return m_Camera; } 
     float GetAspectRatio()          { return m_AspectRatio; }
