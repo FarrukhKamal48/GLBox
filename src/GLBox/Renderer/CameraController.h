@@ -1,7 +1,8 @@
 #pragma once
 
+#include <glbpch.h>
+
 #include "GLBox/Renderer/Camera.h"
-#include "GLBox/Events/Event.h"
 #include "GLBox/Events/MouseEvent.h"
 #include "GLBox/Events/WindowEvent.h"
 
@@ -13,11 +14,12 @@ public:
     { }
 
     void OnEvent(Event& event);
+    void OnResize(uint32_t width, uint32_t height);
 
-    OrthoCamera& GetCamera()    { return m_Camera; } 
-    float GetAspectRatio()      { return m_AspectRatio; }
-    float GetZoomLevel()        { return m_ZoomLevel; }
-    const glm::vec2& GetBounds() { return m_Camera.GetBounds(); }
+    OrthoCamera& GetCamera()        { return m_Camera; } 
+    float GetAspectRatio()          { return m_AspectRatio; }
+    float GetZoomLevel()            { return m_ZoomLevel; }
+    const glm::vec2& GetBounds()    { return m_Camera.GetBounds(); }
 private:
     bool OnWindowResize(WindowResizeEvent& event);
     bool OnMouseScroll(MouseScrolledEvent& event);

@@ -1,3 +1,4 @@
+#include <glbpch.h>
 #include "GLBox/Core/GLlog.h"
 #include "GLBox/Core/Buffer.h"
 
@@ -5,13 +6,13 @@
 //#####   VertexBuffer   #######
 //##############################
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size) 
+VertexBuffer::VertexBuffer(const void* data, uint32_t size) 
 {
     GLCall(glGenBuffers(1, &m_RendereID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendereID));
     GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 }
-VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int drawType) 
+VertexBuffer::VertexBuffer(const void* data, uint32_t size, uint32_t drawType) 
 {
     GLCall(glGenBuffers(1, &m_RendereID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendereID));
@@ -22,7 +23,7 @@ VertexBuffer::~VertexBuffer() {
     GLCall(glDeleteBuffers(1, &m_RendereID));
 }
 
-void VertexBuffer::SetData(const void* data, unsigned int size, unsigned int offset) {
+void VertexBuffer::SetData(const void* data, uint32_t size, uint32_t offset) {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendereID));
     GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, size, data));
 }
@@ -39,12 +40,12 @@ void VertexBuffer::UnBind() const {
 //######   IndexBuffer   #######
 //##############################
 
-IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count) 
+IndexBuffer::IndexBuffer(const uint32_t* data, uint32_t count) 
     : m_Count(count)
 {
     GLCall(glGenBuffers(1, &m_RendereID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendereID));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer() {
@@ -82,7 +83,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
     vb.Bind();
     const auto& elements = layout.GetElements();
     long int offset = 0;
-    for (unsigned int i = 0; i < elements.size(); i++) {
+    for (uint32_t i = 0; i < elements.size(); i++) {
         const auto& element = elements[i];
         GLCall(glEnableVertexAttribArray(i + m_AttribCount));
         GLCall(glVertexAttribPointer(i + m_AttribCount, element.count, element.type, element.normalized, 

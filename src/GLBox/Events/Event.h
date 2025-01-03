@@ -1,8 +1,5 @@
 #pragma once
 
-typedef unsigned int KeyCode;
-typedef unsigned int MouseCode;
-
 enum class EventType {
     None = 0,
     WindowClose, WindowResize, WindowMinimize, WindowFocus, WindowLostFocus, WindowMoved,

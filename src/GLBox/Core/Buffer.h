@@ -1,16 +1,17 @@
 #pragma once
 
+#include <glbpch.h>
 #include "GLBox/Core/VertexBufferLayout.h"
 
 class VertexBuffer {
 private:
-    unsigned int m_RendereID;
+    uint32_t m_RendereID;
 public:
-    VertexBuffer(const void* data, unsigned int size);
-    VertexBuffer(const void* data, unsigned int size, unsigned int drawType);
+    VertexBuffer(const void* data, uint32_t size);
+    VertexBuffer(const void* data, uint32_t size, uint32_t drawType);
     ~VertexBuffer();
 
-    void SetData(const void* data, unsigned int size, unsigned int offset = 0);
+    void SetData(const void* data, uint32_t size, uint32_t offset = 0);
 
     void Bind() const;
     void UnBind() const;
@@ -18,23 +19,23 @@ public:
 
 class IndexBuffer {
 private:
-    unsigned int m_RendereID;
-    unsigned int m_Count;
+    uint32_t m_RendereID;
+    uint32_t m_Count;
 public:
-    IndexBuffer(const unsigned int* data, unsigned int count);
+    IndexBuffer(const uint32_t* data, uint32_t count);
     IndexBuffer() {}
     ~IndexBuffer();
 
     void Bind() const;
     void UnBind() const;
 
-    inline unsigned int GetCount() const { return m_Count; }
+    inline uint32_t GetCount() const { return m_Count; }
 };
 
 class VertexArray {
 private:
-    unsigned int m_RendererID;    
-    unsigned int m_AttribCount;
+    uint32_t m_RendererID;    
+    uint32_t m_AttribCount;
 public:
     VertexArray();
     ~VertexArray();

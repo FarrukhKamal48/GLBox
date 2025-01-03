@@ -17,13 +17,13 @@ void Shader::UnBind() const {
     GLCall(glUseProgram(0));
 }
 
-// void ShaderProgram::Push(unsigned int type, const std::string& srcPath) {
+// void ShaderProgram::Push(uint32_t type, const std::string& srcPath) {
 //     std::ifstream stream(srcPath);
 //     std::stringstream srcStream;
 //     srcStream << stream.rdbuf();
 //     m_Sources.push_back({ type, srcStream.str() });
 // }
-void Shader::Push(unsigned int type, const std::string& srcPath) {
+void Shader::Push(uint32_t type, const std::string& srcPath) {
     std::ifstream stream(srcPath);
     std::stringstream srcStream;
     srcStream << stream.rdbuf();
@@ -33,8 +33,8 @@ void Shader::Push(unsigned int type, const std::string& srcPath) {
     }
 }
 
-unsigned int CompileShader(unsigned int shaderType, const std::string& shaderSrc) {
-    GLCall(unsigned int id = glCreateShader(shaderType));
+uint32_t CompileShader(uint32_t shaderType, const std::string& shaderSrc) {
+    GLCall(uint32_t id = glCreateShader(shaderType));
     const char* src = shaderSrc.c_str();
     GLCall(glShaderSource(id, 1, &src, nullptr));
     GLCall(glCompileShader(id));
@@ -63,7 +63,7 @@ void Shader::Compile() {
     GLCall(m_RendererID = glCreateProgram());
 
     for (ShaderSourceElement element : m_Sources) {
-        unsigned int shaderID = CompileShader(element.type, element.src);
+        uint32_t shaderID = CompileShader(element.type, element.src);
         GLCall(glAttachShader(m_RendererID, shaderID));
         GLCall(glDeleteShader(shaderID));
     }

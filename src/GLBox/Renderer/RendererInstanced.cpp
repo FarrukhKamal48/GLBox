@@ -1,3 +1,5 @@
+#include <glbpch.h>
+
 #include <glm/ext/matrix_clip_space.hpp>
 
 #include "GLBox/Renderer/Renderer.h"
@@ -12,7 +14,7 @@ InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp)
     , m_OccupiedDataSize(cp.m_OccupiedDataSize), m_AllocatedDataSize(cp.m_AllocatedDataSize)
     , m_VData(cp.m_VData), m_MeshLayout(cp.m_MeshLayout), m_VertLayout(cp.m_VertLayout)
 { }
-InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager) 
+InstanceRenderer::InstanceRenderer(uint32_t InstanceCount, void* data, VertexManager* VManager) 
     : m_InstanceCount(InstanceCount), m_TargetCount(InstanceCount * ResizeMultiplier) , m_Data(data)
     , m_OccupiedDataSize(InstanceCount * VManager->SizeOfObject())
     , m_AllocatedDataSize(InstanceCount * ResizeMultiplier * VManager->SizeOfObject())
@@ -21,7 +23,7 @@ InstanceRenderer::InstanceRenderer(unsigned int InstanceCount, void* data, Verte
 }
 InstanceRenderer::~InstanceRenderer() {
 }
-void InstanceRenderer::SetData(unsigned int InstanceCount, void* data) {
+void InstanceRenderer::SetData(uint32_t InstanceCount, void* data) {
     m_Data = data;
     m_InstanceCount = InstanceCount;
     m_OccupiedDataSize = m_InstanceCount * m_VData.SizeOfObject;

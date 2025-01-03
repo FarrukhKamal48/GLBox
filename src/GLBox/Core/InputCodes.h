@@ -1,6 +1,7 @@
 #pragma once
+#include <glbpch.h>
 
-typedef unsigned int KeyCode;
+typedef uint32_t KeyCode;
 namespace Key {
     enum : KeyCode {
         Space               = 32,
@@ -136,7 +137,7 @@ namespace Key {
     };
 }
 
-typedef unsigned int MouseCode;
+typedef uint32_t MouseCode;
 namespace Mouse {
     enum : MouseCode {
         Button0                = 0,

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLBox/Events/Event.h"
+#include "GLBox/Core/InputCodes.h"
 
 class KeyEvent : public Event {
 public:

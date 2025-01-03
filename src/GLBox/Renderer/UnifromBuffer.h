@@ -1,15 +1,16 @@
 #pragma once
+#include <glbpch.h>
 
 class UniformBuffer {
 public:
-    UniformBuffer(const void* data, unsigned int size, unsigned int binding);
+    UniformBuffer(const void* data, uint32_t size, uint32_t binding);
     ~UniformBuffer();
 
-    void SetData(const void* data, unsigned int size, unsigned int offset = 0);
+    void SetData(const void* data, uint32_t size, uint32_t offset = 0);
 
     void Bind() const;
     void UnBind() const;
 private:
-    unsigned int m_RendererID;
-    unsigned int m_Binding;
+    uint32_t m_RendererID;
+    uint32_t m_Binding;
 };

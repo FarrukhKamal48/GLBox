@@ -1,22 +1,23 @@
 #pragma once
 
+#include <glbpch.h>
 #include "GLBox/Events/Event.h"
 
 class WindowResizeEvent : public Event {
 public:
-    WindowResizeEvent(unsigned int Width, unsigned int Height) 
+    WindowResizeEvent(uint32_t Width, uint32_t Height) 
         : m_Width(Width), m_Height(Height)
     {}
 
-    unsigned int GetWidth() const { return m_Width; }
-    unsigned int GetHeight() const { return m_Height; }
+    uint32_t GetWidth() const { return m_Width; }
+    uint32_t GetHeight() const { return m_Height; }
 
     EVENT_CLASS_TYPE(WindowResize);
     EVENT_CLASS_CATAGORY(EventCatagoryWindow);
 
 private:
-    unsigned int m_Width;
-    unsigned int m_Height;
+    uint32_t m_Width;
+    uint32_t m_Height;
 };
 
 class WindowMinimizeEvent : public Event {

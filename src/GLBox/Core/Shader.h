@@ -4,13 +4,13 @@
 #include <glm/glm.hpp>
 
 struct ShaderSourceElement {
-    unsigned int type;
+    uint32_t type;
     std::string src;
 };
 
 class Shader {
 private:
-    unsigned int m_RendererID;
+    uint32_t m_RendererID;
     ShaderSourceElement m_Sources[2];
     std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
@@ -20,7 +20,7 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void Push(unsigned int type, const std::string& srcPath);
+    void Push(uint32_t type, const std::string& srcPath);
     void Compile();
 
     template<typename T> void SetUniform(const std::string& name, T val);
@@ -29,7 +29,7 @@ public:
     template<typename T> void SetUniformVec4(const std::string& name, T val1, T val2, T val3, T val4);
     void SetUniformMat4(const std::string& name, const glm::mat4& mat);
 
-    inline const unsigned int GetID() const { return m_RendererID; }
+    inline const uint32_t GetID() const { return m_RendererID; }
 private:
     int GetUniformLocation(const std::string& name);
 };

@@ -5,12 +5,12 @@
 #include <GLFW/glfw3.h>
 
 struct VertexBufferLayoutElement {
-    unsigned int count;
-    unsigned int type;
+    uint32_t count;
+    uint32_t type;
     unsigned char normalized;
-    unsigned int divisor;
+    uint32_t divisor;
 
-    static unsigned int SizeOf(unsigned int type) {
+    static uint32_t SizeOf(uint32_t type) {
         switch (type) {
            case GL_FLOAT:           return 4;
            case GL_UNSIGNED_INT:    return 4;
@@ -23,18 +23,18 @@ struct VertexBufferLayoutElement {
 class VertexBufferLayout {
 private:
     std::vector<VertexBufferLayoutElement> m_Elements;
-    unsigned int m_Stride;
+    uint32_t m_Stride;
 public:
     VertexBufferLayout()
         : m_Stride(0) 
     {}
 
     template<typename T>
-    void Push(unsigned int count);
+    void Push(uint32_t count);
     
     template<typename T>
-    void Push(unsigned int count, unsigned int divisor);
+    void Push(uint32_t count, uint32_t divisor);
 
     inline const std::vector<VertexBufferLayoutElement>& GetElements() const { return m_Elements; }
-    inline const unsigned int GetStride() const { return m_Stride; }
+    inline const uint32_t GetStride() const { return m_Stride; }
 };

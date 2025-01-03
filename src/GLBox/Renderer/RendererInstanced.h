@@ -1,15 +1,17 @@
 #pragma once
 
+#include <glbpch.h>
+
 #include "GLBox/Core/Buffer.h"
 #include "GLBox/Core/Shader.h"
 #include "GLBox/Renderer/VertexManager.h"
 
 struct VertexData {
-    unsigned int SizeOfObject;
+    uint32_t SizeOfObject;
     const std::vector<float>& MeshData;
-    unsigned int SizeOfMeshData;
-    const std::vector<unsigned int>& Indicies;
-    unsigned int CountofIndicies;
+    uint32_t SizeOfMeshData;
+    const std::vector<uint32_t>& Indicies;
+    uint32_t CountofIndicies;
     
     VertexData(const VertexManager* VManager)
         : SizeOfObject(VManager->SizeOfObject())
@@ -30,12 +32,12 @@ private:
     std::shared_ptr<VertexBuffer> m_MeshBuffer;
     std::shared_ptr<VertexBuffer> m_InstanceBuffer;
     
-    unsigned int m_InstanceCount;
-    unsigned int m_TargetCount;
+    uint32_t m_InstanceCount;
+    uint32_t m_TargetCount;
     
     void* m_Data;
-    unsigned int m_OccupiedDataSize;
-    unsigned int m_AllocatedDataSize;
+    uint32_t m_OccupiedDataSize;
+    uint32_t m_AllocatedDataSize;
     
     VertexData m_VData;
     VertexBufferLayout m_MeshLayout;
@@ -43,10 +45,10 @@ private:
     
 public:
     InstanceRenderer(const InstanceRenderer& cp);
-    InstanceRenderer(unsigned int InstanceCount, void* data, VertexManager* VManager);
+    InstanceRenderer(uint32_t InstanceCount, void* data, VertexManager* VManager);
     ~InstanceRenderer();
 
-    void SetData(unsigned int InstanceCount, void* data);
+    void SetData(uint32_t InstanceCount, void* data);
     void Init();
     void CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath);
     void Draw();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glbpch.h>
 #include "GLBox/Core/Layer.h"
 
 class LayerStack {
@@ -24,5 +25,5 @@ public:
     
 private:
     std::vector<Layer*> m_Layers;
-    unsigned int m_PushIndex = 0;
+    uint32_t m_PushIndex = 0;
 };

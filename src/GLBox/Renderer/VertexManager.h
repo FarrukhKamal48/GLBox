@@ -1,6 +1,8 @@
 #pragma once
 
+#include <glbpch.h>
 #include <glm/ext/matrix_transform.hpp>
+
 #include "GLBox/Core/VertexBufferLayout.h"
 
 class InstanceRenderer;
@@ -8,13 +10,13 @@ class InstanceRenderer;
 class VertexManager {
 public:
     virtual ~VertexManager() {}
-    virtual unsigned int SizeOfObject() const = 0;
+    virtual uint32_t SizeOfObject() const = 0;
     virtual const VertexBufferLayout MeshLayout() const = 0; 
-    virtual VertexBufferLayout VertLayout(unsigned int divisor) const = 0;
+    virtual VertexBufferLayout VertLayout(uint32_t divisor) const = 0;
     virtual const std::vector<float>& MeshData() const = 0;
-    virtual const std::vector<unsigned int>& Indicies() const = 0; 
-    virtual const unsigned int AllocateObject
-        (unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const = 0;
+    virtual const std::vector<uint32_t>& Indicies() const = 0; 
+    virtual const uint32_t AllocateObject
+        (uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const = 0;
 };
 
 
@@ -31,14 +33,14 @@ class Pos_Scale_Col_Quad_Manager : public VertexManager {
 public:
     Pos_Scale_Col_Quad_Manager() {}
     ~Pos_Scale_Col_Quad_Manager() {}
-    unsigned int SizeOfObject()                             const override;
+    uint32_t SizeOfObject()                             const override;
     const VertexBufferLayout MeshLayout()                   const override;
-    VertexBufferLayout VertLayout(unsigned int divisor)     const override;
+    VertexBufferLayout VertLayout(uint32_t divisor)     const override;
     const std::vector<float>& MeshData()                    const override;
-    const std::vector<unsigned int>& Indicies()             const override;
-    const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
+    const std::vector<uint32_t>& Indicies()             const override;
+    const uint32_t AllocateObject(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
-    Pos_Scale_Col_Quad& operator[](unsigned int i);
+    Pos_Scale_Col_Quad& operator[](uint32_t i);
 private:
     inline static const std::vector<float> m_Mesh = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -46,7 +48,7 @@ private:
         1.0f,  1.0f, 1.0f, 1.0f,
         -1.0f,  1.0f, 0.0f, 1.0f,
     };
-    inline static const std::vector<unsigned int> m_Indicies = {
+    inline static const std::vector<uint32_t> m_Indicies = {
         0, 1, 2, 
         0, 2, 3
     };
@@ -68,14 +70,14 @@ class QuadTransform_Manager : public VertexManager {
 public:
     QuadTransform_Manager() {}
     ~QuadTransform_Manager() {}
-    unsigned int SizeOfObject()                             const override;
+    uint32_t SizeOfObject()                             const override;
     const VertexBufferLayout MeshLayout()                   const override;
-    VertexBufferLayout VertLayout(unsigned int divisor)     const override;
+    VertexBufferLayout VertLayout(uint32_t divisor)     const override;
     const std::vector<float>& MeshData()                    const override;
-    const std::vector<unsigned int>& Indicies()             const override;
-    const unsigned int AllocateObject(unsigned int count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
+    const std::vector<uint32_t>& Indicies()             const override;
+    const uint32_t AllocateObject(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
-    QuadTransform& operator[](unsigned int i);
+    QuadTransform& operator[](uint32_t i);
 private:
     inline static const std::vector<float> m_Mesh = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -83,7 +85,7 @@ private:
         1.0f,  1.0f, 1.0f, 1.0f,
         -1.0f,  1.0f, 0.0f, 1.0f,
     };
-    inline static const std::vector<unsigned int> m_Indicies = {
+    inline static const std::vector<uint32_t> m_Indicies = {
         0, 1, 2, 
         0, 2, 3
     };

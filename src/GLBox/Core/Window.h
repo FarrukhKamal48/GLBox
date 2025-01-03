@@ -10,12 +10,12 @@
 struct WindowProps
 {
     std::string Title;
-    unsigned int Width;
-    unsigned int Height;
+    uint32_t Width;
+    uint32_t Height;
 
     WindowProps(const std::string& title = "GLBox",
-                unsigned int width = 1920,
-                unsigned int height = 1080)
+                uint32_t width = 1920,
+                uint32_t height = 1080)
         : Title(title), Width(width), Height(height) { }
 };
 
@@ -34,18 +34,18 @@ public:
     void SetEventCallback(EventCallbackFn callback) { m_Data.EventCallback = callback; }
 
     GLFWwindow* GetWindow()     const { return m_Window; }
-    unsigned int GetWidth()     const { return m_Data.Width; }
-    unsigned int GetHeight()    const { return m_Data.Height; }
+    uint32_t GetWidth()     const { return m_Data.Width; }
+    uint32_t GetHeight()    const { return m_Data.Height; }
     
 private:
     GLFWwindow* m_Window;
     struct WindowData {
         std::string Title;
-        unsigned int Width;
-        unsigned int Height;
+        uint32_t Width;
+        uint32_t Height;
         EventCallbackFn EventCallback;
     };
     WindowData m_Data;
 private:
-    inline static unsigned int m_GLFWWindowCount = 0;
+    inline static uint32_t m_GLFWWindowCount = 0;
 };

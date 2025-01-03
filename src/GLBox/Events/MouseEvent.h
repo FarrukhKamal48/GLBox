@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLBox/Events/Event.h"
+#include "GLBox/Core/InputCodes.h"
 
 class MouseMovedEvent : public Event {
 public:

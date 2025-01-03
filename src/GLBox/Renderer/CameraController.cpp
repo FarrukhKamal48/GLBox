@@ -7,9 +7,13 @@ void OrthoCameraController::OnEvent(Event& event) {
     dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(OnMouseScroll));
 }
 
-bool OrthoCameraController::OnWindowResize(WindowResizeEvent& event) {
-    m_AspectRatio = (float)event.GetWidth() / event.GetHeight();
+void OrthoCameraController::OnResize(uint32_t width, uint32_t height) {
+    m_AspectRatio = (float)width / height;
     m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+}
+
+bool OrthoCameraController::OnWindowResize(WindowResizeEvent& event) {
+    OnResize(event.GetWidth(), event.GetHeight());
     return false;
 }
 bool OrthoCameraController::OnMouseScroll(MouseScrolledEvent& event) {

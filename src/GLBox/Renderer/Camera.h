@@ -1,8 +1,11 @@
 #pragma once
 
-#include "GLBox/Renderer/UnifromBuffer.h"
+#include <glbpch.h>
+
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+
+#include "GLBox/Renderer/UnifromBuffer.h"
 
 class OrthoCamera {
 public:    
@@ -27,7 +30,7 @@ public:
 private:
     void RecalculateMaticies();
 private:
-    unsigned int s_CameraCount = 1;
+    uint32_t s_CameraCount = 1;
     
     glm::mat4 m_Projection;
     glm::mat4 m_View = glm::mat4(1.0f);
