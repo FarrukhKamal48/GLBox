@@ -15,6 +15,7 @@ public:
     static bool MouseReleased(MouseCode button);
     
     static glm::vec2 MousePos();
+    static glm::vec2 MouseDelta();
     static float MouseX();
     static float MouseY();
 };

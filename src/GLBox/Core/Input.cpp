@@ -29,6 +29,13 @@ glm::vec2 Input::MousePos() {
     glfwGetCursorPos(window, &xpos, &ypos);
     return { xpos, ypos };
 }
+glm::vec2 Input::MouseDelta() {
+    static glm::vec2 lastPos = { 0, 0 };
+    glm::vec2 mousePos = Input::MousePos();
+    glm::vec2 delta = mousePos - lastPos;
+    lastPos = mousePos;
+    return delta;
+}
 float Input::MouseX() { 
     return MousePos().x;
 }
