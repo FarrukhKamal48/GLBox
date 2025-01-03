@@ -1,6 +1,7 @@
 #pragma once
 
 // Core
+#include <GLBox/Core/Base.h>
 #include <GLBox/Core/GLlog.h>
 #include <GLBox/Core/Buffer.h>
 #include <GLBox/Core/VertexBufferLayout.h>

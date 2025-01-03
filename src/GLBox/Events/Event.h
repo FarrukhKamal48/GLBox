@@ -1,4 +1,5 @@
 #pragma once
+#include "GLBox/Core/Base.h"
 
 enum class EventType {
     None = 0,
@@ -8,11 +9,11 @@ enum class EventType {
 };
 enum EventCatagory {
     None = 0,
-    EventCatagoryWindow         = 1 << 0,
-    EventCatagoryInput          = 1 << 1,
-    EventCatagoryKeyboard       = 1 << 2,
-    EventCatagoryMouse          = 1 << 3,
-    EventCatagoryMouseButton    = 1 << 4,
+    EventCatagoryWindow         = BIT(0),
+    EventCatagoryInput          = BIT(1),
+    EventCatagoryKeyboard       = BIT(2),
+    EventCatagoryMouse          = BIT(3),
+    EventCatagoryMouseButton    = BIT(4),
 };
 
 class Event {
@@ -35,7 +36,6 @@ public:
 
 #define EVENT_CLASS_CATAGORY(catagory) virtual int GetCatagory() const override { return catagory; }
 
-#define BIND_EVENT_FN(fn) [this](auto&&... args) { return this->fn(args...); }
 
 class EventDispacher {
 public:
