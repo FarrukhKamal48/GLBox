@@ -62,7 +62,7 @@ const VertexBufferLayout QuadTransform_Manager::MeshLayout() const {
 }
 VertexBufferLayout QuadTransform_Manager::VertLayout(uint32_t divisor) const {
     VertexBufferLayout layout;
-    layout.Push<float>(2, divisor);
+    layout.Push<float>(3, divisor);
     layout.Push<float>(2, divisor);
     layout.Push<float>(1, divisor);
     layout.Push<float>(4, divisor);

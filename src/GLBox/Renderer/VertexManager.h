@@ -60,7 +60,7 @@ class QuadTransform {
 public:
     QuadTransform();
     ~QuadTransform();
-    glm::vec2 position;
+    glm::vec3 position;
     glm::vec2 scale;
     float rotation;
     glm::vec4 color;
@@ -71,9 +71,9 @@ public:
     QuadTransform_Manager() {}
     ~QuadTransform_Manager() {}
     uint32_t SizeOfObject()                             const override;
-    const VertexBufferLayout MeshLayout()                   const override;
+    const VertexBufferLayout MeshLayout()               const override;
     VertexBufferLayout VertLayout(uint32_t divisor)     const override;
-    const std::vector<float>& MeshData()                    const override;
+    const std::vector<float>& MeshData()                const override;
     const std::vector<uint32_t>& Indicies()             const override;
     const uint32_t AllocateObject(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const override;
     
