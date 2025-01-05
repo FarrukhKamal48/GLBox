@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.00...3.31)
+cmake_minimum_required (VERSION 3.16...3.31)
 project(GLBox VERSION 1.0
               LANGUAGES CXX)
 
