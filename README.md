@@ -1,5 +1,5 @@
 # GLBox
-GLBox is primarily an OpenGL wrapper for linux.
+GLBox is primarily a 2D OpenGL Rendering Engine for linux. It provides wrapper classes for basic OpenGL objects (Vertex Arrays, Vertex Buffers, Index Buffers etc) while also implementing an Instance Renderer that clasifies all rendering objects and renders them automatically.
 
 ***
 
@@ -29,4 +29,8 @@ GLBox compiles into a static library file.
 2. The static library file can then be found at `build/libGLBox.a`.
 
 ***
+
+## Planed Features
+- Windows Support
+- Text Rendering using SDFs (Sighned Distance Fields)
 
