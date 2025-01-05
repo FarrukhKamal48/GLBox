@@ -1,5 +1,5 @@
-#include <Core/EntryPoint.h>
-#include <Core/Application.h>
+#include <GLBox/Core/EntryPoint.h>
+#include <GLBox.h>
 #include <ExampleLayers/VerletInstancingLayer.h>
 
 class MyApp : public Application {
