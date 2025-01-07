@@ -7,16 +7,24 @@
 Renderer::RenderData Renderer::s_RenderData;
 
 void Renderer::Clear() {
-    GLCall(glClear(GL_COLOR_BUFFER_BIT));
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 void Renderer::Clear(float r, float g, float b, float a) {
     GLCall(glClearColor(r, g, b, a));
-    GLCall(glClear(GL_COLOR_BUFFER_BIT));
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
 void Renderer::BasicBlend() {
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GLCall(glEnable(GL_BLEND));
+}
+
+void Renderer::DepthTest(bool enable) {
+    s_RenderData.DepthtestEnabled = enable;
+    if (enable) {
+        GLCall(glEnable(GL_DEPTH_TEST));
+        GLCall(glDepthFunc(GL_LEQUAL));
+    }
 }
 
 void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) {

@@ -43,6 +43,7 @@ void Application::PushOverlay(Layer* layer) {
 
 void Application::Run() {
     Renderer::BasicBlend();
+    Renderer::DepthTest(true);
     
     while (m_Running) {
         double Time = glfwGetTime();

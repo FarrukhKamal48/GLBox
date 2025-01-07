@@ -17,6 +17,7 @@ public:
     static void Clear();
     static void Clear(float r, float g, float b, float a);
     static void BasicBlend();
+    static void DepthTest(bool enable);
     static void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
     static void DrawInstanced(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, const int count);
     static void DrawAllInstanced(); 
@@ -29,6 +30,7 @@ public:
     
     struct RenderData {
         OrthoCamera* Camera;
+        bool DepthtestEnabled = false;
     };
     
 private:
