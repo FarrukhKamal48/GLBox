@@ -55,7 +55,7 @@ void Application::Run() {
                 layer->OnUpdate(deltaTime);
                 layer->OnRender();
             }
-            Renderer::Clear(0.9, 0.9, 0.9, 1);
+            
             Renderer::DrawAllInstanced();
 
             m_ImGuiLayer->Begin(); {

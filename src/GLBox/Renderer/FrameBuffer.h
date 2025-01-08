@@ -3,61 +3,73 @@
 
 enum class FBTextureFormat {
     None = 0,
+
+    // Color
     RGBA8,
     RED_INTEGER,
+
+    // Depth/stencil
     DEPTH24STENCIL8,
+
+    // Defaults
     Depth = DEPTH24STENCIL8
 };
 
 struct FBTextureSpec {
     FBTextureSpec() = default;
-    FBTextureSpec(FBTextureFormat format) : TextureFormat(format) {}
-    
-    FBTextureFormat TextureFormat = FBTextureFormat::None; 
+    FBTextureSpec(FBTextureFormat format)
+        : TextureFormat(format) {}
+
+    FBTextureFormat TextureFormat = FBTextureFormat::None;
+    // maybe: filtering/wrap
 };
 
-struct FBAttachments {
-    FBAttachments() = default;
-    FBAttachments(std::initializer_list<FBTextureSpec> list) : Attachments(list) {}
-    
+struct FBAttachmentSpec {
+    FBAttachmentSpec() = default;
+    FBAttachmentSpec(std::initializer_list<FBTextureSpec> attachments)
+        : Attachments(attachments) {}
+
     std::vector<FBTextureSpec> Attachments;
 };
 
-struct FrameBufferSpec {
-    uint32_t Width; 
-    uint32_t Height; 
-    FBAttachments Attachments;
-    bool SwapChainTarget = false;
+struct FBSpec {
+    uint32_t Width = 1920;
+    uint32_t Height = 1080;
+    FBAttachmentSpec Attachments;
     uint32_t Samples = 1;
+    
+    bool SwapChainTarget = false;
 };
 
 class FrameBuffer {
-public:    
+public:
     FrameBuffer() = default;
-    FrameBuffer(const FrameBufferSpec& spec);
+    FrameBuffer(const FBSpec& spec);
     ~FrameBuffer();
-
+    
+    void ReConstruct();
+    
+    void Bind();
+    void UnBind();
+    
+    // need to generalize this
     void Resize(uint32_t width, uint32_t height);
-
-    void Bind() const;
-    void UnBind() const;
-
-    template<typename T>
-    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, T& pixeldata);
+    int ReadPixel(uint32_t attachmentIndex, int x, int y);
     
-    template<typename T>
-    void ClearColorAttachment(uint32_t attachmentIndex, const T& clearvalue);
+    void ClearAttachment(uint32_t attachmentIndex, int value);
     
-    const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
-    const FrameBufferSpec& GetSpec() const { return m_Spec; }
-private:
-    void ReCreate();
+    uint32_t GetColorAttachment(uint32_t index = 0) const { 
+        assert(index < m_ColorAttachments.size()); 
+        return m_ColorAttachments[index]; 
+    }
+    
+    const FBSpec& GetSpec() const { return m_Spec; }
 private:
     uint32_t m_RendererID = 0;
-    FrameBufferSpec m_Spec;
-
+    FBSpec m_Spec;
+    
     std::vector<FBTextureSpec> m_ColorAttachmentSpecs;
-    FBTextureSpec m_DepthAttachmentSpec;
+    FBTextureSpec m_DepthAttachmentSpec = FBTextureFormat::None;
     
     std::vector<uint32_t> m_ColorAttachments;
     uint32_t m_DepthAttachment = 0;
