@@ -42,8 +42,11 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata);
-    void ClearColorAttachment(uint32_t attachmentIndex, int value);
+    template<typename T>
+    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, T* pixeldata);
+    
+    template<typename T>
+    void ClearColorAttachment(uint32_t attachmentIndex, T* clearvalue);
     
     const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
     const FrameBufferSpec& GetSpec() const { return m_Spec; }

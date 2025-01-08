@@ -50,7 +50,7 @@ static void AttachDepthTexture(uint32_t ID, int samples, GLenum format, GLenum a
     GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(samples>1), ID, 0));
 }
 
-static GLenum FBTextureFormatToGL(FBTextureFormat format) {
+static GLenum TextureFormatToGL(FBTextureFormat format) {
     switch (format) {
         case FBTextureFormat::RGBA8:        return GL_RGBA8;
         case FBTextureFormat::RED_INTEGER:  return GL_RED_INTEGER;
@@ -105,15 +105,17 @@ void FrameBuffer::UnBind() const {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void FrameBuffer::ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata) {
+template<>
+void FrameBuffer::ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, int* pixeldata) {
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
-    GLCall(glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, pixeldata));
+    GLCall(glReadPixels(x, y, 1, 1, FB::TextureFormatToGL(format), GL_INT, pixeldata));
 }
 
-void FrameBuffer::ClearColorAttachment(uint32_t attachmentIndex, int value) {
+template<>
+void FrameBuffer::ClearColorAttachment(uint32_t attachmentIndex, int* value) {
     auto spec = m_ColorAttachmentSpecs[attachmentIndex];
     GLCall(glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
-               FB::FBTextureFormatToGL(spec.TextureFormat), GL_INT, &value));
+               FB::TextureFormatToGL(spec.TextureFormat), GL_INT, &value));
 }
 
 void FrameBuffer::ReCreate() {
