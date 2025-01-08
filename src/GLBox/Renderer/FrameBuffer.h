@@ -1,14 +1,38 @@
 #pragma once
 #include <glbpch.h>
 
+enum class FBTextureFormat {
+    None = 0,
+    RGBA8,
+    DEPTH24STENCIL8,
+    Depth = DEPTH24STENCIL8
+};
+
+struct FBTextureSpec {
+    FBTextureSpec() = default;
+    FBTextureSpec(FBTextureFormat format) : TextureFormat(format) {}
+    
+    FBTextureFormat TextureFormat = FBTextureFormat::None; 
+};
+
+struct FBAttachments {
+    FBAttachments() = default;
+    FBAttachments(std::initializer_list<FBTextureSpec> list) : Attachments(list) {}
+    
+    std::vector<FBTextureSpec> Attachments;
+};
+
 struct FrameBufferSpec {
     uint32_t Width; 
     uint32_t Height; 
+    FBAttachments Attachments;
     bool SwapChainTarget = false;
+    uint32_t Samaples = 1;
 };
 
 class FrameBuffer {
 public:    
+    FrameBuffer() = default;
     FrameBuffer(const FrameBufferSpec& spec);
     ~FrameBuffer();
 
@@ -17,13 +41,17 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    const uint32_t GetColorAttachment() const { return m_ColorAttachment; }
+    const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
     const FrameBufferSpec& GetSpec() const { return m_Spec; }
 private:
     void ReCreate();
 private:
     uint32_t m_RendererID = 0;
-    uint32_t m_ColorAttachment = 0;
-    uint32_t m_DepthAttachment = 0;
     FrameBufferSpec m_Spec;
+
+    std::vector<FBTextureSpec> m_ColorAttachmentSpecs;
+    FBTextureSpec m_DepthAttachmentSpec;
+    
+    std::vector<uint32_t> m_ColorAttachments;
+    uint32_t m_DepthAttachment = 0;
 };
