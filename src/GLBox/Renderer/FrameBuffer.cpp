@@ -20,12 +20,12 @@ static void CreateTextures(bool multisampled, uint32_t* outID, uint32_t count) {
     GLCall(glCreateTextures(TextureTarget(multisampled), count, outID));
 }
 
-static void AttachColorTexture(uint32_t ID, int samples, GLenum format, uint32_t width, uint32_t height, int index) {
+static void AttachColorTexture(uint32_t ID, int samples, GLenum internalformat, GLenum format, uint32_t width, uint32_t height, int index) {
     if (samples > 1) {
-        GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE));
+        GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalformat, width, height, GL_FALSE));
     }
     else {
-        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
+        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
@@ -96,6 +96,11 @@ void FrameBuffer::UnBind() const {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
+void FrameBuffer::ReadPixels(uint32_t colorAttachment, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata) {
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + colorAttachment);
+    glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, pixeldata);
+}
+
 void FrameBuffer::ReCreate() {
     if (m_RendererID) {
         GLCall(glDeleteFramebuffers(1, &m_RendererID));
@@ -106,7 +111,7 @@ void FrameBuffer::ReCreate() {
     GLCall(glGenFramebuffers(1, &m_RendererID));
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 
-    bool multisampled = m_Spec.Samaples > 1;
+    bool multisampled = m_Spec.Samples > 1;
     if (m_ColorAttachmentSpecs.size()) {
         m_ColorAttachments.resize(m_ColorAttachmentSpecs.size());
         FB::CreateTextures(multisampled, m_ColorAttachments.data(), m_ColorAttachmentSpecs.size());
@@ -115,8 +120,11 @@ void FrameBuffer::ReCreate() {
             FB::BindTexture(multisampled, m_ColorAttachments[i]);
             
             switch (m_ColorAttachmentSpecs[i].TextureFormat) {
-                case FBTextureFormat::RGBA8: 
-                    FB::AttachColorTexture(m_ColorAttachments[i], m_Spec.Samaples, GL_RGBA8, m_Spec.Width, m_Spec.Height, i);
+                case FBTextureFormat::RGBA8:
+                    FB::AttachColorTexture(m_ColorAttachments[i], m_Spec.Samples, GL_RGBA8, GL_RGBA, m_Spec.Width, m_Spec.Height, i);
+                    break;
+                case FBTextureFormat::RED_INTEGER:
+                    FB::AttachColorTexture(m_ColorAttachments[i], m_Spec.Samples, GL_R32I, GL_RED_INTEGER, m_Spec.Width, m_Spec.Height, i);
                     break;
                 default: break;
             }
@@ -128,7 +136,7 @@ void FrameBuffer::ReCreate() {
         
         switch (m_DepthAttachmentSpec.TextureFormat) {
             case FBTextureFormat::DEPTH24STENCIL8:
-                FB::AttachDepthTexture(m_DepthAttachment, m_Spec.Samaples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Spec.Width, m_Spec.Height);
+                FB::AttachDepthTexture(m_DepthAttachment, m_Spec.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Spec.Width, m_Spec.Height);
                 break;
             default: break;
         }

@@ -4,6 +4,7 @@
 enum class FBTextureFormat {
     None = 0,
     RGBA8,
+    RED_INTEGER,
     DEPTH24STENCIL8,
     Depth = DEPTH24STENCIL8
 };
@@ -27,7 +28,7 @@ struct FrameBufferSpec {
     uint32_t Height; 
     FBAttachments Attachments;
     bool SwapChainTarget = false;
-    uint32_t Samaples = 1;
+    uint32_t Samples = 1;
 };
 
 class FrameBuffer {
@@ -41,6 +42,7 @@ public:
     void Bind() const;
     void UnBind() const;
 
+    void ReadPixels(uint32_t colorAttachment, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata);
     const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
     const FrameBufferSpec& GetSpec() const { return m_Spec; }
 private:
