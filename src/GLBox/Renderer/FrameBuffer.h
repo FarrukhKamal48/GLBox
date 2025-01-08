@@ -42,7 +42,9 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void ReadPixels(uint32_t colorAttachment, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata);
+    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, void* pixeldata);
+    void ClearColorAttachment(uint32_t attachmentIndex, int value);
+    
     const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
     const FrameBufferSpec& GetSpec() const { return m_Spec; }
 private:
