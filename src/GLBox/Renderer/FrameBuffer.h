@@ -43,10 +43,10 @@ public:
     void UnBind() const;
 
     template<typename T>
-    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, T* pixeldata);
+    void ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, T& pixeldata);
     
     template<typename T>
-    void ClearColorAttachment(uint32_t attachmentIndex, T* clearvalue);
+    void ClearColorAttachment(uint32_t attachmentIndex, const T& clearvalue);
     
     const uint32_t GetColorAttachment(uint32_t index = 0) const { return m_ColorAttachments[index]; }
     const FrameBufferSpec& GetSpec() const { return m_Spec; }

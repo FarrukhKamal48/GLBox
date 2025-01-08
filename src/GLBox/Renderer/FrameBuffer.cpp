@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "GLBox/Core/GLlog.h"
+#include "glm/ext/vector_float4.hpp"
 #include "GLBox/Renderer/FrameBuffer.h"
 
 namespace FB {
@@ -106,13 +107,13 @@ void FrameBuffer::UnBind() const {
 }
 
 template<>
-void FrameBuffer::ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, int* pixeldata) {
+void FrameBuffer::ReadPixels(uint32_t attachmentIndex, uint32_t x, uint32_t y, FBTextureFormat format, int& pixeldata) {
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
-    GLCall(glReadPixels(x, y, 1, 1, FB::TextureFormatToGL(format), GL_INT, pixeldata));
+    GLCall(glReadPixels(x, y, 1, 1, FB::TextureFormatToGL(format), GL_INT, &pixeldata));
 }
 
 template<>
-void FrameBuffer::ClearColorAttachment(uint32_t attachmentIndex, int* value) {
+void FrameBuffer::ClearColorAttachment(uint32_t attachmentIndex, const int& value) {
     auto spec = m_ColorAttachmentSpecs[attachmentIndex];
     GLCall(glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
                FB::TextureFormatToGL(spec.TextureFormat), GL_INT, &value));
