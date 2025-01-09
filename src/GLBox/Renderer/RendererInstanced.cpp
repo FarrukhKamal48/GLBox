@@ -7,6 +7,8 @@
 
 #define ResizeMultiplier (float)2.0f
 
+std::vector<InstanceRenderer> InstanceRenderer::s_Renderers;
+
 InstanceRenderer::InstanceRenderer(const InstanceRenderer& cp) 
     : InstanceShader(cp.InstanceShader), m_VertexArray(cp.m_VertexArray), m_IndexBuffer(cp.m_IndexBuffer)
     , m_MeshBuffer(cp.m_MeshBuffer) , m_InstanceBuffer(cp.m_InstanceBuffer) 
@@ -63,4 +65,11 @@ void InstanceRenderer::Draw() {
     m_InstanceBuffer->SetData(m_Data, m_OccupiedDataSize);
     Renderer::DrawInstanced(*m_VertexArray, *m_IndexBuffer, *InstanceShader, m_InstanceCount);
 }
+
+
+void Renderer::DrawAllInstanced() {
+    for (int i=0; i < (int)InstanceRenderer::s_Renderers.size(); i++) {
+        InstanceRenderer::s_Renderers[i].Draw();
+    }
+} 
 

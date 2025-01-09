@@ -1,24 +1,6 @@
 #include <glbpch.h>
 
-#include "GLBox/Renderer/Renderer.h"
 #include "GLBox/Renderer/RendererInstanced.h"
-
-static std::vector<InstanceRenderer> Renderers;
-
-template <class Object>
-static uint32_t AllocateObj(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader, VertexManager* VManager, 
-                                  std::vector<Object>& instances, int& rendererI) {
-    uint32_t lastSize = instances.size();
-    instances.insert(instances.end(), count, Object());
-    if (rendererI == -1) {
-        rendererI = Renderers.size();
-        Renderers.emplace_back(instances.size(), instances.data(), VManager);
-        ConfigureShader(Renderers[rendererI]);
-    } else
-        Renderers[rendererI].SetData(instances.size(), instances.data());
-    delete VManager;
-    return lastSize;
-}
 
 
 Pos_Scale_Col_Quad::Pos_Scale_Col_Quad() : position(0), scale(0), color(0) { }
@@ -41,7 +23,7 @@ uint32_t Pos_Scale_Col_Quad_Manager::SizeOfObject()                     const { 
 const std::vector<float>& Pos_Scale_Col_Quad_Manager::MeshData()            const { return m_Mesh; }
 const std::vector<uint32_t>& Pos_Scale_Col_Quad_Manager::Indicies()     const { return m_Indicies; }
 const uint32_t Pos_Scale_Col_Quad_Manager::AllocateObject(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const {
-    return AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_RendererI);
+    return InstanceRenderer::AllocateObj(count, ConfigureShader, new Pos_Scale_Col_Quad_Manager(), m_Instances, m_RendererI);
 }
 Pos_Scale_Col_Quad& Pos_Scale_Col_Quad_Manager::operator[](uint32_t i) {
     assert(i >= 0 && i < m_Instances.size() 
@@ -72,7 +54,7 @@ uint32_t QuadTransform_Manager::SizeOfObject()                      const { retu
 const std::vector<float>& QuadTransform_Manager::MeshData()             const { return m_Mesh; }
 const std::vector<uint32_t>& QuadTransform_Manager::Indicies()      const { return m_Indicies; }
 const uint32_t QuadTransform_Manager::AllocateObject(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader) const {
-    return AllocateObj(count, ConfigureShader, new QuadTransform_Manager(), m_Instances, m_RendererI);
+    return InstanceRenderer::AllocateObj(count, ConfigureShader, new QuadTransform_Manager(), m_Instances, m_RendererI);
 }
 QuadTransform& QuadTransform_Manager::operator[](uint32_t i) {
     assert(i >= 0 && i < m_Instances.size() 
@@ -80,10 +62,4 @@ QuadTransform& QuadTransform_Manager::operator[](uint32_t i) {
     return m_Instances[i]; 
 }
 
-
-void Renderer::DrawAllInstanced() {
-    for (int i=0; i < (int)Renderers.size(); i++) {
-        Renderers[i].Draw();
-    }
-} 
 

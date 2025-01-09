@@ -43,6 +43,7 @@ private:
     VertexBufferLayout m_MeshLayout;
     VertexBufferLayout m_VertLayout;
     
+    static std::vector<InstanceRenderer> s_Renderers;
 public:
     InstanceRenderer(const InstanceRenderer& cp);
     InstanceRenderer(uint32_t InstanceCount, void* data, VertexManager* VManager);
@@ -52,5 +53,23 @@ public:
     void Init();
     void CreateShader(const std::string& vertSrcPath, const std::string& fragSrcPath);
     void Draw();
+
+    template <class Object>
+    static uint32_t AllocateObj(uint32_t count, std::function<void(InstanceRenderer&)> ConfigureShader, VertexManager* VManager, 
+                                      std::vector<Object>& instances, int& rendererI) {
+        uint32_t lastSize = instances.size();
+        instances.insert(instances.end(), count, Object());
+        if (rendererI == -1) {
+            rendererI = s_Renderers.size();
+            s_Renderers.emplace_back(instances.size(), instances.data(), VManager);
+            ConfigureShader(s_Renderers[rendererI]);
+        } else
+            s_Renderers[rendererI].SetData(instances.size(), instances.data());
+        delete VManager;
+        return lastSize;
+    }
+private:
+    friend class Renderer;
 };
+
 
