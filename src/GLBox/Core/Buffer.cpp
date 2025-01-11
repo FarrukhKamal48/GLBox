@@ -86,8 +86,18 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
     for (uint32_t i = 0; i < elements.size(); i++) {
         const auto& element = elements[i];
         GLCall(glEnableVertexAttribArray(i + m_AttribCount));
-        GLCall(glVertexAttribPointer(i + m_AttribCount, element.count, element.type, element.normalized, 
-                                     layout.GetStride(), (const void*)offset));
+        switch (element.type) {
+            case GL_FLOAT:
+                GLCall(glVertexAttribPointer(i + m_AttribCount, element.count, element.type, element.normalized, 
+                                             layout.GetStride(), (const void*)offset));
+                break;
+            case GL_INT:
+            case GL_UNSIGNED_INT:
+            case GL_UNSIGNED_BYTE:
+                GLCall(glVertexAttribIPointer(i + m_AttribCount, element.count, element.type, 
+                                             layout.GetStride(), (const void*)offset));
+                break;
+        }
         offset += element.count * VertexBufferLayoutElement::SizeOf(element.type);
         GLCall(glVertexAttribDivisor(i + m_AttribCount, element.divisor));
     }
