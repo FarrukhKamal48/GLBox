@@ -8,6 +8,8 @@ public:
     ImGuiLayer();
     ~ImGuiLayer();
 
+    void OnEvent(Event& event) override;
+
     void OnAttach() override;
     void OnDetach() override;
 
@@ -15,4 +17,8 @@ public:
     void End();
     
     void SetDarkThemeColors();
+
+    void SetBlockEvents(bool block) { m_BlockEvents = block; }
+private:
+    bool m_BlockEvents;
 };

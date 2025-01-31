@@ -18,6 +18,7 @@ public:
     void PushOverlay(Layer* layer);
 
     Window& GetWindow() { return m_Window; }
+    ImGuiLayer& GetImGuiLayer() { return *m_ImGuiLayer; }
     static Application& Get() { return *s_Instance; }
 private:
     virtual void Run();

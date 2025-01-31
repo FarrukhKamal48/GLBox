@@ -10,6 +10,14 @@ ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {
 ImGuiLayer::~ImGuiLayer() {
 }
 
+void ImGuiLayer::OnEvent(Event& event) {
+    if (m_BlockEvents) {
+        ImGuiIO& io = ImGui::GetIO();
+        event.Handled |= event.IsInCatagory(EventCatagoryMouse) & io.WantCaptureMouse;
+        event.Handled |= event.IsInCatagory(EventCatagoryKeyboard) & io.WantCaptureKeyboard;
+    } 
+}
+
 void ImGuiLayer::OnAttach() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
